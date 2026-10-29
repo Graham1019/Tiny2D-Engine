@@ -1,0 +1,18 @@
+# CMake build artifacts
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Compiled files
+*.o
+*.a
+*.dylib
+*.dSYM/
