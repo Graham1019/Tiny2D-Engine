@@ -4,14 +4,17 @@ A lightweight 2D game engine built with C++17.
 
 ## Project Status
 
-Milestone M1 — Window + Input + Game Loop implemented.
+Milestone M2 — Programmable Rendering Pipeline implemented on top of M1.
 
 - CMake static engine library and existing Vector2 math/tests
 - RAII GLFW window and OpenGL Core context
 - Logical/framebuffer size queries and resize-aware viewport
 - Window-bound keyboard polling (WASD, Escape and GLFW key codes)
 - Application update/render loop with monotonic, capped deltaTime
-- 800×600 graphical Sandbox with key-controlled colors and FPS title
+- Move-only RAII ShaderProgram, VertexBuffer and VertexArray
+- GLSL 330 Core RGB triangle with interleaved position/color attributes
+- External shader assets copied beside the executable; independent of working directory
+- 800×600 Sandbox with an interpolated RGB triangle, WASD background and FPS title
 
 ## Requirements
 
@@ -29,6 +32,10 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ctest --test-dir build --output-on-failure
 ./build/tiny2d_sandbox
+# Also supported:
+(cd build && ./tiny2d_sandbox)
+# Deterministic normal-exit smoke run:
+./build/tiny2d_sandbox --frames 4
 ```
 
 If GLFW is not found, install it with Homebrew and add
@@ -38,14 +45,21 @@ Hold W/A/D for green/red/blue channels; combine them to mix colors. S overrides
 with dark gray. Release keys to restore the default background. Escape closes
 the window. Resize freely; the title reports FPS approximately every second.
 
-See [M1 design and acceptance guide](docs/milestone-01.md) for ownership, loop
-flow, build details, manual checks and known limitations. Build and Vector2Tests
-passed; the user confirmed window display, WASD/mixed-color behavior, Escape exit and
-FPS updates. Other GUI acceptance items are documented as unverified.
+CTest includes Vector2Tests, deterministic rendering failure injection, real
+OpenGL resource/pixel-readback tests, and Sandbox smoke runs from both directories.
+The three `gui`/`opengl` tests need a logged-in macOS graphical session. They fail
+on context errors rather than silently skipping. For a headless build explicitly
+configure `-DTINY2D_OPENGL_TESTS=OFF`; that only validates CPU/fake-driver tests.
+
+Debug build and all 5 tests passed on Apple M5 Pro (OpenGL 4.1 Core supplied for
+the 3.3 Core request). The user confirmed the triangle, WASD, resizing and Escape.
+See [M2 architecture, lifecycle and validation](docs/milestone-02.md) for exact
+coverage and remaining manual checks, and [M1 design](docs/milestone-01.md) for the
+preserved window/input/application foundation.
 
 ## Roadmap
 
-- Modern OpenGL renderer, shaders and textures
+- Textures, additional uniforms and indexed rendering
 - Scene management
 - Collision detection
 - Arena Survivor demo
