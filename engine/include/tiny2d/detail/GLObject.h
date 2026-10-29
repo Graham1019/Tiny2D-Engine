@@ -4,7 +4,7 @@ struct GLFWwindow;
 
 namespace tiny2d::detail {
 
-enum class ObjectKind { Program, VertexShader, FragmentShader, Buffer, VertexArray };
+enum class ObjectKind { Program, VertexShader, FragmentShader, Buffer, VertexArray, Texture };
 
 // Internal owner shared by the small rendering wrappers. No public GL headers.
 class GLObject {

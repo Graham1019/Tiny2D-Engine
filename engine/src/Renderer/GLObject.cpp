@@ -22,6 +22,7 @@ void destroy(ObjectKind kind, GLuint id) noexcept {
     }
     case ObjectKind::VertexShader:
     case ObjectKind::FragmentShader: glDeleteShader(id); break;
+    case ObjectKind::Texture: glDeleteTextures(1, &id); break;
     case ObjectKind::Buffer: glDeleteBuffers(1, &id); break;
     case ObjectKind::VertexArray: glDeleteVertexArrays(1, &id); break;
     }
@@ -51,6 +52,7 @@ GLObject::GLObject(ObjectKind kind) : kind_(kind) {
     case ObjectKind::Program: id_ = glCreateProgram(); break;
     case ObjectKind::VertexShader: id_ = glCreateShader(GL_VERTEX_SHADER); break;
     case ObjectKind::FragmentShader: id_ = glCreateShader(GL_FRAGMENT_SHADER); break;
+    case ObjectKind::Texture: glGenTextures(1, &id_); break;
     case ObjectKind::Buffer: glGenBuffers(1, &id_); break;
     case ObjectKind::VertexArray: glGenVertexArrays(1, &id_); break;
     }

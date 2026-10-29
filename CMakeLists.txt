@@ -13,10 +13,16 @@ if(NOT TARGET glfw)
     message(FATAL_ERROR "GLFW 3.3+ not found. On macOS: brew install glfw; configure with -DCMAKE_PREFIX_PATH=$(brew --prefix) if needed.")
 endif()
 find_package(OpenGL REQUIRED)
+find_package(PNG REQUIRED) # Local libpng; brew install libpng. No configure-time downloads.
 
 # 引擎静态库
 add_library(tiny2d_engine STATIC
     engine/src/Math/Vector2.cpp
+    engine/src/Math/Mat4.cpp
+    engine/src/Renderer/Camera2D.cpp
+    engine/src/Renderer/Texture2D.cpp
+    engine/src/Renderer/SpriteRenderer.cpp
+    engine/src/Assets/ImageLoader.cpp
     engine/src/Platform/Window.cpp
     engine/src/Platform/Input.cpp
     engine/src/Core/Application.cpp
@@ -31,7 +37,7 @@ target_include_directories(tiny2d_engine PUBLIC
 )
 
 target_compile_features(tiny2d_engine PUBLIC cxx_std_17)
-target_link_libraries(tiny2d_engine PRIVATE glfw OpenGL::GL)
+target_link_libraries(tiny2d_engine PRIVATE glfw OpenGL::GL PNG::PNG)
 
 set_target_properties(tiny2d_engine PROPERTIES
     CXX_EXTENSIONS OFF
@@ -64,6 +70,11 @@ add_dependencies(tiny2d_sandbox tiny2d_shader_assets)
 include(CTest)
 
 if(BUILD_TESTING)
+    add_executable(tiny2d_m3_cpu_tests tests/test_m3_cpu.cpp sandbox/src/ShaderAssets.cpp)
+    target_include_directories(tiny2d_m3_cpu_tests PRIVATE sandbox/src)
+    target_link_libraries(tiny2d_m3_cpu_tests PRIVATE tiny2d_engine)
+    add_dependencies(tiny2d_m3_cpu_tests tiny2d_shader_assets)
+    add_test(NAME M3CPUTests COMMAND tiny2d_m3_cpu_tests)
     add_executable(tiny2d_tests
         tests/test_vector2.cpp
     )
@@ -79,6 +90,7 @@ if(BUILD_TESTING)
 
     add_executable(tiny2d_failure_tests
         tests/test_render_failures.cpp
+        engine/src/Renderer/Texture2D.cpp
         engine/src/Renderer/GLObject.cpp
         engine/src/Renderer/ShaderProgram.cpp
         engine/src/Renderer/VertexBuffer.cpp
@@ -92,6 +104,11 @@ if(BUILD_TESTING)
 
     option(TINY2D_OPENGL_TESTS "Run tests requiring a macOS graphical login and real OpenGL context" ON)
     if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m3_gpu_tests tests/test_m3_gpu.cpp)
+        target_link_libraries(tiny2d_m3_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
+        add_test(NAME M3GPUTests COMMAND tiny2d_m3_gpu_tests)
+        add_test(NAME TriangleRegression COMMAND tiny2d_sandbox --scene triangle --frames 4)
+        set_tests_properties(M3GPUTests TriangleRegression PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 30)
         add_executable(tiny2d_render_tests tests/test_render.cpp sandbox/src/ShaderAssets.cpp)
         target_include_directories(tiny2d_render_tests PRIVATE sandbox/src)
         target_link_libraries(tiny2d_render_tests PRIVATE tiny2d_engine glfw OpenGL::GL)

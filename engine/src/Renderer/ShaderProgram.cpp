@@ -92,3 +92,9 @@ void ShaderProgram::setVec2(const char* name, float x, float y) const {
     detail::checkGL("glUniform2f");
 }
 }
+
+namespace tiny2d {
+void ShaderProgram::setInt(const char* n,int v) const { glUniform1i(uniformLocation(n),v); detail::checkGL("glUniform1i"); }
+void ShaderProgram::setMat4(const char* n,const Mat4& v) const { glUniformMatrix4fv(uniformLocation(n),1,GL_FALSE,v.data()); detail::checkGL("glUniformMatrix4fv"); }
+void ShaderProgram::setVec4(const char* n,float r,float g,float b,float a) const { glUniform4f(uniformLocation(n),r,g,b,a); detail::checkGL("glUniform4f"); }
+}

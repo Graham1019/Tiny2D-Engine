@@ -1,0 +1,2 @@
+sprite.png: Original procedural artwork created for Tiny2D M3. Dedicated to the public domain under CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+Top row first; transparent border, opaque and half-alpha interior.
