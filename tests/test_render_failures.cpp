@@ -1,6 +1,7 @@
 // Deterministic failure injection: production wrappers, fake GL entry points.
 // This checks ownership on hard-to-trigger allocation errors, not driver behavior.
 #include "tiny2d/ShaderProgram.h"
+#include "tiny2d/Texture2D.h"
 #include "tiny2d/VertexArray.h"
 #include "tiny2d/VertexBuffer.h"
 #include "../engine/src/Renderer/OpenGL.h"
@@ -19,8 +20,9 @@ struct Object { bool deleted = false; std::set<GLuint> shaders; };
 std::map<GLuint, Object> live;
 GLuint nextId = 1;
 GLuint currentProgram = 0;
+std::map<GLenum,GLint> unpack{{GL_UNPACK_ALIGNMENT,8},{GL_UNPACK_ROW_LENGTH,3},{GL_UNPACK_SKIP_ROWS,1},{GL_UNPACK_SKIP_PIXELS,2}};
 GLenum pendingError = GL_NO_ERROR;
-enum class Fault { None, Program, VertexShader, FragmentShader, Buffer, Array, Upload, Layout, Compile, Link };
+enum class Fault { None, Texture, TextureUpload, Program, VertexShader, FragmentShader, Buffer, Array, Upload, Layout, Compile, Link };
 Fault fault = Fault::None;
 bool returnHandleOnFailure = false;
 GLuint create(Fault point) {
@@ -67,7 +69,7 @@ void glGenBuffers(GLsizei, GLuint* id) { *id = create(Fault::Buffer); }
 void glGenVertexArrays(GLsizei, GLuint* id) { *id = create(Fault::Array); }
 void glDeleteBuffers(GLsizei, const GLuint* id) { live.erase(*id); }
 void glDeleteVertexArrays(GLsizei, const GLuint* id) { live.erase(*id); }
-void glGetIntegerv(GLenum name, GLint* value) { *value = name == GL_CURRENT_PROGRAM ? currentProgram : 16; }
+void glGetIntegerv(GLenum name, GLint* value) { *value = name == GL_CURRENT_PROGRAM ? currentProgram : (unpack.count(name)?unpack.at(name):16); }
 void glUseProgram(GLuint id) { currentProgram = id; }
 void glShaderSource(GLuint, GLsizei, const GLchar* const*, const GLint*) {}
 void glCompileShader(GLuint) {}
@@ -79,6 +81,16 @@ void glAttachShader(GLuint program, GLuint shader) { live.at(program).shaders.in
 void glDetachShader(GLuint program, GLuint shader) { live.at(program).shaders.erase(shader); collectShaders(); }
 void glLinkProgram(GLuint) {}
 GLint glGetUniformLocation(GLuint, const GLchar*) { return 0; }
+void glGenTextures(GLsizei, GLuint* id) { *id=create(Fault::Texture); }
+void glDeleteTextures(GLsizei,const GLuint* id) { live.erase(*id); }
+void glBindTexture(GLenum,GLuint) {}
+void glActiveTexture(GLenum) {}
+void glPixelStorei(GLenum name,GLint value) { unpack[name]=value; }
+void glTexParameteri(GLenum,GLenum,GLint) {}
+void glTexImage2D(GLenum,GLint,GLint,GLsizei,GLsizei,GLint,GLenum,GLenum,const void*) { if(fault==Fault::TextureUpload) pendingError=GL_OUT_OF_MEMORY; }
+void glUniform1i(GLint,GLint) {}
+void glUniform4f(GLint,GLfloat,GLfloat,GLfloat,GLfloat) {}
+void glUniformMatrix4fv(GLint,GLsizei,GLboolean,const GLfloat*) {}
 void glUniform1f(GLint, GLfloat) {}
 void glUniform2f(GLint, GLfloat, GLfloat) {}
 void glBindBuffer(GLenum, GLuint) {}
@@ -128,8 +140,18 @@ int main() {
             tiny2d::VertexBuffer buffer(vertices, sizeof(vertices));
             tiny2d::VertexArray array(buffer, 20, {{0, 2, 0}});
         });
+        const auto expectedUnpack=unpack;
+        for(auto f : {Fault::Texture,Fault::TextureUpload}) {
+            fault=f;
+            fails([] { tiny2d::Texture2D texture({1,1,{255,255,255,255}}); });
+        }
+        require(unpack==expectedUnpack,"texture failure changed pixel-store state");
         returnHandleOnFailure = false;
+        fault=Fault::Texture;
+        fails([] { tiny2d::Texture2D texture({1,1,{255,255,255,255}}); });
         fault = Fault::None;
+        fails([] { tiny2d::Texture2D texture({0,1,{}}); });
+        fails([] { tiny2d::Texture2D texture({1,1,{255}}); });
         fails([] { tiny2d::VertexBuffer buffer(nullptr, 4); });
         fails([] { tiny2d::ShaderProgram program("", "fragment"); });
         pendingError = GL_INVALID_ENUM;

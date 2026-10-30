@@ -2,6 +2,7 @@
 
 #include "tiny2d/detail/GLObject.h"
 #include <string_view>
+#include "tiny2d/Mat4.h"
 
 namespace tiny2d {
 
@@ -21,6 +22,9 @@ public:
     void bind() const;
     static void unbind();
     // Requires this program bound; inactive/missing uniforms are errors.
+    void setInt(const char* name, int value) const;
+    void setMat4(const char* name, const Mat4& value) const;
+    void setVec4(const char* name, float r,float g,float b,float a) const;
     void setFloat(const char* name, float value) const;
     void setVec2(const char* name, float x, float y) const;
     unsigned int nativeHandle() const noexcept { return object_.id(); }
