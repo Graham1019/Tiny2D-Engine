@@ -21,6 +21,7 @@ add_library(tiny2d_engine STATIC
     engine/src/Math/Mat4.cpp
     engine/src/Renderer/Camera2D.cpp
     engine/src/Renderer/Texture2D.cpp
+    engine/src/Renderer/BatchRenderer.cpp
     engine/src/Renderer/SpriteRenderer.cpp
     engine/src/Assets/ImageLoader.cpp
     engine/src/Platform/Window.cpp
@@ -90,6 +91,10 @@ if(BUILD_TESTING)
 
     add_executable(tiny2d_failure_tests
         tests/test_render_failures.cpp
+        engine/src/Renderer/BatchRenderer.cpp
+        engine/src/Renderer/Camera2D.cpp
+        engine/src/Math/Mat4.cpp
+        engine/src/Math/Vector2.cpp
         engine/src/Renderer/Texture2D.cpp
         engine/src/Renderer/GLObject.cpp
         engine/src/Renderer/ShaderProgram.cpp
@@ -122,4 +127,20 @@ if(BUILD_TESTING)
         set_tests_properties(OpenGLResourceTests SandboxSmokeRoot SandboxSmokeBuild
             PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 30)
     endif()
+endif()
+
+add_executable(tiny2d_benchmark sandbox/src/benchmark.cpp)
+target_link_libraries(tiny2d_benchmark PRIVATE tiny2d_engine glfw OpenGL::GL)
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m4_gpu_tests tests/test_m4_gpu.cpp)
+    target_link_libraries(tiny2d_m4_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
+    add_test(NAME M4GPUTests COMMAND tiny2d_m4_gpu_tests)
+    set_tests_properties(M4GPUTests PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m41_gpu_tests tests/test_m41_gpu.cpp)
+    target_link_libraries(tiny2d_m41_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
+    add_test(NAME M41GPUTests COMMAND tiny2d_m41_gpu_tests)
+    set_tests_properties(M41GPUTests PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
 endif()

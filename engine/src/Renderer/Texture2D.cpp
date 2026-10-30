@@ -4,6 +4,7 @@
 namespace tiny2d {
 Texture2D::Texture2D(const ImageData& image,TextureFilter filter)
     : object_(detail::ObjectKind::Texture),width_(image.width),height_(image.height) {
+    GLint units=0;glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,&units);maxUnits_=static_cast<unsigned>(units);
     GLint maxSize=0; glGetIntegerv(GL_MAX_TEXTURE_SIZE,&maxSize);
     if(width_<=0||height_<=0||width_>maxSize||height_>maxSize||
        static_cast<std::uint64_t>(width_)*height_*4!=image.pixels.size()||
@@ -23,10 +24,12 @@ Texture2D::Texture2D(const ImageData& image,TextureFilter filter)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width_,height_,0,GL_RGBA,GL_UNSIGNED_BYTE,image.pixels.data());
     detail::checkGL("RGBA8 texture upload");
 }
+void Texture2D::requireCurrentContext() const {
+    object_.requireCurrent("Texture2D::requireCurrentContext");
+}
 void Texture2D::bind(unsigned unit) const {
     object_.requireCurrent("Texture2D::bind");
-    GLint maxUnits=0; glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,&maxUnits);
-    if(unit>=static_cast<unsigned>(maxUnits)) throw std::invalid_argument("invalid texture unit");
-    glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D,object_.id()); detail::checkGL("texture bind");
+    if(unit>=maxUnits_) throw std::invalid_argument("invalid texture unit");
+    glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D,object_.id()); detail::debugGL("texture bind");
 }
 }

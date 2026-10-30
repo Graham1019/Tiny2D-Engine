@@ -1,0 +1,2 @@
+logical=800x600 framebuffer=1600x1200 compiler=21.0.0 (clang-2100.1.1.101) build=Release capacity=1000 slots=8
+vendor=Apple renderer=Apple M5 Pro version=4.1 Metal - 90.5 timer=available samples=120 warmup=30 repeats=5 vsync=0
