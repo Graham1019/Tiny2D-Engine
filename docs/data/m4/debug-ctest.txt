@@ -1,0 +1,27 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m4-debug
+    Start 1: M3CPUTests
+1/9 Test #1: M3CPUTests .......................   Passed    0.01 sec
+    Start 2: Vector2Tests
+2/9 Test #2: Vector2Tests .....................   Passed    0.00 sec
+    Start 3: RenderFailureTests
+3/9 Test #3: RenderFailureTests ...............   Passed    0.00 sec
+    Start 4: M3GPUTests
+4/9 Test #4: M3GPUTests .......................   Passed    0.17 sec
+    Start 5: TriangleRegression
+5/9 Test #5: TriangleRegression ...............   Passed    1.58 sec
+    Start 6: OpenGLResourceTests
+6/9 Test #6: OpenGLResourceTests ..............   Passed    0.21 sec
+    Start 7: SandboxSmokeRoot
+7/9 Test #7: SandboxSmokeRoot .................   Passed    0.20 sec
+    Start 8: SandboxSmokeBuild
+8/9 Test #8: SandboxSmokeBuild ................   Passed    0.20 sec
+    Start 9: M4GPUTests
+9/9 Test #9: M4GPUTests .......................   Passed    0.16 sec
+
+100% tests passed out of 9
+
+Label Time Summary:
+gui       =   2.52 sec*proc (6 tests)
+opengl    =   2.52 sec*proc (6 tests)
+
+Total Test time (real) =   2.54 sec

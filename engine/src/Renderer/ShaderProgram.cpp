@@ -63,7 +63,7 @@ ShaderProgram::ShaderProgram(std::string_view vertexSource, std::string_view fra
 void ShaderProgram::bind() const {
     object_.requireCurrent("ShaderProgram::bind");
     glUseProgram(object_.id());
-    detail::checkGL("glUseProgram");
+    detail::debugGL("glUseProgram");
 }
 void ShaderProgram::unbind() {
     detail::requireContext("ShaderProgram::unbind");
@@ -78,9 +78,12 @@ int ShaderProgram::uniformLocation(const char* name) const {
     glGetIntegerv(GL_CURRENT_PROGRAM, &current);
     detail::checkGL("GL_CURRENT_PROGRAM");
     if (static_cast<GLuint>(current) != object_.id()) throw std::logic_error("uniform update requires this program bound");
+    const auto cached=locations_.find(name);
+    if(cached!=locations_.end()) return cached->second;
     const GLint location = glGetUniformLocation(object_.id(), name);
     detail::checkGL("glGetUniformLocation");
     if (location < 0) throw std::invalid_argument(std::string("inactive or missing uniform: ") + name);
+    locations_.emplace(name,location);
     return location;
 }
 void ShaderProgram::setFloat(const char* name, float value) const {

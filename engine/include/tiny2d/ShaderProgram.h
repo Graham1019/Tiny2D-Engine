@@ -2,6 +2,8 @@
 
 #include "tiny2d/detail/GLObject.h"
 #include <string_view>
+#include <string>
+#include <unordered_map>
 #include "tiny2d/Mat4.h"
 
 namespace tiny2d {
@@ -31,5 +33,6 @@ public:
 private:
     int uniformLocation(const char* name) const;
     detail::GLObject object_;
+    mutable std::unordered_map<std::string,int> locations_;
 };
 }

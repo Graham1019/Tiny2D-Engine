@@ -18,5 +18,6 @@ public:
 private:
     detail::GLObject object_;
     int width_,height_;
+    unsigned maxUnits_=0;
 };
 }
