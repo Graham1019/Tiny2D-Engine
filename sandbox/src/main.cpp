@@ -40,8 +40,12 @@ public:
           array_(buffer_, sizeof(Vertex), {{0, 2, offsetof(Vertex, position)},
                                            {1, 3, offsetof(Vertex, color)}}),
           frameLimit_(frameLimit), sprites_(sprites), count_(count), batchMode_(batch), multi_(multi) {
-        if(sprites_) { texture_=std::make_unique<tiny2d::Texture2D>(tiny2d::ImageLoader::loadPNG(assetPath("textures/sprite.png"))); renderer_=std::make_unique<tiny2d::SpriteRenderer>(); }
-        if(batchMode_) batch_=std::make_unique<tiny2d::BatchRenderer>();
+        if(sprites_) {
+            texture_=std::make_unique<tiny2d::Texture2D>(
+                tiny2d::ImageLoader::loadPNG(assetPath("textures/sprite.png")));
+            if(batchMode_) batch_=std::make_unique<tiny2d::BatchRenderer>();
+            else renderer_=std::make_unique<tiny2d::SpriteRenderer>();
+        }
         if(multi_) for(const char* name:{"red.png","green.png","blue.png"}) textures_.push_back(std::make_unique<tiny2d::Texture2D>(tiny2d::ImageLoader::loadPNG(assetPath((std::string("textures/")+name).c_str()))));
         camera_.setPosition(400,300);
     }
@@ -63,15 +67,14 @@ private:
     }
     void render() override {
         frameDraws_=0;
-        if(sprites_) renderer_->beginFrame(camera_);
         window().clear(red_, green_, blue_);
         const auto framebuffer = window().framebufferSize();
         if (framebuffer.width > 0 && framebuffer.height > 0) {
             const auto logical=window().size();
             if(sprites_ && logical.width>0 && logical.height>0) {
                 camera_.setViewportSize(logical.width,logical.height);
-                renderer_->beginFrame(camera_);
-                if(batchMode_)batch_->beginFrame(camera_);
+                if(batchMode_) batch_->beginFrame(camera_);
+                else renderer_->beginFrame(camera_);
                 for(unsigned i=0;i<count_;++i) {
                     const float x=80+float(i%10)*58, y=80+float((i/10)%50)*48;
                     const auto& texture=multi_?*textures_[i%textures_.size()]:*texture_;
@@ -90,7 +93,8 @@ private:
             array_.drawTriangles(3);frameDraws_=1;
             }
         }
-        if(sprites_ && batchMode_ && (framebuffer.width<=0 || framebuffer.height<=0)) {batch_->beginFrame(camera_);batch_->endFrame();}
+        // frameDraws_ is the displayed per-frame count, including skipped/minimized frames.
+        // Renderer statistics describe its last begun pass; no pass is begun when undrawable.
         if (frameLimit_ && ++totalFrames_ >= frameLimit_) {
             std::cout << "Frames: " << totalFrames_ << " | Draw calls in final frame: "
                       << frameDraws_ << '\n';

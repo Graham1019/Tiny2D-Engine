@@ -18,7 +18,12 @@ the queue. Positive sizes and any finite tint are accepted; RGBA8 output clamps.
 Texture objects must stay alive until their queued draws are flushed. All GPU
 operations, moves that release resources, and destruction require the owning
 context current on the main thread. Moved-from BatchRenderer operations throw.
-Moving transfers the complete frame/state snapshot. Destruction during an active
+Move construction transfers the complete frame/state snapshot without touching GL.
+Move assignment requires both source and target inactive; otherwise it throws
+logic_error before any mutation. It is no longer noexcept. Inactive assignment
+validates both owning contexts before deleting the target; moved-from targets
+can be reused by assignment. Self-assignment is a no-op even when active.
+Destruction during an active
 frame cancels queued work and restores state; it does not implicitly draw.
 Construction failures unwind RAII owners. endFrame failures discard the queue,
 restore state and propagate diagnostics, permitting a fresh frame.
@@ -83,3 +88,34 @@ remains; internal context prechecks and hot binding/uniform checks use debugGL.
 Shader compile/link status, allocation/upload failures and draw errors remain
 checked in Release. Performance results therefore include remaining validation,
 state capture/restoration, CPU vertex transformation and driver submission costs.
+
+## M4.1 review fixes
+
+Texture2D::requireCurrentContext() delegates to GLObject::requireCurrent(). It
+checks the main thread, live handle and owning context, without binding textures
+or changing the active texture unit. Batch draw checks its own owner and the
+texture before capacity/slot flush, CPU append or statistics increments. Thus a
+foreign-context or moved-from texture cannot flush an existing full queue. This
+is validation, not a lifetime extension: textures still must survive until flush.
+
+Assignment state table (distinct objects):
+
+| Source | Target | Result |
+|---|---|---|
+| inactive | inactive | Validate contexts, release target, transfer ownership |
+| active | inactive | Throw, both unchanged |
+| inactive | active | Throw, both unchanged |
+| active | active | Throw, both unchanged |
+
+M41GPUTests exercises all four states, active/inactive move construction, all
+moved-from APIs, recovery, and destruction. Its both-active test deliberately
+nests two passes only to check rejection, then closes them in reverse order;
+it does not establish support for interleaved drawing through multiple passes.
+
+Sandbox creates only the selected SpriteRenderer or BatchRenderer for sprite
+scenes, neither for triangle. It begins exactly one selected pass for drawable
+sprite frames. No pass is begun for undrawable frames: displayed frameDraws resets
+to zero independently, while renderer stats describe the last begun pass. The
+CLI chooses a mode per process; there is no runtime mode-switch API. Triangle's
+existing shader/quad remain eager members but are never bound/updated per sprite
+frame; changing their ownership is outside this targeted fix.

@@ -24,6 +24,9 @@ Texture2D::Texture2D(const ImageData& image,TextureFilter filter)
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width_,height_,0,GL_RGBA,GL_UNSIGNED_BYTE,image.pixels.data());
     detail::checkGL("RGBA8 texture upload");
 }
+void Texture2D::requireCurrentContext() const {
+    object_.requireCurrent("Texture2D::requireCurrentContext");
+}
 void Texture2D::bind(unsigned unit) const {
     object_.requireCurrent("Texture2D::bind");
     if(unit>=maxUnits_) throw std::invalid_argument("invalid texture unit");

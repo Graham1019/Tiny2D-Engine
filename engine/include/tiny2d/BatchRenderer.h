@@ -14,7 +14,10 @@ public:
     explicit BatchRenderer(std::size_t capacity=1000, unsigned textureSlots=8);
     ~BatchRenderer();
     BatchRenderer(BatchRenderer&&) noexcept;
-    BatchRenderer& operator=(BatchRenderer&&) noexcept;
+    // Construction transfers even an active pass without touching GL state.
+    // Assignment requires both objects inactive and their owning context current.
+    // Active source/target throws without mutation; self-assignment is a no-op.
+    BatchRenderer& operator=(BatchRenderer&&);
     BatchRenderer(const BatchRenderer&)=delete;
     BatchRenderer& operator=(const BatchRenderer&)=delete;
     void beginFrame(const Camera2D&);

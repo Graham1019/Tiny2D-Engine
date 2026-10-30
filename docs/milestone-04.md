@@ -50,3 +50,24 @@ Resume material: implemented order-preserving indexed batching with up to eight
 textures on GLSL 330, reduced the verified 500-sprite draw count from 500 to 1,
 and built real-driver pixel regression plus asynchronous GPU timer profiling.
 Do not describe draw-call reduction as an FPS speedup.
+
+## M4.1 targeted review follow-up
+
+Built on 84523e226a318337cba25fe213bbd238099dee4b, same feat/batch-renderer
+branch and PR #3. No M5 work or history rewriting.
+
+- Explicit nonbinding Texture2D context validation before enqueue/automatic flush.
+- Move assignment rejects any active operand; move construction still transfers.
+- Sandbox creates only the selected renderer and removes redundant beginFrame.
+- M41GPUTests adds dual unshared contexts, rejection atomicity, all move state
+  combinations, and 9-texture overlapping RGBA regression with slot reuse.
+- Debug and Release: 10/10 CTest passed, preserving all previous nine tests.
+- Both transparent orders: 3 draws/flushes, 18 binds, max channel error 0/255.
+- Requested 30-frame Sandbox runs: Immediate 500 draws, Batch 1, multitexture
+  5000 sprites 5; triangle 4-frame run 1. Both zero-sprite modes report 0;
+  triangle with --renderer batch reports 1 without creating a BatchRenderer.
+
+Logs and new full benchmark data are in docs/data/m41; historical M4 data is
+unchanged. [Performance comparison](performance-m41.md) documents hot-path costs.
+Actual keyboard/Escape and physical minimization interactions were not performed;
+input logic is unchanged and minimized displayed counts reset before size checks.

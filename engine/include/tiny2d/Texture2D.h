@@ -11,6 +11,8 @@ public:
     Texture2D& operator=(const Texture2D&)=delete;
     Texture2D(Texture2D&&) noexcept=default;
     Texture2D& operator=(Texture2D&&) noexcept=default;
+    // Validates ownership/main thread without changing any GL bindings.
+    void requireCurrentContext() const;
     void bind(unsigned unit=0) const;
     int width() const { return width_; }
     int height() const { return height_; }

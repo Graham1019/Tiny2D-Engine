@@ -66,7 +66,16 @@ struct BatchRenderer::Impl {
 BatchRenderer::BatchRenderer(std::size_t n,unsigned t):impl_(std::make_unique<Impl>(n,t)){}
 BatchRenderer::~BatchRenderer()=default;
 BatchRenderer::BatchRenderer(BatchRenderer&&) noexcept=default;
-BatchRenderer& BatchRenderer::operator=(BatchRenderer&&) noexcept=default;
+BatchRenderer& BatchRenderer::operator=(BatchRenderer&& other) {
+    if(this==&other) return *this;
+    if((impl_ && impl_->active) || (other.impl_ && other.impl_->active))
+        throw std::logic_error("batch move assignment requires inactive source and target");
+    // Validate before deleting the target or taking ownership of the source.
+    if(impl_) impl_->vao.requireCurrent("batch move assignment target");
+    if(other.impl_) other.impl_->vao.requireCurrent("batch move assignment source");
+    impl_=std::move(other.impl_);
+    return *this;
+}
 BatchRenderer::Impl& BatchRenderer::get()const{if(!impl_)throw std::logic_error("moved-from batch");return *impl_;}
 const RenderStats& BatchRenderer::stats()const{return get().stats;}
 unsigned BatchRenderer::textureSlots()const{return get().limit;}
@@ -84,7 +93,9 @@ void BatchRenderer::beginFrame(const Camera2D& camera){
 }
 void BatchRenderer::draw(const Texture2D& texture,Vector2 p,Vector2 s,float angle,Color c){
     auto& b=get();if(!b.active)throw std::logic_error("draw outside frame");
-    if(!texture.nativeHandle()||!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(s.x)||!std::isfinite(s.y)||s.x<=0||s.y<=0||!std::isfinite(angle)||!std::isfinite(c.r)||!std::isfinite(c.g)||!std::isfinite(c.b)||!std::isfinite(c.a))throw std::invalid_argument("invalid sprite");
+    b.vao.requireCurrent("batch draw");
+    texture.requireCurrentContext(); // Must precede capacity/slot flush and all queue mutation.
+    if(!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(s.x)||!std::isfinite(s.y)||s.x<=0||s.y<=0||!std::isfinite(angle)||!std::isfinite(c.r)||!std::isfinite(c.g)||!std::isfinite(c.b)||!std::isfinite(c.a))throw std::invalid_argument("invalid sprite");
     Vertex quad[4];const float uv[4][2]={{0,0},{1,0},{1,1},{0,1}};
     const auto model=Mat4::translation(p.x+s.x/2,p.y+s.y/2)*Mat4::rotationZ(angle)*Mat4::scale(s.x,s.y)*Mat4::translation(-.5f,-.5f);
     for(unsigned i=0;i<4;++i){float u=uv[i][0],v=uv[i][1];float x=model.values[0]*u+model.values[4]*v+model.values[12],y=model.values[1]*u+model.values[5]*v+model.values[13];if(!std::isfinite(x)||!std::isfinite(y))throw std::invalid_argument("transform overflow");quad[i]={x,y,u,v,c.r,c.g,c.b,c.a,0};}

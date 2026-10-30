@@ -27,7 +27,7 @@ to the executable, independent of working directory. Default renderer is immedia
 Sprite count accepts 0–100000. Arrow keys pan, Q/E zoom, WASD change background,
 Escape exits. Interactive VSync is preserved; only benchmark disables it.
 
-Debug and Release pass 9/9 CTest tests including six real macOS OpenGL tests.
+Debug and Release pass 10/10 CTest tests including seven real macOS OpenGL tests.
 A graphical login is required. Explicit `-DTINY2D_OPENGL_TESTS=OFF` runs only
 CPU/fake-driver tests and cannot establish rendering correctness.
 
@@ -46,3 +46,15 @@ CPU/GPU frame CSVs in the current directory; avoid overwriting earlier runs.
 
 Next: scene management, collision detection and an Arena Survivor demo; renderer
 work follows profiling evidence and cross-driver regression coverage.
+
+## M4.1 review fixes
+
+Texture submissions now validate their owning Context before any flush or queue
+mutation. Active move assignment is rejected without changing either owner;
+move construction can transfer an active pass. Sandbox creates only its selected
+sprite renderer. New real-driver tests use unshared contexts and compare full
+RGBA output across three texture-slot flushes in both transparent draw orders
+(maximum error 0, allowed 2/255).
+
+See [review notes](docs/m4-review-notes.md) and [M4.1 performance regression](docs/performance-m41.md).
+Historical M4 data remains in docs/data/m4; new results are in docs/data/m41.
