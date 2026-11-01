@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tiny2D VERSION 0.1.0 LANGUAGES CXX)
+project(Tiny2D VERSION 0.4.0 LANGUAGES CXX)
 
 if(NOT APPLE)
     message(FATAL_ERROR "M2 renderer currently supports macOS system OpenGL only.")
