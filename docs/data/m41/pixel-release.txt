@@ -1,0 +1,4 @@
+dual unshared contexts, moved-from texture and unchanged rejection queue passed
+all four assignment states, active/inactive construction and moved-from APIs passed
+cross-slot order 0: max RGBA error=0, draws/flushes=3, binds=18
+cross-slot order 1: max RGBA error=0, draws/flushes=3, binds=18

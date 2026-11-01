@@ -22,7 +22,7 @@ int main() {
     assert(b.x == 4.0f);
     assert(b.y == 5.0f);
 
-    // TODO: Test 3
+    // Test 3
     // Test addition with negative numbers
     const Vector2 c(-2.0f, -3.0f);
     const Vector2 d(4.0f, 5.0f);
@@ -32,7 +32,7 @@ int main() {
     assert(result2.x == 2.0f);
     assert(result2.y == 2.0f);
 
-    // TODO: Test 4
+    // Test 4
     // Test addition with a zero vector
     const Vector2 zero(0.0f, 0.0f);
     const Vector2 e(1.0f, 2.0f);
@@ -42,7 +42,7 @@ int main() {
     assert(result3.x == 1.0f);
     assert(result3.y == 2.0f);
 
-    // TODO: Test 5
+    // Test 5
     // Test addition with both vectors being negative
     const Vector2 f(-1.0f, -2.0f);
     const Vector2 g(-3.0f, -4.0f);
