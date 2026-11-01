@@ -1,6 +1,7 @@
 // Deterministic failure injection: production wrappers, fake GL entry points.
 // This checks ownership on hard-to-trigger allocation errors, not driver behavior.
 #include "tiny2d/ShaderProgram.h"
+#include "tiny2d/BatchRenderer.h"
 #include "tiny2d/Texture2D.h"
 #include "tiny2d/VertexArray.h"
 #include "tiny2d/VertexBuffer.h"
@@ -101,6 +102,14 @@ void glVertexAttribPointer(GLuint, GLint, GLenum, GLboolean, GLsizei, const void
 }
 void glEnableVertexAttribArray(GLuint) {}
 void glDrawArrays(GLenum, GLint, GLsizei) {}
+void glBufferSubData(GLenum,GLintptr,GLsizeiptr,const void*) {if(fault==Fault::Upload)pendingError=GL_OUT_OF_MEMORY;}
+void glDrawElements(GLenum,GLsizei,GLenum,const void*) {}
+GLboolean glIsEnabled(GLenum){return GL_FALSE;}
+void glEnable(GLenum){}
+void glDisable(GLenum){}
+void glBlendFuncSeparate(GLenum,GLenum,GLenum,GLenum){}
+void glBlendEquationSeparate(GLenum,GLenum){}
+void glBlendEquation(GLenum){}
 }
 
 int main() {
@@ -111,6 +120,21 @@ int main() {
     static_assert(std::is_nothrow_move_assignable_v<tiny2d::VertexBuffer>);
     static_assert(std::is_nothrow_move_constructible_v<tiny2d::VertexArray>);
     try {
+        for(auto failure:{Fault::Program,Fault::VertexShader,Fault::FragmentShader,Fault::Compile,Fault::Link,Fault::Buffer,Fault::Array,Fault::Upload,Fault::Layout}) {
+            fault=failure;
+            fails([]{tiny2d::BatchRenderer batch;});
+        }
+        fault=Fault::None;
+        {
+            tiny2d::Texture2D texture({1,1,{255,255,255,255}});
+            tiny2d::BatchRenderer batch;
+            tiny2d::Camera2D camera(100,100);
+            batch.beginFrame(camera);batch.draw(texture,{0,0},{1,1});fault=Fault::Upload;
+            bool caught=false;try{batch.endFrame();}catch(const std::runtime_error&){caught=true;}
+            require(caught,"batch upload failure ignored");fault=Fault::None;
+            batch.beginFrame(camera);batch.endFrame();require(batch.stats().drawCalls==0,"failed queue survived end");
+        }
+        require(live.empty(),"batch failure leaked");
         for (auto failure : {Fault::Program, Fault::VertexShader, Fault::FragmentShader, Fault::Compile, Fault::Link}) {
             fault = failure;
             fails([] { tiny2d::ShaderProgram program("vertex", "fragment", "test.vert", "test.frag"); });

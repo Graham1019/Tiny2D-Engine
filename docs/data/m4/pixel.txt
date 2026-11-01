@@ -1,0 +1,3 @@
+pixel max error 0
+pixel max error 0
+M4 capacity, slots, lifecycle, RGBA pixels, state and resource tests passed

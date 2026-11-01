@@ -8,4 +8,11 @@
 namespace tiny2d::detail {
 void checkGL(const char* operation);
 void requireContext(const char* operation);
+inline void debugGL(const char* operation) {
+#ifndef NDEBUG
+    checkGL(operation);
+#else
+    (void)operation;
+#endif
+}
 }

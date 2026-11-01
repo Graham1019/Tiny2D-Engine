@@ -84,7 +84,7 @@ void GLObject::requireCurrent(const char* operation) const {
     if (!id_ || glfwGetCurrentContext() != context_) {
         throw std::logic_error(std::string(operation) + ": moved-from object or wrong current context");
     }
-    checkGL(operation);
+    debugGL(operation);
 }
 
 void GLObject::reset() noexcept {
