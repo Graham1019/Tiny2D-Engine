@@ -136,3 +136,28 @@ Original texture copyright/CC0 notices are preserved in
 [M4-LICENSE.txt](sandbox/assets/textures/M4-LICENSE.txt). libpng attribution is in
 [M3 documentation](docs/milestone-03.md). No repository-wide LICENSE file exists;
 this integration does not assign a new license to the engine code.
+
+## M5 Development: Scene / Collision / Arena
+
+M5 adds CPU-only generation handles, deterministic Scene iteration, closed-set
+AABB/Circle collision events, and a bounded 60 Hz accumulator. SceneRenderer
+bridges numeric sprite asset keys to shared textures and retains ownership until
+BatchRenderer finishes its pass. Existing M0–M4.1 scenes remain available.
+
+```sh
+cmake -S . -B build/m5-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m5-debug --parallel
+ctest --test-dir build/m5-debug --output-on-failure
+./build/m5-debug/tiny2d_sandbox --scene arena-demo --frames 120
+./build/m5-debug/tiny2d_sandbox --scene arena-demo
+```
+
+WASD moves the player, arrows offset the follow camera, Q/E zoom, Escape exits.
+Arena always uses batching; renderer/sprite-count options retain their existing
+meaning for the old sprite demos. Finite Arena runs advance one fixed tick per
+render frame for reproducible lifecycle smoke coverage. Interactive runs use real
+time. This is a prototype, not a complete Arena Survivor game.
+
+See [M5 acceptance and limitations](docs/milestone-05.md),
+[scene ownership](docs/scene-architecture.md), [collision](docs/collision-design.md),
+[fixed timestep](docs/fixed-timestep.md), and [review notes](docs/m5-review-notes.md).

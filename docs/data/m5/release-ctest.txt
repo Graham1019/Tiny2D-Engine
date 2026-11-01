@@ -1,0 +1,40 @@
+Test project <repo>/build/m5-release
+      Start  1: M3CPUTests
+ 1/15 Test  #1: M3CPUTests .......................   Passed    0.15 sec
+      Start  2: Vector2Tests
+ 2/15 Test  #2: Vector2Tests .....................   Passed    0.12 sec
+      Start  3: RenderFailureTests
+ 3/15 Test  #3: RenderFailureTests ...............   Passed    0.01 sec
+      Start  4: M3GPUTests
+ 4/15 Test  #4: M3GPUTests .......................   Passed    0.33 sec
+      Start  5: TriangleRegression
+ 5/15 Test  #5: TriangleRegression ...............   Passed    0.32 sec
+      Start  6: OpenGLResourceTests
+ 6/15 Test  #6: OpenGLResourceTests ..............   Passed    0.34 sec
+      Start  7: SandboxSmokeRoot
+ 7/15 Test  #7: SandboxSmokeRoot .................   Passed    0.21 sec
+      Start  8: SandboxSmokeBuild
+ 8/15 Test  #8: SandboxSmokeBuild ................   Passed    0.20 sec
+      Start  9: M4GPUTests
+ 9/15 Test  #9: M4GPUTests .......................   Passed    0.30 sec
+      Start 10: M41GPUTests
+10/15 Test #10: M41GPUTests ......................   Passed    0.37 sec
+      Start 11: M5_scene
+11/15 Test #11: M5_scene .........................   Passed    0.16 sec
+      Start 12: M5_collision
+12/15 Test #12: M5_collision .....................   Passed    0.12 sec
+      Start 13: M5_fixed_step
+13/15 Test #13: M5_fixed_step ....................   Passed    0.37 sec
+      Start 14: M5GPU
+14/15 Test #14: M5GPU ............................   Passed    0.34 sec
+      Start 15: M5Arena
+15/15 Test #15: M5Arena ..........................   Passed    1.24 sec
+
+100% tests passed out of 15
+
+Label Time Summary:
+cpu       =   0.65 sec*proc (3 tests)
+gui       =   3.64 sec*proc (9 tests)
+opengl    =   3.64 sec*proc (9 tests)
+
+Total Test time (real) =   4.58 sec

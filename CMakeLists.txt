@@ -17,6 +17,9 @@ find_package(PNG REQUIRED) # Local libpng; brew install libpng. No configure-tim
 
 # 引擎静态库
 add_library(tiny2d_engine STATIC
+    engine/src/Scene/Scene.cpp
+    engine/src/Physics/Collision2D.cpp
+    engine/src/Renderer/SceneRenderer.cpp
     engine/src/Math/Vector2.cpp
     engine/src/Math/Mat4.cpp
     engine/src/Renderer/Camera2D.cpp
@@ -47,6 +50,7 @@ set_target_properties(tiny2d_engine PROPERTIES
 # 游戏测试程序
 add_executable(tiny2d_sandbox
     sandbox/src/main.cpp
+    sandbox/src/ArenaDemo.cpp
     sandbox/src/ShaderAssets.cpp
 )
 
@@ -143,4 +147,20 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     target_link_libraries(tiny2d_m41_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
     add_test(NAME M41GPUTests COMMAND tiny2d_m41_gpu_tests)
     set_tests_properties(M41GPUTests PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+endif()
+
+if(BUILD_TESTING)
+    foreach(suite scene collision fixed_step)
+        add_executable(tiny2d_m5_${suite}_tests tests/test_m5_${suite}.cpp)
+        target_link_libraries(tiny2d_m5_${suite}_tests PRIVATE tiny2d_engine)
+        add_test(NAME M5_${suite} COMMAND tiny2d_m5_${suite}_tests)
+        set_tests_properties(M5_${suite} PROPERTIES LABELS "cpu")
+    endforeach()
+    if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m5_gpu_tests tests/test_m5_gpu.cpp)
+        target_link_libraries(tiny2d_m5_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
+        add_test(NAME M5GPU COMMAND tiny2d_m5_gpu_tests)
+        add_test(NAME M5Arena COMMAND tiny2d_sandbox --scene arena-demo --frames 120)
+        set_tests_properties(M5GPU M5Arena PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    endif()
 endif()
