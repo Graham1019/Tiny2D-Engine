@@ -1,0 +1,5 @@
+triangle: Frames: 30 | Draw calls in final frame: 1
+immediate: Frames: 30 | Draw calls in final frame: 500
+batch: Frames: 30 | Draw calls in final frame: 1
+multi: Frames: 30 | Draw calls in final frame: 5
+arena: Arena frames=120 ticks=120 draws=1 objects=55 contacts=7 events=170 created=2 deleted=2

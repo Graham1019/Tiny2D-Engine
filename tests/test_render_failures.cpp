@@ -2,6 +2,7 @@
 // This checks ownership on hard-to-trigger allocation errors, not driver behavior.
 #include "tiny2d/ShaderProgram.h"
 #include "tiny2d/BatchRenderer.h"
+#include "tiny2d/SceneRenderer.h"
 #include "tiny2d/Texture2D.h"
 #include "tiny2d/VertexArray.h"
 #include "tiny2d/VertexBuffer.h"
@@ -21,6 +22,7 @@ struct Object { bool deleted = false; std::set<GLuint> shaders; };
 std::map<GLuint, Object> live;
 GLuint nextId = 1;
 GLuint currentProgram = 0;
+unsigned actualDraws=0;
 std::map<GLenum,GLint> unpack{{GL_UNPACK_ALIGNMENT,8},{GL_UNPACK_ROW_LENGTH,3},{GL_UNPACK_SKIP_ROWS,1},{GL_UNPACK_SKIP_PIXELS,2}};
 GLenum pendingError = GL_NO_ERROR;
 enum class Fault { None, Texture, TextureUpload, Program, VertexShader, FragmentShader, Buffer, Array, Upload, Layout, Compile, Link };
@@ -103,7 +105,7 @@ void glVertexAttribPointer(GLuint, GLint, GLenum, GLboolean, GLsizei, const void
 void glEnableVertexAttribArray(GLuint) {}
 void glDrawArrays(GLenum, GLint, GLsizei) {}
 void glBufferSubData(GLenum,GLintptr,GLsizeiptr,const void*) {if(fault==Fault::Upload)pendingError=GL_OUT_OF_MEMORY;}
-void glDrawElements(GLenum,GLsizei,GLenum,const void*) {}
+void glDrawElements(GLenum,GLsizei,GLenum,const void*) {++actualDraws;}
 GLboolean glIsEnabled(GLenum){return GL_FALSE;}
 void glEnable(GLenum){}
 void glDisable(GLenum){}
@@ -135,6 +137,23 @@ int main() {
             batch.beginFrame(camera);batch.endFrame();require(batch.stats().drawCalls==0,"failed queue survived end");
         }
         require(live.empty(),"batch failure leaked");
+        {
+            tiny2d::Scene scene;tiny2d::SceneRenderer renderer;
+            auto texture=std::make_shared<tiny2d::Texture2D>(tiny2d::ImageData{1,1,{255,255,255,255}});
+            renderer.setAsset(0,texture);std::weak_ptr<tiny2d::Texture2D> weak=texture;
+            for(int i=0;i<1001;++i)scene.find(scene.create())->sprite=tiny2d::SpriteData{};
+            tiny2d::Camera2D camera(100,100);auto before=actualDraws;
+            fault=Fault::Upload;bool caught=false;
+            try{renderer.render(scene,camera);}catch(const std::runtime_error& e){caught=std::string(e.what()).find("batch upload")!=std::string::npos;}
+            require(caught&&actualDraws==before,"runtime error lost or catch flushed queue");
+            fault=Fault::None;renderer.render(scene,camera);require(actualDraws==before+2,"renderer failed recovery");
+            renderer.begin(camera);renderer.submit(scene);before=actualDraws;
+            fault=Fault::Upload;caught=false;try{renderer.submit(scene);}catch(const std::runtime_error&){caught=true;}
+            fault=Fault::None;require(caught&&actualDraws==before,"cancel submitted after failed automatic flush");
+            renderer.removeAsset(0);texture.reset();require(weak.expired(),"failed submit retained owners");
+            renderer.begin(camera);renderer.end();
+        }
+
         for (auto failure : {Fault::Program, Fault::VertexShader, Fault::FragmentShader, Fault::Compile, Fault::Link}) {
             fault = failure;
             fails([] { tiny2d::ShaderProgram program("vertex", "fragment", "test.vert", "test.frag"); });

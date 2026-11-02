@@ -1,0 +1,4 @@
+triangle: Frames: 30 | Draw calls in final frame: 1
+immediate: Frames: 30 | Draw calls in final frame: 500
+batch: Frames: 30 | Draw calls in final frame: 1
+multi: Frames: 30 | Draw calls in final frame: 5
