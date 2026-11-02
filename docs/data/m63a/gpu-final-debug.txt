@@ -1,0 +1,11 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m63a-debug
+    Start 29: M63aGPU
+1/1 Test #29: M63aGPU ..........................   Passed    0.91 sec
+
+100% tests passed out of 1
+
+Label Time Summary:
+gui       =   0.91 sec*proc (1 test)
+opengl    =   0.91 sec*proc (1 test)
+
+Total Test time (real) =   0.91 sec

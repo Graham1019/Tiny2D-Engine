@@ -1,0 +1,46 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m63a-headless
+      Start  1: M3CPUTests
+ 1/19 Test  #1: M3CPUTests .......................   Passed    0.00 sec
+      Start  2: Vector2Tests
+ 2/19 Test  #2: Vector2Tests .....................   Passed    0.00 sec
+      Start  3: RenderFailureTests
+ 3/19 Test  #3: RenderFailureTests ...............   Passed    0.00 sec
+      Start  4: M5_scene
+ 4/19 Test  #4: M5_scene .........................   Passed    0.02 sec
+      Start  5: M5_collision
+ 5/19 Test  #5: M5_collision .....................   Passed    0.00 sec
+      Start  6: M5_fixed_step
+ 6/19 Test  #6: M5_fixed_step ....................   Passed    0.00 sec
+      Start  7: M61_combat
+ 7/19 Test  #7: M61_combat .......................   Passed    0.00 sec
+      Start  8: M61_projectiles
+ 8/19 Test  #8: M61_projectiles ..................   Passed    0.00 sec
+      Start  9: M61_spawning
+ 9/19 Test  #9: M61_spawning .....................   Passed    0.01 sec
+      Start 10: M62_game_phase
+10/19 Test #10: M62_game_phase ...................   Passed    0.01 sec
+      Start 11: M62_restart
+11/19 Test #11: M62_restart ......................   Passed    0.00 sec
+      Start 12: M62_hud
+12/19 Test #12: M62_hud ..........................   Passed    0.00 sec
+      Start 13: M63a_difficulty
+13/19 Test #13: M63a_difficulty ..................   Passed    0.00 sec
+      Start 14: M63a_flow
+14/19 Test #14: M63a_flow ........................   Passed    0.01 sec
+      Start 15: M63a_pacing
+15/19 Test #15: M63a_pacing ......................   Passed    0.02 sec
+      Start 16: M63a_invalid_difficulty_0
+16/19 Test #16: M63a_invalid_difficulty_0 ........   Passed    0.00 sec
+      Start 17: M63a_invalid_difficulty_6
+17/19 Test #17: M63a_invalid_difficulty_6 ........   Passed    0.00 sec
+      Start 18: M63a_invalid_difficulty_-1
+18/19 Test #18: M63a_invalid_difficulty_-1 .......   Passed    0.00 sec
+      Start 19: M63a_invalid_difficulty_abc
+19/19 Test #19: M63a_invalid_difficulty_abc ......   Passed    0.00 sec
+
+100% tests passed out of 19
+
+Label Time Summary:
+cpu    =   0.04 sec*proc (6 tests)
+
+Total Test time (real) =   0.11 sec

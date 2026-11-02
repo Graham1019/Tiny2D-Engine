@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 namespace tiny2d {
+bool Input::focused() const { return glfwGetWindowAttrib(window_.handle_.get(), GLFW_FOCUSED)==GLFW_TRUE; }
 bool Input::isKeyPressed(Key key) const {
     return isKeyPressed(static_cast<int>(key));
 }

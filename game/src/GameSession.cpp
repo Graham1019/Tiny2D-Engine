@@ -1,4 +1,5 @@
 #include "tiny2d_game/GameSession.h"
+#include "tiny2d_game/Difficulty.h"
 #include "tiny2d/FixedTimestep.h"
 #include <algorithm>
 #include <cmath>
@@ -8,9 +9,6 @@
 using namespace tiny2d;
 namespace tiny2d_game {
 namespace {
-uint64_t ticks(double seconds) {
-    return static_cast<uint64_t>(std::ceil(seconds*60.0-1e-10));
-}
 Vector2 direction(Vector2 from, Vector2 to, float speed) {
     const double x=double(to.x)-from.x, y=double(to.y)-from.y;
     const double length=std::hypot(x,y);
@@ -35,8 +33,8 @@ GameSession::GameSession(const CombatConfig& config, const SurvivalRules& rules)
     config_.validate();
     player_=create(EntityKind::Player,{0,0});
     for(std::size_t i=0;i<config_.initialEnemies;++i)spawnEnemy();
-    nextFire_=ticks(config_.fireInterval);
-    nextSpawn_=ticks(config_.initialSpawnInterval);
+    nextFire_=combatTicks(config_.fireInterval);
+    nextSpawn_=combatTicks(config_.initialSpawnInterval);
 }
 ObjectId GameSession::create(EntityKind kind, Vector2 p) {
     const float radius=kind==EntityKind::PlayerProjectile?4:12;
@@ -82,7 +80,7 @@ void GameSession::fire() {
     if(best==0)velocity={config_.projectileSpeed,0}; // deterministic +X fallback
     auto id=create(EntityKind::PlayerProjectile,p);
     scene_.find(id)->velocity=velocity;
-    entities_.at(id).expires=tick_+ticks(config_.projectileLifetime);
+    entities_.at(id).expires=tick_+combatTicks(config_.projectileLifetime);
     ++fired_;
 }
 void GameSession::erase(ObjectId id) { scene_.destroy(id);entities_.erase(id); }
@@ -98,10 +96,10 @@ void GameSession::fixedUpdate(const GameplayInput& input) {
     for(auto id:expired)erase(id);
     auto p=center(player_);
     scene_.find(player_)->velocity=playerAlive()?direction({}, {input.moveX,input.moveY},config_.playerSpeed):Vector2{};
-    if(tick_>=nextFire_) {nextFire_=tick_+ticks(config_.fireInterval);if(playerAlive())fire();}
+    if(tick_>=nextFire_) {nextFire_=tick_+combatTicks(config_.fireInterval);if(playerAlive())fire();}
     if(tick_>=nextSpawn_) {
         double fraction=std::min(1.0,elapsedSimulationTime()/config_.spawnRampSeconds);
-        nextSpawn_=tick_+ticks(config_.initialSpawnInterval+(config_.minimumSpawnInterval-config_.initialSpawnInterval)*fraction);
+        nextSpawn_=tick_+combatTicks(config_.initialSpawnInterval+(config_.minimumSpawnInterval-config_.initialSpawnInterval)*fraction);
         if(enemyCount()<config_.maxEnemies)spawnEnemy();
     }
     // All objects created above participate in this Scene snapshot, including new enemies.
@@ -127,7 +125,7 @@ void GameSession::fixedUpdate(const GameplayInput& input) {
         if(e.a==player_)other=e.b;else if(e.b==player_)other=e.a;else continue;
         auto i=entities_.find(other);
         if(i!=entities_.end()&&i->second.kind==EntityKind::Enemy&&i->second.health>0) {
-            --entities_.at(player_).health;vulnerableAt_=tick_+ticks(config_.invulnerability);break;
+            --entities_.at(player_).health;vulnerableAt_=tick_+combatTicks(config_.invulnerability);break;
         }
     }
     for(const auto& [id,s]:entities_)if(s.kind==EntityKind::Enemy&&s.health==0){consumed.insert(id);++kills_;}

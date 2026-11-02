@@ -179,3 +179,12 @@ inside the window. Finite runs keep rendering to their limit after death.
 
 See [M6.2 validation](docs/milestone-06-2.md), [game loop](docs/game-loop-design.md),
 [HUD](docs/hud-rendering.md), and historical [M6.1](docs/milestone-06-1.md).
+
+## M6.3a difficulty and menu
+
+Survivor now opens a CPU-only difficulty-selection flow (default Lv.3); 1–5 selects,
+Enter starts, and terminal R restarts the applied level. Direct GameSession defaults
+remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing UI pass.
+Finite --frames runs auto-start; --difficulty accepts 1..5.
+See [M6.3a validation and commands](docs/milestone-06-3a.md), [difficulty design](docs/difficulty-design.md)
+and [menu lifecycle](docs/menu-flow-design.md).

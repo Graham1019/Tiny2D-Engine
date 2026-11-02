@@ -10,6 +10,7 @@ class Input {
 public:
     // Non-owning reference: Window must outlive Input. Main thread only.
     explicit Input(const Window& window) : window_(window) {}
+    bool focused() const;
     bool isKeyPressed(Key key) const;
     // Supports all GLFW keyboard tokens, returning false for invalid tokens.
     bool isKeyPressed(int keyCode) const;

@@ -36,3 +36,12 @@ See data/m62/performance.csv for separate fixed update, HUD update and world/UI
 CPU submission samples. Submission timings are not GPU execution measurements.
 M51GPU and M61GPU continue to test preflight, cancel, texture owners and context
 rejection; M62GPU adds UI pixel, overlay, restart and resize checks.
+
+## M6.3a difficulty and menu
+
+Survivor now opens a CPU-only difficulty-selection flow (default Lv.3); 1–5 selects,
+Enter starts, and terminal R restarts the applied level. Direct GameSession defaults
+remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing UI pass.
+Finite --frames runs auto-start; --difficulty accepts 1..5.
+See [M6.3a validation and commands](milestone-06-3a.md), [difficulty design](difficulty-design.md)
+and [menu lifecycle](menu-flow-design.md).
