@@ -30,7 +30,8 @@ void CombatConfig::validate() const {
        maxProjectiles==0||maxProjectiles>256||initialEnemies>maxEnemies)
         throw std::invalid_argument("invalid spawn or capacity configuration");
 }
-GameSession::GameSession(const CombatConfig& config):config_(config) {
+GameSession::GameSession(const CombatConfig& config, const SurvivalRules& rules):config_(config),rules_(rules) {
+    rules_.validate();
     config_.validate();
     player_=create(EntityKind::Player,{0,0});
     for(std::size_t i=0;i<config_.initialEnemies;++i)spawnEnemy();
@@ -86,6 +87,7 @@ void GameSession::fire() {
 }
 void GameSession::erase(ObjectId id) { scene_.destroy(id);entities_.erase(id); }
 void GameSession::fixedUpdate(const GameplayInput& input) {
+    if(!isPlaying())return; // Terminal calls ignore even invalid input.
     if(!std::isfinite(input.moveX)||!std::isfinite(input.moveY))
         throw std::invalid_argument("non-finite gameplay input");
     if(tick_==UINT64_MAX)throw std::overflow_error("simulation tick exhausted");
@@ -133,6 +135,8 @@ void GameSession::fixedUpdate(const GameplayInput& input) {
     auto& sprite=*scene_.find(player_)->sprite;
     sprite.r=!playerAlive()?.3f:tick_<vulnerableAt_?1.f:.15f;
     sprite.g=!playerAlive()?.3f:tick_<vulnerableAt_?.9f:.5f;
-    if(!playerAlive())scene_.find(player_)->velocity={};
+    sprite.b=tick_<vulnerableAt_ && (tick_/4)%2 ? .35f:1.f;
+    if(!playerAlive()) {scene_.find(player_)->velocity={};phase_=GamePhase::GameOver;}
+    else if(tick_>=rules_.durationTicks)phase_=GamePhase::Victory;
 }
 }

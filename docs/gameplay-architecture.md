@@ -1,4 +1,4 @@
-# Gameplay architecture (M6.1)
+# Gameplay architecture (M6.2)
 
 GameSession owns a Scene and a map keyed by the complete ObjectId (sceneId/index/generation).
 EntityState contains an explicit EntityKind (Player, Enemy, PlayerProjectile), health, projectile
@@ -44,15 +44,16 @@ Ticks start at zero. Each call validates finite input before mutation, then:
     update the player damage/death tint.
 
 New projectiles move on their creation tick. New enemies may collide on creation tick but
-cannot be targeted by that tick's earlier firing opportunity. Spawn continues after death,
-within its cap; enemies stop moving, remaining projectiles finish their lifetimes.
+cannot be targeted by that tick's earlier firing opportunity. M6.2 decides GameOver/Victory after cleanup and freezes all subsequent simulation.
 
 Times quantize upward to integer ticks (ceil(seconds * 60), with a tiny rounding tolerance
 for exact represented tick multiples). Deadlines do not accumulate render delta error.
-Finite demo mode ignores live movement input and runs exactly one tick per rendered frame;
+Finite demo mode ignores live movement input and provides one tick opportunity per rendered frame (terminal calls are no-ops);
 interactive mode uses the existing FixedTimestep accumulator (six steps maximum per frame).
 Camera controls affect presentation only.
 
 Determinism covers repeated sessions with the same config/input in this build. Independent
 Scene tokens differ; tests compare creation serials, role/health, positions and real counters.
 No claim of cross-platform floating-point bit identity is made.
+
+M6.2 adds SurvivalRules, GamePhase and CPU SessionController. See [game loop](game-loop-design.md) and [HUD](hud-rendering.md).

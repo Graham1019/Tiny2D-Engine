@@ -1,4 +1,4 @@
-# Combat rules (M6.1)
+# Combat rules (M6.2)
 
 CombatConfig defaults: player HP 5, speed 180, invulnerability .6s; enemy HP 2, speed 65;
 projectile damage 1, speed 420, lifetime 2s; firing interval .6s; initial enemies 8;
@@ -8,7 +8,7 @@ over 90 seconds. This ramp duration is configurable, and is not a victory timer.
 HP and damage must be positive. Speeds must be finite in [0,100000]. Durations must be
 finite from one fixed tick through one day. Capacities must be 1..256, initial enemies
 cannot exceed their cap, and minimum spawn interval cannot exceed initial interval.
-Input NaN/Inf throws before advancing the tick. Any finite nonzero input is normalized;
+While Playing, input NaN/Inf throws before advancing the tick. Terminal calls ignore input. Any finite nonzero input is normalized;
 zero input stops movement.
 
 Player and enemy sprites are 24x24 with radius-12 colliders offset to their center.
@@ -51,4 +51,4 @@ is 7 units/tick versus a combined enemy/projectile radius of 16: ordinary direct
 are practical, but grazing, fast relative movement and configured higher speeds can
 tunnel. No continuous collision detection, collision layer, spatial hash, avoidance,
 world bounds or separation response is added. Enemies can overlap each other and player.
-No win state, Game Over UI, restart, HUD, or M6.2 gameplay is implemented.
+M6.2 adds 5400-tick victory, death-priority GameOver, complete terminal freeze, restart and HUD. See [game loop](game-loop-design.md).
