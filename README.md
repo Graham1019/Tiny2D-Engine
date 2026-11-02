@@ -161,3 +161,8 @@ time. This is a prototype, not a complete Arena Survivor game.
 See [M5 acceptance and limitations](docs/milestone-05.md),
 [scene ownership](docs/scene-architecture.md), [collision](docs/collision-design.md),
 [fixed timestep](docs/fixed-timestep.md), and [review notes](docs/m5-review-notes.md).
+
+M5.1 review fixes add enforced Scene identity, full-scene render preflight,
+pending-command cancellation and per-texture frame ownership. Predictable Scene
+input failures draw nothing; cancel cannot undo completed GPU draws. See
+[M5.1 contracts, tests and performance](docs/m51-review-fixes.md).

@@ -119,3 +119,7 @@ to zero independently, while renderer stats describe the last begun pass. The
 CLI chooses a mode per process; there is no runtime mode-switch API. Triangle's
 existing shader/quad remain eager members but are never bound/updated per sprite
 frame; changing their ownership is outside this targeted fix.
+
+## M5.1 cancellation and shared geometry validation
+
+`cancelFrame()` requires an active pass on the owning current context. It clears pending vertices/texture IDs, restores beginFrame state, and ends without drawing. Earlier capacity/slot Flushes remain visible. Wrong-context cancellation rejects without mutation. Stats retain accepted submissions and completed draw counts; canceled submissions are not completed draws. `detail::spriteCorners` is the shared CPU input/vertex validation used by draw and SceneRenderer preflight. See [M5.1](m51-review-fixes.md) for failure contracts and performance evidence.

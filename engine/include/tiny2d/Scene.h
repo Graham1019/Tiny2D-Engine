@@ -9,7 +9,7 @@ enum class CollisionPhase { Enter,Stay,Exit };
 struct CollisionEvent { ObjectId a,b; CollisionPhase phase; };
 class Scene {
 public:
-    Scene()=default;
+    Scene();
     Scene(const Scene&)=delete;
     Scene& operator=(const Scene&)=delete;
     ObjectId create();
@@ -25,6 +25,7 @@ public:
     void update(double dt,const Update& update={},const Events& events={});
     std::size_t contacts()const{return contacts_.size();}
 private:
+    const uint64_t sceneId_;
     struct Slot { uint32_t generation=1; std::unique_ptr<GameObject> object; bool dead=false; };
     std::vector<Slot> slots_;
     std::vector<ObjectId> order_;

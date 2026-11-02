@@ -24,6 +24,8 @@ public:
     void draw(const Texture2D&,Vector2,Vector2,float radians=0,Color tint={});
     void flush();
     void endFrame();
+    // Discard pending commands and restore state; already flushed draws remain.
+    void cancelFrame();
     const RenderStats& stats() const;
     unsigned textureSlots() const;
 private:

@@ -95,6 +95,9 @@ if(BUILD_TESTING)
 
     add_executable(tiny2d_failure_tests
         tests/test_render_failures.cpp
+        engine/src/Renderer/SceneRenderer.cpp
+        engine/src/Scene/Scene.cpp
+        engine/src/Physics/Collision2D.cpp
         engine/src/Renderer/BatchRenderer.cpp
         engine/src/Renderer/Camera2D.cpp
         engine/src/Math/Mat4.cpp
@@ -163,4 +166,15 @@ if(BUILD_TESTING)
         add_test(NAME M5Arena COMMAND tiny2d_sandbox --scene arena-demo --frames 120)
         set_tests_properties(M5GPU M5Arena PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
     endif()
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m51_gpu_tests tests/test_m51_gpu.cpp)
+    target_link_libraries(tiny2d_m51_gpu_tests PRIVATE tiny2d_engine glfw OpenGL::GL)
+    add_test(NAME M51GPU COMMAND tiny2d_m51_gpu_tests)
+    set_tests_properties(M51GPU PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+endif()
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m51_benchmark tests/benchmark_m51.cpp)
+    target_link_libraries(tiny2d_m51_benchmark PRIVATE tiny2d_engine glfw OpenGL::GL)
 endif()

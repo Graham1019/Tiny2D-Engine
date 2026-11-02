@@ -1,5 +1,6 @@
 #include "tiny2d/BatchRenderer.h"
 #include "OpenGL.h"
+#include "tiny2d/detail/SpriteGeometry.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -95,10 +96,9 @@ void BatchRenderer::draw(const Texture2D& texture,Vector2 p,Vector2 s,float angl
     auto& b=get();if(!b.active)throw std::logic_error("draw outside frame");
     b.vao.requireCurrent("batch draw");
     texture.requireCurrentContext(); // Must precede capacity/slot flush and all queue mutation.
-    if(!std::isfinite(p.x)||!std::isfinite(p.y)||!std::isfinite(s.x)||!std::isfinite(s.y)||s.x<=0||s.y<=0||!std::isfinite(angle)||!std::isfinite(c.r)||!std::isfinite(c.g)||!std::isfinite(c.b)||!std::isfinite(c.a))throw std::invalid_argument("invalid sprite");
+    const auto corners=detail::spriteCorners(p,s,angle,c);
     Vertex quad[4];const float uv[4][2]={{0,0},{1,0},{1,1},{0,1}};
-    const auto model=Mat4::translation(p.x+s.x/2,p.y+s.y/2)*Mat4::rotationZ(angle)*Mat4::scale(s.x,s.y)*Mat4::translation(-.5f,-.5f);
-    for(unsigned i=0;i<4;++i){float u=uv[i][0],v=uv[i][1];float x=model.values[0]*u+model.values[4]*v+model.values[12],y=model.values[1]*u+model.values[5]*v+model.values[13];if(!std::isfinite(x)||!std::isfinite(y))throw std::invalid_argument("transform overflow");quad[i]={x,y,u,v,c.r,c.g,c.b,c.a,0};}
+    for(unsigned i=0;i<4;++i)quad[i]={corners[i].x,corners[i].y,uv[i][0],uv[i][1],c.r,c.g,c.b,c.a,0};
     if(b.vertices.size()/4==b.cap)flush();
     auto it=std::find(b.textures.begin(),b.textures.end(),texture.nativeHandle());
     if(it==b.textures.end()&&b.textures.size()==b.limit){flush();it=b.textures.end();}
@@ -117,6 +117,11 @@ void BatchRenderer::flush(){
     for(unsigned i=0;i<b.limit;++i)b.program.setInt(("uTextures["+std::to_string(i)+"]").c_str(),i<b.textures.size()?i:0);
     glDrawElements(GL_TRIANGLES,static_cast<GLsizei>(b.vertices.size()/4*6),GL_UNSIGNED_INT,nullptr);detail::checkGL("batch draw");
     ++b.stats.drawCalls;++b.stats.batchFlushes;b.vertices.clear();b.textures.clear();
+}
+void BatchRenderer::cancelFrame(){
+    auto& b=get();if(!b.active)throw std::logic_error("cancel outside frame");
+    b.vao.requireCurrent("batch cancel");
+    b.vertices.clear();b.textures.clear();b.restore();
 }
 void BatchRenderer::endFrame(){auto& b=get();if(!b.active)throw std::logic_error("end outside frame");try{flush();}catch(...){b.vertices.clear();b.textures.clear();b.restore();throw;}b.restore();}
 }

@@ -1,20 +1,32 @@
 #include "tiny2d/Scene.h"
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <stdexcept>
 namespace tiny2d {
+namespace {
+uint64_t allocateSceneId() {
+    static std::atomic<uint64_t> next{1};
+    auto value=next.load(std::memory_order_relaxed);
+    for (;;) {
+        if(value==UINT64_MAX)throw std::overflow_error("Scene identity exhausted");
+        if(next.compare_exchange_weak(value,value+1,std::memory_order_relaxed))return value;
+    }
+}
+}
+Scene::Scene():sceneId_(allocateSceneId()){}
 ObjectId Scene::create(){
     auto object=std::make_unique<GameObject>();
     std::size_t i=0;for(;i<slots_.size();++i)if(!slots_[i].object&&slots_[i].generation!=UINT32_MAX)break;
     if(i==UINT32_MAX)throw std::length_error("Scene slot limit");
     if(i==slots_.size())slots_.emplace_back();
-    ObjectId id{static_cast<uint32_t>(i),slots_[i].generation};
+    ObjectId id{sceneId_,static_cast<uint32_t>(i),slots_[i].generation};
     object->id_=id;
     order_.push_back(id);slots_[i].object=std::move(object);return id;
 }
 GameObject* Scene::find(ObjectId id){return const_cast<GameObject*>(static_cast<const Scene&>(*this).find(id));}
 const GameObject* Scene::find(ObjectId id)const{
-    if(id.index>=slots_.size())return nullptr;const auto&s=slots_[id.index];
+    if(id.sceneId!=sceneId_||id.index>=slots_.size())return nullptr;const auto&s=slots_[id.index];
     return s.generation==id.generation&&!s.dead?s.object.get():nullptr;
 }
 bool Scene::destroy(ObjectId id){

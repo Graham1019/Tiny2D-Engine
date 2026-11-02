@@ -6,9 +6,10 @@
 #include <tuple>
 namespace tiny2d {
 struct ObjectId {
+    uint64_t sceneId=0;
     uint32_t index=UINT32_MAX,generation=0;
-    friend bool operator==(ObjectId a,ObjectId b){return a.index==b.index&&a.generation==b.generation;}
-    friend bool operator<(ObjectId a,ObjectId b){return std::tie(a.index,a.generation)<std::tie(b.index,b.generation);}
+    friend bool operator==(ObjectId a,ObjectId b){return a.sceneId==b.sceneId&&a.index==b.index&&a.generation==b.generation;}
+    friend bool operator<(ObjectId a,ObjectId b){return std::tie(a.sceneId,a.index,a.generation)<std::tie(b.sceneId,b.index,b.generation);}
 };
 struct SpriteData {
     uint32_t asset=0;

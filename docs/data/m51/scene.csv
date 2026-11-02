@@ -1,0 +1,5 @@
+sprites,unique_textures,keys,preflight_median_us,total_median_us,draws,frame_owners
+100,1,1,4.125,25.959,1,1
+500,1,1,18.916,58.042,1,1
+1000,4,4,38.25,94.833,1,4
+1000,4,32,40.083,95.75,1,4

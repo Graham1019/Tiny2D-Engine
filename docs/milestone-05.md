@@ -53,3 +53,7 @@ Release，10 samples × 5 repeats，warmup=30；旧 M4.1 为 120 samples × 5。
 该测试比较旧渲染器路径，不测 Scene 碰撞开销。GPU/CPU 小样本容易受调度和图形会话影响；历史原始数据未改动。Headless 配置另行构建并通过 6/6，仍使用系统链接依赖，但不创建 OpenGL Context。
 
 性能异常跟进：同环境保留的 integration-release 二进制在 pixel/5000/batch 的 CPU p50 中位数为 461.6 µs；M5 复测为 416.0 µs（首次 410.6），GPU 中位数均约 3.76 ms。历史对应 CPU 为 279.4 µs，但旧 trial 本身也出现 526.4 µs。当前对照不支持将波动归因于 M5 修改；更可能与采样长度、驱动排队及会话负载有关，此解释为推断。保留 baseline/repeat trials，不宣称获得性能提升或完成正式性能认证。
+
+## M5.1 review 修复
+
+M5 原始结果及数据保持不变。后续修复新增跨 Scene 身份检查、SceneRenderer 全量 Preflight、显式取消和纹理保活去重，详见 [M5.1 修复与新验收](m51-review-fixes.md)。没有新增 M6 功能。
