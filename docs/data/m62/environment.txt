@@ -1,0 +1,6 @@
+macOS-26.5.1-arm64-arm-64bit
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.5.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+Client acceptance date: 2026-11-02

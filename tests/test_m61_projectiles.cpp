@@ -16,6 +16,7 @@ int main(){try {
     step(cap,2);check(cap.firedCount()==2,"capacity recovers without backlog");
     c=quiet();GameSession overlap(c);A::enemy(overlap,{0,0});A::fire(overlap);
     for(auto [id,s]:overlap.entities())if(s.kind==EntityKind::PlayerProjectile)check(overlap.scene().find(id)->velocity.x==420,"overlap fallback");
+    A::erase(life,enemy); // Keep expiry stress Playing; terminal sessions now freeze.
     for(int i=0;i<1200;++i) {
         auto old=A::shot(life,{1000,0},1);life.fixedUpdate();
         check(!life.scene().find(old),"stress stale");auto fresh=A::shot(life,{1000,0},1);

@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-Tiny2D is a C++17 learning engine for macOS OpenGL. The v0.4.0 candidate integrates
-M1–M4.1: window/input, programmable rendering, textured sprites, a 2D camera and
-order-preserving batch rendering. This is release preparation, not a published release.
+Tiny2D is a C++17 learning engine for macOS OpenGL. M0–M6.2 include window/input, batched sprites, Scene/collision, fixed-step combat,
+and a playable 90-second survivor game with HUD, victory/defeat and restart.
+The project version remains 0.4.0; no release is published.
 
 ## Features
 
@@ -38,10 +38,10 @@ brew install glfw libpng
 ## Build Instructions
 
 ```sh
-cmake -S . -B build/integration-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/integration-debug --parallel
-cmake -S . -B build/integration-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/integration-release --parallel
+cmake -S . -B build/m62-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m62-debug --parallel
+cmake -S . -B build/m62-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m62-release --parallel
 ```
 
 If discovery fails, add `-DCMAKE_PREFIX_PATH="$(brew --prefix)"` to configuration.
@@ -51,10 +51,10 @@ Assets are copied beside Sandbox on each build and resolve independently of the 
 ## Run Instructions
 
 ```sh
-./build/integration-release/tiny2d_sandbox --scene triangle --frames 30
-./build/integration-release/tiny2d_sandbox --renderer immediate --scene sprites --sprite-count 500 --frames 30
-./build/integration-release/tiny2d_sandbox --renderer batch --scene sprites --sprite-count 500 --frames 30
-./build/integration-release/tiny2d_sandbox --renderer batch --scene multitexture --sprite-count 5000 --frames 30
+./build/m62-release/tiny2d_sandbox --scene triangle --frames 30
+./build/m62-release/tiny2d_sandbox --renderer immediate --scene sprites --sprite-count 500 --frames 30
+./build/m62-release/tiny2d_sandbox --renderer batch --scene sprites --sprite-count 500 --frames 30
+./build/m62-release/tiny2d_sandbox --renderer batch --scene multitexture --sprite-count 5000 --frames 30
 ```
 
 Omit `--frames` for interaction. Arrow keys pan, Q/E zoom, WASD change background,
@@ -64,13 +64,13 @@ Interactive VSync is enabled; Benchmark disables it.
 ## Test Instructions
 
 ```sh
-ctest --test-dir build/integration-debug -N
-ctest --test-dir build/integration-debug --output-on-failure
-ctest --test-dir build/integration-release -N
-ctest --test-dir build/integration-release --output-on-failure
+ctest --test-dir build/m62-debug -N
+ctest --test-dir build/m62-debug --output-on-failure
+ctest --test-dir build/m62-release -N
+ctest --test-dir build/m62-release --output-on-failure
 ```
 
-Integration validation on 2026-11-01 passed 10/10 in both configurations, including
+Historical integration validation on 2026-11-01 passed 10/10 in both configurations, including
 seven real OpenGL tests. Restricted process execution could not complete GPU tests;
 rerunning in the logged-in desktop environment passed. For CPU/fake-driver checks
 only, configure a separate build with `-DTINY2D_OPENGL_TESTS=OFF`; that does not
@@ -91,7 +91,7 @@ Run Benchmark in a **new empty directory**: it writes `m4-frames.csv` and
 
 ```sh
 mkdir -p build/benchmark-new-run
-(cd build/benchmark-new-run && ../integration-release/tiny2d_benchmark > trials.csv 2> environment.txt)
+(cd build/benchmark-new-run && ../m62-release/tiny2d_benchmark > trials.csv 2> environment.txt)
 python3 scripts/summarize_m4.py build/benchmark-new-run/trials.csv
 ```
 
@@ -116,18 +116,15 @@ stage; current batch behavior is specified in the batch design document.
 
 ## Roadmap
 
-M1–M4.1 are implemented. After integration review and merge, M5 will start from
-updated main: Scene Management, GameObject/Transform2D, Collision2D, Fixed Timestep,
-Texture Lifetime and an Interactive Arena Prototype. M5 and M6 are not completed.
-See [v0.4.0 candidate release notes](docs/release-notes-v0.4.0.md).
+M0–M6.2 are implemented. M6.3 will consider visual polish, measured performance
+optimization, extended playtesting and release packaging.
 
 ## Known Limitations
 
 macOS-only build; no cross-platform or cross-driver support claim. OpenGL is Apple's
 system API and no alternative graphics backend is implemented. GPU work and destruction
 require the owning live context on the main thread; destruction misuse terminates.
-Queued textures must survive until flush. No resource cache, scene system, collision,
-sRGB pipeline or multithreaded OpenGL is provided. Manual input/window interaction,
+Queued textures must survive until flush. No sRGB pipeline or multithreaded OpenGL is provided. Manual input/window interaction,
 cross-display Retina transitions and long-duration GPU memory profiling remain pending.
 No GitHub CI workflow is currently configured; validation here is local.
 
@@ -167,19 +164,18 @@ pending-command cancellation and per-texture frame ownership. Predictable Scene
 input failures draw nothing; cancel cannot undo completed GPU draws. See
 [M5.1 contracts, tests and performance](docs/m51-review-fixes.md).
 
-### M6.1 Arena Survivor
+### M6.2 Arena Survivor
 
 ```bash
-cmake -S . -B build/m61-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m61-release --parallel
-./build/m61-release/tiny2d_sandbox --scene survivor-demo
-./build/m61-release/tiny2d_sandbox --scene survivor-demo --frames 600
+./build/m62-release/tiny2d_sandbox --scene survivor-demo
+./build/m62-release/tiny2d_sandbox --scene survivor-demo --frames 600
 ```
 
-WASD moves; arrows offset the following camera; Q/E zoom; Escape exits. The blue player
-automatically shoots yellow projectiles at red enemies. HP, kills and live counts appear
-in the title. Finite-frame runs advance exactly one 60Hz tick/frame and print real combat
-statistics. The original `arena-demo` and all previous scenes remain available.
+WASD moves, arrows offset camera, Q/E zoom, Escape exits. Survive 5400 fixed ticks
+(90 simulation seconds) to win. HP zero ends the game; death wins same-tick ties.
+World simulation freezes at either outcome, while the HUD and result panel remain
+visible. Press and release R to restart. HP/bar, countdown and kills are rendered
+inside the window. Finite runs keep rendering to their limit after death.
 
-See [M6.1 validation](docs/milestone-06-1.md),
-[gameplay architecture](docs/gameplay-architecture.md) and [combat rules](docs/combat-rules.md).
+See [M6.2 validation](docs/milestone-06-2.md), [game loop](docs/game-loop-design.md),
+[HUD](docs/hud-rendering.md), and historical [M6.1](docs/milestone-06-1.md).

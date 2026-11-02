@@ -1,9 +1,12 @@
 #pragma once
 #include "CombatConfig.h"
+#include "SurvivalRules.h"
 #include "GameplayInput.h"
 #include "tiny2d/Scene.h"
 #include <map>
 namespace tiny2d_game {
+enum class GamePhase { Playing, Victory, GameOver };
+inline const char* phaseName(GamePhase p) { return p==GamePhase::Playing?"Playing":p==GamePhase::Victory?"Victory":"GameOver"; }
 enum class EntityKind { Player, Enemy, PlayerProjectile };
 struct EntityState {
     EntityKind kind;
@@ -14,7 +17,13 @@ struct EntityState {
 // CPU-only, single-threaded. Public snapshots are borrowed until the next update.
 class GameSession {
 public:
-    explicit GameSession(const CombatConfig& config={});
+    explicit GameSession(const CombatConfig& config={}, const SurvivalRules& rules={});
+    GamePhase phase() const { return phase_; }
+    bool isPlaying() const { return phase_==GamePhase::Playing; }
+    uint64_t durationTicks() const { return rules_.durationTicks; }
+    uint64_t remainingTicks() const { return durationTicks()-tick_; }
+    double remainingSeconds() const { return remainingTicks()/60.0; }
+    bool invulnerable() const { return isPlaying() && tick_<vulnerableAt_; }
     void fixedUpdate(const GameplayInput& input={});
     const tiny2d::Scene& scene() const { return scene_; }
     const std::map<tiny2d::ObjectId,EntityState>& entities() const { return entities_; }
@@ -38,6 +47,8 @@ private:
     void fire();
     void erase(tiny2d::ObjectId);
     CombatConfig config_;
+    SurvivalRules rules_;
+    GamePhase phase_=GamePhase::Playing;
     tiny2d::Scene scene_;
     std::map<tiny2d::ObjectId,EntityState> entities_;
     tiny2d::ObjectId player_;

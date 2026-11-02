@@ -1,0 +1,17 @@
+--scene triangle --frames 30
+Frames: 30 | Draw calls in final frame: 1
+--renderer immediate --scene sprites --sprite-count 500 --frames 30
+Frames: 30 | Draw calls in final frame: 500
+--renderer batch --scene sprites --sprite-count 500 --frames 30
+Frames: 30 | Draw calls in final frame: 1
+--renderer batch --scene multitexture --sprite-count 5000 --frames 30
+Frames: 30 | Draw calls in final frame: 5
+--scene arena-demo --frames 120
+Arena frames=120 ticks=120 draws=1 objects=55 contacts=7 events=170 created=2 deleted=2
+--scene survivor-demo --frames 600
+Survivor frames=600 ticks=492 health=0 kills=6 enemies=7 projectiles=0 spawned=13 fired=13 hits=13 phase=GameOver remaining=81.8 draws_world=1 draws_ui=1 draws_total=2
+2026-11-02 14:24:36.882 tiny2d_sandbox[53979:19724468] TSM AdjustCapsLockLEDForKeyTransitionHandling - _ISSetPhysicalKeyboardCapsLockLED Inhibit
+2026-11-02 14:24:36.889 tiny2d_sandbox[53979:19724468] error messaging the mach port for IMKCFRunLoopWakeUpReliable
+--scene survivor-demo --frames 6000
+Survivor frames=6000 ticks=492 health=0 kills=6 enemies=7 projectiles=0 spawned=13 fired=13 hits=13 phase=GameOver remaining=81.8 draws_world=1 draws_ui=1 draws_total=2
+2026-11-02 14:24:41.202 tiny2d_sandbox[53983:19724617] TSM AdjustCapsLockLEDForKeyTransitionHandling - _ISSetPhysicalKeyboardCapsLockLED Inhibit

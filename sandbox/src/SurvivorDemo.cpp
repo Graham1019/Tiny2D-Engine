@@ -2,7 +2,8 @@
 #include "tiny2d/Application.h"
 #include "tiny2d/SceneRenderer.h"
 #include "tiny2d/FixedTimestep.h"
-#include "tiny2d_game/GameSession.h"
+#include "tiny2d_game/SessionController.h"
+#include "ui/GameHUD.h"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -23,6 +24,8 @@ public:
 private:
     void update(float dt) override {
         if(input().isKeyPressed(Key::Escape))window().requestClose();
+        bool restarted=session_.restartKey(input().isKeyPressed('R'));
+        if(restarted){clock_.reset();offset_={};camera_.setZoom(1);}
         tiny2d_game::GameplayInput in;
         if(!limit_) {
             in.moveX=input().isKeyPressed(Key::D)-input().isKeyPressed(Key::A);
@@ -30,36 +33,43 @@ private:
         }
         const auto fb=window().framebufferSize();
         if(!limit_&&(fb.width<=0||fb.height<=0)){clock_.reset();return;}
-        unsigned steps=limit_?1:clock_.advance(dt);
-        for(unsigned i=0;i<steps;++i)game_.fixedUpdate(in);
+        unsigned steps=restarted?0:limit_?1:clock_.advance(dt);
+        for(unsigned i=0;i<steps;++i)session_.game().fixedUpdate(in);
         camera_.setZoom(std::clamp(camera_.zoom()*std::exp((input().isKeyPressed(Key::E)-input().isKeyPressed(Key::Q))*dt),.25f,4.f));
         offset_.x+=(input().isKeyPressed(Key::Right)-input().isKeyPressed(Key::Left))*150*dt;
         offset_.y+=(input().isKeyPressed(Key::Down)-input().isKeyPressed(Key::Up))*150*dt;
-        auto p=game_.scene().find(game_.playerId())->transform.position;
+        auto p=session_.game().scene().find(session_.game().playerId())->transform.position;
         camera_.setPosition(p.x+12+offset_.x,p.y+12+offset_.y);
     }
     void render() override {
         window().clear(.025f,.04f,.06f);
-        auto fb=window().framebufferSize();auto size=window().size();std::size_t draws=0;
+        auto fb=window().framebufferSize();auto size=window().size();std::size_t draws=0,uiDraws=0;
         if(fb.width>0&&fb.height>0&&size.width>0&&size.height>0) {
             camera_.setViewportSize(size.width,size.height);
-            renderer_.begin(camera_);renderer_.submit(grid_);renderer_.submit(game_.scene());renderer_.end();
+            renderer_.begin(camera_);renderer_.submit(grid_);renderer_.submit(session_.game().scene());renderer_.end();
             draws=renderer_.stats().drawCalls;
+            hud_.update(session_.game(),size.width,size.height);
+            uiCamera_.setViewportSize(size.width,size.height);uiCamera_.setPosition(size.width/2.f,size.height/2.f);
+            renderer_.begin(uiCamera_);renderer_.submit(hud_.scene());renderer_.end();
+            uiDraws=renderer_.stats().drawCalls;
         }
         ++frames_;
         double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start_).count();
-        window().setTitle("Tiny2D Survivor | HP: "+std::to_string(game_.playerHealth())+"/"+std::to_string(game_.playerMaxHealth())+
-            " | Kills: "+std::to_string(game_.killCount())+" | Enemies: "+std::to_string(game_.enemyCount())+
-            " | Projectiles: "+std::to_string(game_.projectileCount())+" | Draws: "+std::to_string(draws)+
+        window().setTitle("Tiny2D Survivor | HP: "+std::to_string(session_.game().playerHealth())+"/"+std::to_string(session_.game().playerMaxHealth())+
+            " | Kills: "+std::to_string(session_.game().killCount())+" | Enemies: "+std::to_string(session_.game().enemyCount())+
+            " | Projectiles: "+std::to_string(session_.game().projectileCount())+" | Draws: "+std::to_string(draws+uiDraws)+
             " | FPS: "+std::to_string(int(frames_/std::max(.001,seconds))));
         if(limit_&&frames_>=limit_) {
-            std::cout<<"Survivor frames="<<frames_<<" ticks="<<game_.tickCount()<<" health="<<game_.playerHealth()
-                <<" kills="<<game_.killCount()<<" enemies="<<game_.enemyCount()<<" projectiles="<<game_.projectileCount()
-                <<" spawned="<<game_.spawnedCount()<<" fired="<<game_.firedCount()<<" hits="<<game_.hitCount()<<" draws="<<draws<<'\n';
+            std::cout<<"Survivor frames="<<frames_<<" ticks="<<session_.game().tickCount()<<" health="<<session_.game().playerHealth()
+                <<" kills="<<session_.game().killCount()<<" enemies="<<session_.game().enemyCount()<<" projectiles="<<session_.game().projectileCount()
+                <<" spawned="<<session_.game().spawnedCount()<<" fired="<<session_.game().firedCount()<<" hits="<<session_.game().hitCount()<<" phase="<<tiny2d_game::phaseName(session_.game().phase())<<" remaining="<<session_.game().remainingSeconds()
+                <<" draws_world="<<draws<<" draws_ui="<<uiDraws<<" draws_total="<<draws+uiDraws<<'\n';
             window().requestClose();
         }
     }
-    tiny2d_game::GameSession game_;
+    tiny2d_game::SessionController session_;
+    tiny2d_ui::GameHUD hud_;
+    Camera2D uiCamera_{800,600};
     Scene grid_;
     SceneRenderer renderer_;
     Camera2D camera_{800,600};
