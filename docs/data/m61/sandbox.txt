@@ -1,0 +1,6 @@
+Frames: 30 | Draw calls in final frame: 1
+Frames: 30 | Draw calls in final frame: 500
+Frames: 30 | Draw calls in final frame: 1
+Frames: 30 | Draw calls in final frame: 5
+Arena frames=120 ticks=120 draws=1 objects=55 contacts=7 events=170 created=2 deleted=2
+Survivor frames=600 ticks=600 health=0 kills=6 enemies=8 projectiles=0 spawned=14 fired=13 hits=13 draws=1

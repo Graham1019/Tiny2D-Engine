@@ -1,0 +1,26 @@
+Test project <repo>/build/m61-headless
+    Start 1: M3CPUTests
+1/9 Test #1: M3CPUTests .......................   Passed    0.00 sec
+    Start 2: Vector2Tests
+2/9 Test #2: Vector2Tests .....................   Passed    0.00 sec
+    Start 3: RenderFailureTests
+3/9 Test #3: RenderFailureTests ...............   Passed    0.00 sec
+    Start 4: M5_scene
+4/9 Test #4: M5_scene .........................   Passed    0.02 sec
+    Start 5: M5_collision
+5/9 Test #5: M5_collision .....................   Passed    0.00 sec
+    Start 6: M5_fixed_step
+6/9 Test #6: M5_fixed_step ....................   Passed    0.00 sec
+    Start 7: M61_combat
+7/9 Test #7: M61_combat .......................   Passed    0.35 sec
+    Start 8: M61_projectiles
+8/9 Test #8: M61_projectiles ..................   Passed    0.42 sec
+    Start 9: M61_spawning
+9/9 Test #9: M61_spawning .....................   Passed    0.42 sec
+
+100% tests passed out of 9
+
+Label Time Summary:
+cpu    =   1.21 sec*proc (6 tests)
+
+Total Test time (real) =   1.23 sec

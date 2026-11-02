@@ -166,3 +166,20 @@ M5.1 review fixes add enforced Scene identity, full-scene render preflight,
 pending-command cancellation and per-texture frame ownership. Predictable Scene
 input failures draw nothing; cancel cannot undo completed GPU draws. See
 [M5.1 contracts, tests and performance](docs/m51-review-fixes.md).
+
+### M6.1 Arena Survivor
+
+```bash
+cmake -S . -B build/m61-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m61-release --parallel
+./build/m61-release/tiny2d_sandbox --scene survivor-demo
+./build/m61-release/tiny2d_sandbox --scene survivor-demo --frames 600
+```
+
+WASD moves; arrows offset the following camera; Q/E zoom; Escape exits. The blue player
+automatically shoots yellow projectiles at red enemies. HP, kills and live counts appear
+in the title. Finite-frame runs advance exactly one 60Hz tick/frame and print real combat
+statistics. The original `arena-demo` and all previous scenes remain available.
+
+See [M6.1 validation](docs/milestone-06-1.md),
+[gameplay architecture](docs/gameplay-architecture.md) and [combat rules](docs/combat-rules.md).

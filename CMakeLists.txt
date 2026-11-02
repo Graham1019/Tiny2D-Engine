@@ -51,6 +51,7 @@ set_target_properties(tiny2d_engine PROPERTIES
 add_executable(tiny2d_sandbox
     sandbox/src/main.cpp
     sandbox/src/ArenaDemo.cpp
+    sandbox/src/SurvivorDemo.cpp
     sandbox/src/ShaderAssets.cpp
 )
 
@@ -177,4 +178,33 @@ endif()
 if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_executable(tiny2d_m51_benchmark tests/benchmark_m51.cpp)
     target_link_libraries(tiny2d_m51_benchmark PRIVATE tiny2d_engine glfw OpenGL::GL)
+endif()
+
+
+# CPU gameplay has no renderer/platform translation units or GL link dependency.
+add_library(tiny2d_game STATIC game/src/GameSession.cpp
+    engine/src/Scene/Scene.cpp engine/src/Physics/Collision2D.cpp engine/src/Math/Vector2.cpp)
+target_include_directories(tiny2d_game PUBLIC game/include engine/include)
+target_compile_features(tiny2d_game PUBLIC cxx_std_17)
+target_link_libraries(tiny2d_sandbox PRIVATE tiny2d_game)
+if(BUILD_TESTING)
+    foreach(suite combat projectiles spawning)
+        add_executable(tiny2d_m61_${suite}_tests tests/test_m61_${suite}.cpp)
+        target_link_libraries(tiny2d_m61_${suite}_tests PRIVATE tiny2d_game)
+        add_test(NAME M61_${suite} COMMAND tiny2d_m61_${suite}_tests)
+        set_tests_properties(M61_${suite} PROPERTIES LABELS "cpu")
+    endforeach()
+    add_executable(tiny2d_m61_benchmark tests/benchmark_m61.cpp)
+    target_link_libraries(tiny2d_m61_benchmark PRIVATE tiny2d_game)
+    if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m61_gpu_tests tests/test_m61_gpu.cpp)
+        target_link_libraries(tiny2d_m61_gpu_tests PRIVATE tiny2d_game tiny2d_engine glfw OpenGL::GL)
+        add_test(NAME M61GPU COMMAND tiny2d_m61_gpu_tests)
+        add_test(NAME M61Survivor COMMAND tiny2d_sandbox --scene survivor-demo --frames 600)
+        set_tests_properties(M61GPU M61Survivor PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    endif()
+endif()
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m61_gpu_benchmark tests/benchmark_m61_gpu.cpp)
+    target_link_libraries(tiny2d_m61_gpu_benchmark PRIVATE tiny2d_game tiny2d_engine glfw OpenGL::GL)
 endif()
