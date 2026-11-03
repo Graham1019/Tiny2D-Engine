@@ -217,4 +217,3 @@ CPU frame p95 change: -32.7%.
 |polish|0/3|2009|3/3|289296|0/0|0|1|
 
 Completed offscreen throughput (1e6 / median frame_completed_us): 2875.6 frames/s. This excludes display swap/vsync and is not interactive FPS.
-

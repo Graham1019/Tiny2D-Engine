@@ -21,4 +21,4 @@ for load,name in enumerate(names):
         def peak(key): return max(int(r[key]) for r in rs)
         text+=f"|{k}|{peak('world_draws')}/{peak('ui_draws')}|{peak('sprites')}|{peak('flushes')}/{peak('binds')}|{peak('bytes')}|{peak('enemies')}/{peak('projectiles')}|{peak('vfx')}|{peak('objects')}|\n"
     text+=f"\nCompleted offscreen throughput (1e6 / median frame_completed_us): {1e6/quantile(rows['polish'],'frame_completed_us',.5):.1f} frames/s. This excludes display swap/vsync and is not interactive FPS.\n\n"
-(root/'summary.md').write_text(text)
+(root/'summary.md').write_text(text.rstrip()+'\n')
