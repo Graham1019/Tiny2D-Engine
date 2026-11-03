@@ -66,3 +66,11 @@ remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing U
 Finite --frames runs auto-start; --difficulty accepts 1..5.
 See [M6.3a validation and commands](milestone-06-3a.md), [difficulty design](difficulty-design.md)
 and [menu lifecycle](menu-flow-design.md).
+
+## M6.3b combat presentation
+
+Bounded combat events feed CPU-only hit/death sparks, trails, center marks and damage
+feedback. World camera shake leaves UI independent. Difficulty rules are unchanged.
+FPS uses a recent one-second window, including menu rendering.
+See [milestone](milestone-06-3b.md), [feedback](combat-feedback-design.md),
+[lifecycle](vfx-lifecycle.md) and [performance](performance-m63b.md).

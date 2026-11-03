@@ -4,9 +4,12 @@
 #include "GameplayInput.h"
 #include "tiny2d/Scene.h"
 #include <map>
+#include <array>
 namespace tiny2d_game {
 enum class GamePhase { Playing, Victory, GameOver };
 inline const char* phaseName(GamePhase p) { return p==GamePhase::Playing?"Playing":p==GamePhase::Victory?"Victory":"GameOver"; }
+enum class CombatEventKind { ProjectileHit, EnemyKilled, PlayerDamaged };
+struct CombatEvent { CombatEventKind kind; uint64_t tick, sequence; tiny2d::Vector2 position; };
 enum class EntityKind { Player, Enemy, PlayerProjectile };
 struct EntityState {
     EntityKind kind;
@@ -18,6 +21,13 @@ struct EntityState {
 class GameSession {
 public:
     explicit GameSession(const CombatConfig& config={}, const SurvivalRules& rules={});
+    static constexpr std::size_t eventCapacity=512;
+    uint64_t eventSequence() const { return eventSequence_; }
+    // Sequence-addressed ring: callers detect overwritten history by a null result.
+    const CombatEvent* event(uint64_t sequence) const {
+        if(!sequence || sequence>eventSequence_ || eventSequence_-sequence>=eventCapacity)return nullptr;
+        return &events_[(sequence-1)%eventCapacity];
+    }
     GamePhase phase() const { return phase_; }
     bool isPlaying() const { return phase_==GamePhase::Playing; }
     uint64_t durationTicks() const { return rules_.durationTicks; }
@@ -46,6 +56,11 @@ private:
     tiny2d::Vector2 center(tiny2d::ObjectId) const;
     void fire();
     void erase(tiny2d::ObjectId);
+    void emit(CombatEventKind kind,tiny2d::Vector2 position) noexcept {
+        ++eventSequence_;events_[(eventSequence_-1)%eventCapacity]={kind,tick_,eventSequence_,position};
+    }
+    std::array<CombatEvent,eventCapacity> events_{};
+    uint64_t eventSequence_=0;
     CombatConfig config_;
     SurvivalRules rules_;
     GamePhase phase_=GamePhase::Playing;
