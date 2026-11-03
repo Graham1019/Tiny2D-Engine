@@ -52,3 +52,12 @@ are practical, but grazing, fast relative movement and configured higher speeds 
 tunnel. No continuous collision detection, collision layer, spatial hash, avoidance,
 world bounds or separation response is added. Enemies can overlap each other and player.
 M6.2 adds 5400-tick victory, death-priority GameOver, complete terminal freeze, restart and HUD. See [game loop](game-loop-design.md).
+
+## M6.3a difficulty and menu
+
+Survivor now opens a CPU-only difficulty-selection flow (default Lv.3); 1–5 selects,
+Enter starts, and terminal R restarts the applied level. Direct GameSession defaults
+remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing UI pass.
+Finite --frames runs auto-start; --difficulty accepts 1..5.
+See [M6.3a validation and commands](milestone-06-3a.md), [difficulty design](difficulty-design.md)
+and [menu lifecycle](menu-flow-design.md).

@@ -139,6 +139,7 @@ private:
 int main(int argc, char** argv) {
     try {
         unsigned frameLimit = 0;
+        unsigned difficulty=3;bool difficultySet=false,framesSet=false;
         bool survivor=false; bool arena=false; bool sprites=true,batch=false,multi=false; unsigned count=12;
         for(int i=1;i<argc;i+=2) {
             if(i+1>=argc) throw std::invalid_argument("missing option value");
@@ -148,14 +149,19 @@ int main(int argc, char** argv) {
             } else if(option=="--scene") {
                 if(value!="sprites"&&value!="triangle"&&value!="multitexture"&&value!="arena-demo"&&value!="survivor-demo") throw std::invalid_argument("scene must be sprites, triangle, multitexture arena-demo or survivor-demo");
                 survivor=value=="survivor-demo";arena=value=="arena-demo";sprites=value!="triangle";multi=value=="multitexture";
+            } else if(option=="--difficulty") {
+                if(value.size()!=1||value[0]<'1'||value[0]>'5')throw std::invalid_argument("difficulty must be 1..5");
+                difficulty=value[0]-'0';difficultySet=true;
             } else if(option=="--frames"||option=="--sprite-count") {
                 if(value.empty()||value.find_first_not_of("0123456789")!=std::string::npos) throw std::invalid_argument("count must be a positive integer");
                 const auto n=std::stoul(value);
                 if(n>(option=="--frames"?1000000u:100000u)) throw std::invalid_argument("count outside allowed range");
-                if(option=="--frames") frameLimit=n; else count=n;
+                if(option=="--frames") {frameLimit=n;framesSet=true;} else count=n;
             } else throw std::invalid_argument("Usage: tiny2d_sandbox [--renderer immediate|batch] [--scene sprites|multitexture|triangle|arena-demo|survivor-demo] [--frames N] [--sprite-count 0..100000]");
         }
-        if(survivor){runSurvivor(frameLimit);return 0;}
+        if(survivor&&framesSet&&!frameLimit)throw std::invalid_argument("survivor frames must be positive");
+        if(difficultySet&&!survivor)throw std::invalid_argument("difficulty requires survivor-demo");
+        if(survivor){runSurvivor(frameLimit,difficulty);return 0;}
         if(arena){runArena(frameLimit);return 0;}
         Sandbox sandbox(frameLimit,sprites,count,batch,multi);
         sandbox.run();

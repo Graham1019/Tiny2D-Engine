@@ -6,7 +6,7 @@ std::string formatTime(uint64_t seconds) {
     auto pad=[](uint64_t n){return (n<10?"0":"")+std::to_string(n);};
     return pad(seconds/60)+":"+pad(seconds%60);
 }
-void GameHUD::update(const tiny2d_game::GameSession& game,int width,int height) {
+void GameHUD::update(const tiny2d_game::GameSession& game,int width,int height,tiny2d_game::DifficultyLevel level) {
     if(width<=0||height<=0)return;
     if(sceneToken_!=game.playerId().sceneId){sceneToken_=game.playerId().sceneId;lastKills_=game.killCount();flashUntil_=0;}
     if(lastKills_!=game.killCount()){lastKills_=game.killCount();flashUntil_=game.tickCount()+12;}
@@ -16,7 +16,8 @@ void GameHUD::update(const tiny2d_game::GameSession& game,int width,int height) 
     auto time=formatTime((game.remainingTicks()+59)/60);
     auto survived="SURVIVED "+formatTime(game.tickCount()/60);
     // Kill counter flashes for a bounded number of simulation ticks.
-    auto key=hp+kills+time+std::to_string(int(game.phase()))+std::to_string(game.invulnerable())+std::to_string(killFlash)+
+    auto difficulty="LV "+std::to_string(unsigned(level))+" "+tiny2d_game::difficultyName(level);
+    auto key=difficulty+hp+kills+time+std::to_string(int(game.phase()))+std::to_string(game.invulnerable())+std::to_string(killFlash)+
         ":"+std::to_string(width)+":"+std::to_string(height)+(game.isPlaying()?"":survived);
     if(key==key_)return;
     auto next=std::make_unique<tiny2d::Scene>();auto& s=*next;
@@ -28,6 +29,7 @@ void GameHUD::update(const tiny2d_game::GameSession& game,int width,int height) 
     rectangle(s,margin,18*scale,65*scale*game.playerHealth()/game.playerMaxHealth(),6*scale,.2f,.85f,.4f);
     text(s,time,(width-textWidth(time,scale))/2,10*scale,scale);
     text(s,kills,width-margin-textWidth(kills,scale),10*scale,scale,1,killFlash?1:.85f,killFlash?1:.3f);
+    text(s,difficulty,margin,height-12*scale,scale);
     if(!game.isPlaying()) {
         float panel=std::min(width-2*margin,280*scale), top=height/2.f-50*scale;
         rectangle(s,(width-panel)/2,top,panel,104*scale,.025f,.035f,.06f,.92f);

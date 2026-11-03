@@ -1,0 +1,10 @@
+Frames: 30 | Draw calls in final frame: 1
+Frames: 30 | Draw calls in final frame: 500
+Frames: 30 | Draw calls in final frame: 1
+Frames: 30 | Draw calls in final frame: 5
+Arena frames=120 ticks=120 draws=1 objects=55 contacts=7 events=170 created=2 deleted=2
+Survivor frames=600 difficulty=1 ticks=492 health=0 kills=6 enemies=7 projectiles=0 spawned=13 fired=13 hits=13 phase=GameOver remaining=81.8 draws_world=1 draws_ui=2 draws_total=3
+Survivor frames=600 difficulty=2 ticks=414 health=0 kills=6 enemies=7 projectiles=0 spawned=13 fired=12 hits=12 phase=GameOver remaining=83.1 draws_world=1 draws_ui=1 draws_total=2
+Survivor frames=600 difficulty=3 ticks=383 health=0 kills=5 enemies=9 projectiles=0 spawned=14 fired=11 hits=11 phase=GameOver remaining=83.6167 draws_world=1 draws_ui=2 draws_total=3
+Survivor frames=600 difficulty=4 ticks=358 health=0 kills=5 enemies=9 projectiles=0 spawned=14 fired=11 hits=11 phase=GameOver remaining=84.0333 draws_world=1 draws_ui=1 draws_total=2
+Survivor frames=600 difficulty=5 ticks=338 health=0 kills=6 enemies=8 projectiles=0 spawned=14 fired=12 hits=12 phase=GameOver remaining=84.3667 draws_world=1 draws_ui=2 draws_total=3

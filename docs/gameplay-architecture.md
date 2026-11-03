@@ -57,3 +57,12 @@ Scene tokens differ; tests compare creation serials, role/health, positions and 
 No claim of cross-platform floating-point bit identity is made.
 
 M6.2 adds SurvivalRules, GamePhase and CPU SessionController. See [game loop](game-loop-design.md) and [HUD](hud-rendering.md).
+
+## M6.3a difficulty and menu
+
+Survivor now opens a CPU-only difficulty-selection flow (default Lv.3); 1–5 selects,
+Enter starts, and terminal R restarts the applied level. Direct GameSession defaults
+remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing UI pass.
+Finite --frames runs auto-start; --difficulty accepts 1..5.
+See [M6.3a validation and commands](milestone-06-3a.md), [difficulty design](difficulty-design.md)
+and [menu lifecycle](menu-flow-design.md).
