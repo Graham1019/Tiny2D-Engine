@@ -33,6 +33,8 @@ void GameHUD::update(const tiny2d_game::GameSession& game,int width,int height,t
     if(!game.isPlaying()) {
         float panel=std::min(width-2*margin,280*scale), top=height/2.f-50*scale;
         rectangle(s,(width-panel)/2,top,panel,104*scale,.025f,.035f,.06f,.92f);
+        bool victory=game.phase()==tiny2d_game::GamePhase::Victory;
+        rectangle(s,(width-panel)/2,top+2*scale,panel,2*scale,victory?.2f:1.f,victory?.85f:.2f,.25f);
         auto centered=[&](const std::string& t,float y,float z){text(s,t,(width-textWidth(t,z))/2,y,z);};
         centered(game.phase()==tiny2d_game::GamePhase::Victory?"VICTORY":"GAME OVER",top+10*scale,2*scale);
         centered(survived,top+36*scale,scale);centered(kills,top+54*scale,scale);

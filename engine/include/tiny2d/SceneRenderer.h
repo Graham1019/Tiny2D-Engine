@@ -14,6 +14,7 @@ public:
     SceneRenderer& operator=(SceneRenderer&&)=delete;
     void setAsset(uint32_t,std::shared_ptr<const Texture2D>);
     void removeAsset(uint32_t);
+    bool passActive() const noexcept { return active_; }
     void begin(const Camera2D&);
     // Preflight failure preserves the active pass; runtime draw failure cancels it.
     void submit(const Scene&);

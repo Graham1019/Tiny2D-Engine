@@ -1,0 +1,3 @@
+#include "M5Test.h"
+#include "FrameRate.h"
+int main(){try{tiny2d_ui::FrameRate f;check(f.sample(0)==0,"first");for(int i=1;i<=600;++i)f.sample(i/60.);check(std::abs(f.value()-60)<1,"menu steady");for(int i=601;i<=1200;++i)f.sample(i/60.);check(std::abs(f.value()-60)<1,"start and terminal stable");check(f.sample(100)==0,"long pause reset");f.sample(101,false);check(f.value()==0,"minimized");f.sample(102);for(int i=1;i<=120;++i)f.sample(102+i/120.);check(std::abs(f.value()-120)<1,"restore");f.sample(0);check(f.value()==0,"clock regression");}catch(const std::exception&e){std::cerr<<e.what();return 1;}}

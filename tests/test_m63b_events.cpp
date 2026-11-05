@@ -1,0 +1,5 @@
+#include "GameSessionTestAccess.h"
+using namespace tiny2d_game;using A=GameSessionTestAccess;
+int main(){try{GameSession g(quiet());auto e=A::enemy(g,{80,0});A::shot(g,{80,0});g.fixedUpdate();check(g.eventSequence()==1&&g.event(1)->kind==CombatEventKind::ProjectileHit,"single hit");g.fixedUpdate();check(g.eventSequence()==1,"no repeat");A::shot(g,{80,0});g.fixedUpdate();check(g.eventSequence()==3&&g.event(2)->kind==CombatEventKind::ProjectileHit&&g.event(3)->kind==CombatEventKind::EnemyKilled&&!g.scene().find(e),"ordered kill");check(g.event(1)->tick==1,"history survives ticks");A::enemy(g,{0,0});g.fixedUpdate();check(g.event(4)->kind==CombatEventKind::PlayerDamaged,"real damage");step(g,35);check(g.eventSequence()==4,"invulnerability no event");
+ GameSession ring(quiet());for(int i=0;i<600;++i){auto id=A::enemy(ring,{80,0});A::shot(ring,{80,0});A::shot(ring,{80,0});ring.fixedUpdate();check(!ring.scene().find(id),"cleanup");}check(ring.eventSequence()==1800&&!ring.event(1)&&ring.event(1289)&&!ring.event(1801),"bounded ring overwrite");
+}catch(const std::exception&e){std::cerr<<e.what();return 1;}}

@@ -5,6 +5,9 @@
 #include "tiny2d_game/SurvivorFlowController.h"
 #include "ui/GameHUD.h"
 #include "ui/DifficultyMenu.h"
+#include "vfx/CombatVFX.h"
+#include "FrameRate.h"
+#include "SurvivorPresentation.h"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -18,9 +21,9 @@ public:
         renderer_.setAsset(0,std::make_shared<Texture2D>(ImageData{1,1,{255,255,255,255}}));
         for(int i=-20;i<=20;++i) {
             auto id=grid_.create();auto& o=*grid_.find(id);
-            o.transform.position={float(i*80),-1600};o.sprite=SpriteData{0,{1,3200},.12f,.17f,.22f,1,-1};
+            o.transform.position={float(i*80),-1600};o.sprite=SpriteData{0,{1,3200},.075f,.10f,.14f,1,-1};
             id=grid_.create();auto& h=*grid_.find(id);
-            h.transform.position={-1600,float(i*80)};h.sprite=SpriteData{0,{3200,1},.12f,.17f,.22f,1,-1};
+            h.transform.position={-1600,float(i*80)};h.sprite=SpriteData{0,{3200,1},.075f,.10f,.14f,1,-1};
         }
     }
 private:
@@ -31,7 +34,7 @@ private:
         menuInput.enter=input().isKeyPressed(257);menuInput.restart=input().isKeyPressed('R');menuInput.focused=input().focused();
         bool restarted=limit_?false:session_.input(menuInput);
         if(session_.phase()==tiny2d_game::SurvivorPhase::DifficultySelection||(!limit_&&!menuInput.focused)){clock_.reset();return;}
-        if(restarted){clock_.reset();offset_={};camera_.setZoom(1);}
+        if(restarted){vfx_.reset();clock_.reset();offset_={};camera_.setZoom(1);}
         tiny2d_game::GameplayInput in;
         if(!limit_) {
             in.moveX=input().isKeyPressed(Key::D)-input().isKeyPressed(Key::A);
@@ -40,37 +43,36 @@ private:
         const auto fb=window().framebufferSize();
         if(!limit_&&(fb.width<=0||fb.height<=0)){clock_.reset();return;}
         unsigned steps=restarted?0:limit_?1:clock_.advance(dt);
-        for(unsigned i=0;i<steps;++i)session_.game().fixedUpdate(in);
+        vfx_.update(limit_?FixedTimestep::step:dt);
+        for(unsigned i=0;i<steps;++i){session_.game().fixedUpdate(in);vfx_.consume(session_.game());}
+        vfx_.consume(session_.game());
         camera_.setZoom(std::clamp(camera_.zoom()*std::exp((input().isKeyPressed(Key::E)-input().isKeyPressed(Key::Q))*dt),.25f,4.f));
         offset_.x+=(input().isKeyPressed(Key::Right)-input().isKeyPressed(Key::Left))*150*dt;
         offset_.y+=(input().isKeyPressed(Key::Down)-input().isKeyPressed(Key::Up))*150*dt;
         auto p=session_.game().scene().find(session_.game().playerId())->transform.position;
-        camera_.setPosition(p.x+12+offset_.x,p.y+12+offset_.y);
+        auto shake=vfx_.shake();
+        camera_.setPosition(p.x+12+offset_.x+shake.x/camera_.zoom(),p.y+12+offset_.y+shake.y/camera_.zoom());
     }
     void render() override {
         window().clear(.025f,.04f,.06f);
         auto fb=window().framebufferSize();auto size=window().size();std::size_t draws=0,uiDraws=0;
+        fps_.sample(std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count(),fb.width>0&&fb.height>0&&input().focused());
+        window().setTitle("Tiny2D Survivor | FPS: "+std::to_string(int(fps_.value())));
         if(fb.width>0&&fb.height>0&&size.width>0&&size.height>0) {
             if(session_.phase()==tiny2d_game::SurvivorPhase::DifficultySelection){
                 menu_.update(session_.difficulty(),size.width,size.height);
                 uiCamera_.setViewportSize(size.width,size.height);uiCamera_.setPosition(size.width/2.f,size.height/2.f);
                 renderer_.render(menu_.scene(),uiCamera_);return;
             }
-            camera_.setViewportSize(size.width,size.height);
-            renderer_.begin(camera_);renderer_.submit(grid_);renderer_.submit(session_.game().scene());renderer_.end();
-            draws=renderer_.stats().drawCalls;
-            hud_.update(session_.game(),size.width,size.height,session_.difficulty());
-            uiCamera_.setViewportSize(size.width,size.height);uiCamera_.setPosition(size.width/2.f,size.height/2.f);
-            renderer_.begin(uiCamera_);renderer_.submit(hud_.scene());renderer_.end();
-            uiDraws=renderer_.stats().drawCalls;
+            auto stats=tiny2d_ui::renderSurvivor(renderer_,grid_,session_.game(),vfx_,hud_,camera_,uiCamera_,size.width,size.height,session_.difficulty());
+            draws=stats.world.drawCalls;uiDraws=stats.ui.drawCalls;
         }
         if(session_.phase()==tiny2d_game::SurvivorPhase::DifficultySelection)return;
+        window().setTitle("Tiny2D Survivor | FPS: "+std::to_string(int(fps_.value()))+
+            " | HP: "+std::to_string(session_.game().playerHealth())+
+            " | Kills: "+std::to_string(session_.game().killCount())+
+            " | VFX: "+std::to_string(vfx_.active())+" | Draws: "+std::to_string(draws+uiDraws));
         ++frames_;
-        double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-start_).count();
-        window().setTitle("Tiny2D Survivor | HP: "+std::to_string(session_.game().playerHealth())+"/"+std::to_string(session_.game().playerMaxHealth())+
-            " | Kills: "+std::to_string(session_.game().killCount())+" | Enemies: "+std::to_string(session_.game().enemyCount())+
-            " | Projectiles: "+std::to_string(session_.game().projectileCount())+" | Draws: "+std::to_string(draws+uiDraws)+
-            " | FPS: "+std::to_string(int(frames_/std::max(.001,seconds))));
         if(limit_&&frames_>=limit_) {
             std::cout<<"Survivor frames="<<frames_<<" difficulty="<<unsigned(session_.difficulty())<<" ticks="<<session_.game().tickCount()<<" health="<<session_.game().playerHealth()
                 <<" kills="<<session_.game().killCount()<<" enemies="<<session_.game().enemyCount()<<" projectiles="<<session_.game().projectileCount()
@@ -89,7 +91,8 @@ private:
     FixedTimestep clock_;
     Vector2 offset_;
     unsigned limit_,frames_=0;
-    std::chrono::steady_clock::time_point start_=std::chrono::steady_clock::now();
+    tiny2d_vfx::CombatVFX vfx_;
+    tiny2d_ui::FrameRate fps_;
 };
 }
 void runSurvivor(unsigned frames,unsigned level){Survivor app(frames,level);app.run();}

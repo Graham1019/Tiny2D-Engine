@@ -117,7 +117,7 @@ void GameSession::fixedUpdate(const GameplayInput& input) {
         if(a->second.kind!=EntityKind::PlayerProjectile||b->second.kind!=EntityKind::Enemy||
            b->second.health<=0||consumed.count(a->first))continue;
         b->second.health=std::max(0,b->second.health-config_.projectileDamage);
-        consumed.insert(a->first);++hits_;
+        consumed.insert(a->first);++hits_;emit(CombatEventKind::ProjectileHit,center(a->first));
     }
     // Projectile kills win over contact damage within the same tick.
     if(playerAlive()&&tick_>=vulnerableAt_)for(auto e:events) {
@@ -125,10 +125,10 @@ void GameSession::fixedUpdate(const GameplayInput& input) {
         if(e.a==player_)other=e.b;else if(e.b==player_)other=e.a;else continue;
         auto i=entities_.find(other);
         if(i!=entities_.end()&&i->second.kind==EntityKind::Enemy&&i->second.health>0) {
-            --entities_.at(player_).health;vulnerableAt_=tick_+combatTicks(config_.invulnerability);break;
+            --entities_.at(player_).health;emit(CombatEventKind::PlayerDamaged,center(player_));vulnerableAt_=tick_+combatTicks(config_.invulnerability);break;
         }
     }
-    for(const auto& [id,s]:entities_)if(s.kind==EntityKind::Enemy&&s.health==0){consumed.insert(id);++kills_;}
+    for(const auto& [id,s]:entities_)if(s.kind==EntityKind::Enemy&&s.health==0){consumed.insert(id);++kills_;emit(CombatEventKind::EnemyKilled,center(id));}
     for(auto id:consumed)erase(id);
     auto& sprite=*scene_.find(player_)->sprite;
     sprite.r=!playerAlive()?.3f:tick_<vulnerableAt_?1.f:.15f;
