@@ -1,0 +1,151 @@
+-- Configuring done (0.1s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-release
+[ 19%] Built target tiny2d_game
+[ 19%] Built target tiny2d_app_resources
+[ 73%] Built target tiny2d_engine
+[ 88%] Built target tiny2d_ui
+[100%] Built target Tiny2DSurvivor
+-- fixup_bundle
+--   app='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app'
+--   libs=''
+--   dirs=''
+--   ignoreItems=''
+-- fixup_bundle: preparing...
+-- fixup_bundle: copying...
+-- 1/8: *NOT* copying '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor'
+-- 2/8: linking '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib' -> '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.dylib'
+-- 3/8: copying '/opt/homebrew/opt/libpng/lib/libpng16.16.dylib'
+-- 4/8: copying '/opt/homebrew/Cellar/glfw/3.5.1/lib/libglfw.3.5.dylib'
+-- fixup_bundle: fixing...
+-- 5/8: fixing up '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor'
+-- 6/8: fixing up '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.dylib'
+-- 7/8: fixing up '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib'
+/Library/Developer/CommandLineTools/usr/bin/install_name_tool: warning: changes being made to the file will invalidate the code signature in: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+-- 8/8: fixing up '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib'
+/Library/Developer/CommandLineTools/usr/bin/install_name_tool: warning: changes being made to the file will invalidate the code signature in: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+-- fixup_bundle: cleaning up...
+-- fixup_bundle: verifying...
+-- ===========================================================================
+-- Analyzing app='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app'
+-- bundle='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app'
+-- executable='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor'
+-- valid='1'
+-- executable file 1: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor
+-- verified='1'
+-- info='Verified 1 executable files in '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app''
+-- 
+-- verified='1'
+-- info=''
+-- 
+-- fixup_bundle: done
+-- ===========================================================================
+-- Analyzing app='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app'
+-- bundle='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app'
+-- executable='/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor'
+-- valid='1'
+-- executable file 1: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor
+-- verified='1'
+-- info='Verified 1 executable files in '/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app''
+-- 
+-- verified='1'
+-- info=''
+-- 
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib: replacing existing signature
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib: replacing existing signature
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app: replacing existing signature
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor:
+	@executable_path/../Frameworks/libglfw.3.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL (compatibility version 1.0.0, current version 1.0.0)
+	@executable_path/../Frameworks/libpng16.16.dylib (compatibility version 76.0.0, current version 76.0.0)
+	/usr/lib/libz.1.dylib (compatibility version 1.0.0, current version 1.2.12)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib:
+	@executable_path/../Frameworks/libpng16.16.dylib (compatibility version 76.0.0, current version 76.0.0)
+	/usr/lib/libz.1.dylib (compatibility version 1.0.0, current version 1.2.12)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.dylib:
+	@executable_path/../Frameworks/libglfw.3.5.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa (compatibility version 1.0.0, current version 24.0.0)
+	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5026.5.4)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 2685.60.104)
+	/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics (compatibility version 64.0.0, current version 1965.5.1)
+	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1226.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib:
+	@executable_path/../Frameworks/libglfw.3.5.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa (compatibility version 1.0.0, current version 24.0.0)
+	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5026.5.4)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 2685.60.104)
+	/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics (compatibility version 64.0.0, current version 1965.5.1)
+	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1226.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+
+Bundle structure, assets, architecture, deployment and dependency closure PASS
+--prepared:/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app: valid on disk
+/Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9/Tiny2D Survivor.app: satisfies its Designated Requirement
+Tiny2D-Survivor-v0.5.0-rc1-macos-arm64.zip: OK
+/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor:
+	@executable_path/../Frameworks/libglfw.3.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL (compatibility version 1.0.0, current version 1.0.0)
+	@executable_path/../Frameworks/libpng16.16.dylib (compatibility version 76.0.0, current version 76.0.0)
+	/usr/lib/libz.1.dylib (compatibility version 1.0.0, current version 1.2.12)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib:
+	@executable_path/../Frameworks/libpng16.16.dylib (compatibility version 76.0.0, current version 76.0.0)
+	/usr/lib/libz.1.dylib (compatibility version 1.0.0, current version 1.2.12)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.dylib:
+	@executable_path/../Frameworks/libglfw.3.5.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa (compatibility version 1.0.0, current version 24.0.0)
+	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5026.5.4)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 2685.60.104)
+	/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics (compatibility version 64.0.0, current version 1965.5.1)
+	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1226.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+
+/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib:
+	@executable_path/../Frameworks/libglfw.3.5.dylib (compatibility version 3.0.0, current version 3.5.0)
+	/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa (compatibility version 1.0.0, current version 24.0.0)
+	/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+	/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore (compatibility version 1.2.0, current version 1195.14.4)
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 5026.5.4)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 2685.60.104)
+	/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics (compatibility version 64.0.0, current version 1965.5.1)
+	/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices (compatibility version 1.0.0, current version 1226.0.0)
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
+	/usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+
+Bundle structure, assets, architecture, deployment and dependency closure PASS
+--prepared:/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T//tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app: valid on disk
+/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T//tiny2d-release-validation.dKWbzV/Tiny2D Survivor.app: satisfies its Designated Requirement
+Candidate: /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-dist/candidate-dOgOD9
+Independent extraction: /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T//tiny2d-release-validation.dKWbzV

@@ -1,198 +1,138 @@
 # Tiny2D Engine
 
-## Project Overview
+**C++17 · macOS OpenGL · Batched 2D rendering · Playable arena survival**
 
-Tiny2D is a C++17 learning engine for macOS OpenGL. M0–M6.2 include window/input, batched sprites, Scene/collision, fixed-step combat,
-and a playable 90-second survivor game with HUD, victory/defeat and restart.
-The project version remains 0.4.0; no release is published.
+Tiny2D is a lightweight C++17 2D engine built with OpenGL on macOS. It combines
+RAII GPU ownership, fixed-step simulation, collision detection and a playable
+90-second arena-survival game with five difficulty levels.
+
+![Actual Survivor difficulty menu](docs/media/menu.png)
+
+[Play / RC notes](docs/releases/v0.5.0-rc1.md) · [Architecture](docs/project-architecture-overview.md) ·
+[Performance evidence](docs/performance-m41.md) · [Interview walkthrough](docs/interview-walkthrough.md)
+
+## Overview
+
+An engineering portfolio focused on explicit ownership, testable gameplay and
+measured rendering behavior. The standalone **Tiny2D Survivor** opens directly to
+the difficulty menu; the developer Sandbox retains its original demos and CLI.
+Version **0.5.0 / rc1** is a local release candidate, not a published GitHub Release.
 
 ## Features
 
-- GLFW Window, Input and Application loop with deltaTime and framebuffer resize support.
-- Move-only GPU ownership, shader compile/link diagnostics, external triangle shaders, VBO/VAO.
-- libpng RGBA8 decoding, Texture2D, Mat4, orthographic Camera2D and alpha-blended SpriteRenderer.
-- BatchRenderer with dynamic VBO, fixed EBO, up to eight texture slots, automatic flush and RenderStats.
-- GLSL 330 constant-index sampling, transparent submission order, CPU/GPU benchmark and regression tests.
-- M4.1 context validation, safe batch move assignment and full-frame cross-slot pixel comparisons.
+- C++17 and RAII; move-only GPU objects with owning-context checks.
+- OpenGL 3.3 Core request, orthographic cameras, alpha blending and PNG textures.
+- Dynamic VBO / static EBO batching, up to eight texture slots and automatic flush.
+- Scene identity and ObjectId generations reject stale or foreign handles.
+- 60 Hz fixed ticks, AABB/circle collisions and ordered combat resolution.
+- CPU-only GameSession, five difficulty configurations and 90-second survival.
+- Event-driven bounded VFX, independent HUD camera, Victory/GameOver and restart.
+- Exception-safe render passes and CPU / real-context GPU regression tests.
+
+## Play the Game
+
+The RC ZIP is prepared locally; **no download asset has been published yet**.
+After owner review, extract the ZIP and double-click `Tiny2D Survivor.app` in Finder.
+This candidate is **arm64 only**, deployment target macOS **26.0**, tested on **26.5.1**.
+Ad-hoc signing is for local integrity checks; it is not Developer ID signing or Apple notarization.
+External downloads may be blocked by Gatekeeper. See [release notes](docs/releases/v0.5.0-rc1.md).
+
+| Input | Action |
+|---|---|
+| 1–5, Enter | Select difficulty, start |
+| WASD | Move; combat fires automatically |
+| Arrow keys; Q/E | Camera offset; zoom |
+| R (press/release) | Restart the applied difficulty after an outcome |
+| Escape | Exit |
+
+![Actual Lv.3 gameplay](docs/media/gameplay-lv3.png)
+
+## Build from Source
+
+Install Xcode Command Line Tools, CMake, GLFW and libpng (`brew install cmake glfw libpng`).
+The build uses local dependencies and performs no implicit source downloads.
+
+```bash
+cmake -S . -B build/m63c-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m63c-release --parallel
+ctest --test-dir build/m63c-release --output-on-failure
+cmake --build build/m63c-release --target package_macos
+```
+
+The packaging target builds `Tiny2DSurvivor`, stages a fresh named App, recursively
+embeds third-party libraries, signs inside-out, verifies, archives with `ditto`,
+checks SHA-256 and verifies an independent extraction. Each invocation preserves
+previous candidates under `build/m63c-dist/candidate-*`.
+[Bundle design and exact commands](docs/release-architecture.md).
+
+The developer executable remains `build/m63c-release/tiny2d_sandbox`:
+
+```bash
+./build/m63c-release/tiny2d_sandbox --scene survivor-demo --difficulty 3 --frames 600
+./build/m63c-release/tiny2d_sandbox --scene sprites --renderer batch --sprite-count 500 --frames 4
+```
+
+No arguments still select the original immediate sprite demo.
 
 ## Architecture
 
-Application owns Window and Input. Sandbox GPU members are destroyed before the
-base Application's window/context. ImageLoader produces CPU pixels; Texture2D
-owns uploaded GPU storage. Camera2D supplies the view-projection matrix to either
-SpriteRenderer or BatchRenderer. BatchRenderer preserves submission order and
-restores its documented GL state at endFrame.
-
-See the [batch state and lifetime contract](docs/batch-rendering-design.md).
-
-## Requirements
-
-macOS (validated on Apple Silicon), AppleClang, C++17, CMake 3.20+, GLFW 3.3+,
-system OpenGL with a 3.3 Core context, and libpng. Real GPU tests require a graphical
-login. Dependencies must be installed locally; configuration does not fetch them.
-
-```sh
-brew install glfw libpng
-```
-
-## Build Instructions
-
-```sh
-cmake -S . -B build/m62-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m62-debug --parallel
-cmake -S . -B build/m62-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m62-release --parallel
-```
-
-If discovery fails, add `-DCMAKE_PREFIX_PATH="$(brew --prefix)"` to configuration.
-Builds generate the static engine library, Sandbox, Benchmark and test executables.
-Assets are copied beside Sandbox on each build and resolve independently of the working directory.
-
-## Run Instructions
-
-```sh
-./build/m62-release/tiny2d_sandbox --scene triangle --frames 30
-./build/m62-release/tiny2d_sandbox --renderer immediate --scene sprites --sprite-count 500 --frames 30
-./build/m62-release/tiny2d_sandbox --renderer batch --scene sprites --sprite-count 500 --frames 30
-./build/m62-release/tiny2d_sandbox --renderer batch --scene multitexture --sprite-count 5000 --frames 30
-```
-
-Omit `--frames` for interaction. Arrow keys pan, Q/E zoom, WASD change background,
-Escape exits. Default renderer is immediate; sprite count accepts 0–100000.
-Interactive VSync is enabled; Benchmark disables it.
-
-## Test Instructions
-
-```sh
-ctest --test-dir build/m62-debug -N
-ctest --test-dir build/m62-debug --output-on-failure
-ctest --test-dir build/m62-release -N
-ctest --test-dir build/m62-release --output-on-failure
-```
-
-Historical integration validation on 2026-11-01 passed 10/10 in both configurations, including
-seven real OpenGL tests. Restricted process execution could not complete GPU tests;
-rerunning in the logged-in desktop environment passed. For CPU/fake-driver checks
-only, configure a separate build with `-DTINY2D_OPENGL_TESTS=OFF`; that does not
-validate actual rendering. See [integration evidence and manual-test gaps](docs/integration-m1-m4.md).
+CPU gameplay owns rules and collision; presentation consumes copied combat events.
+The Survivor adapter coordinates simulation and separate world/UI passes. See
+[architecture diagram and ownership](docs/project-architecture-overview.md).
 
 ## Performance
 
-500 identical-texture sprites produce 500 Immediate draws versus 1 Batch draw
-(99.8% fewer calls). Historical M4.1 CPU submission p50 is 489.92 µs versus
-90.67 µs (about 5.40×); that ratio is not an FPS improvement. GPU timings and
-pixel workloads vary, and some workloads regress.
+| Measured fixture | Result | Evidence |
+|---|---|---|
+| 500 sprites, immediate vs batch | 500 → 1 draw calls (99.8% fewer) | [M4.1](docs/performance-m41.md) |
+| M4.1 500-sprite CPU workload | CPU submission p50 489.92 → 90.67 µs (~5.40× ratio) | [M4.1 methodology](docs/performance-m41.md) |
+| Historical M6.3b, 48 enemies + 64 projectiles | Fixed update p95 24.625 µs; CPU frame p95 103.291 µs | [raw summary](docs/data/m63b/summary.md) |
 
-- [M4 performance](docs/performance-m4.md) and [M4.1 performance](docs/performance-m41.md)
-- [Integration reproduction](docs/integration-m1-m4.md) and [new raw data](docs/data/integration-m1-m4/)
+These are fixture-specific measurements, not a 5.4× game-FPS claim. CPU frame
+excludes swap/poll and explicit `glFinish`; completion wait is not pure GPU time.
+[M6.3b methodology](docs/performance-m63b.md) and [M6.3b.1 follow-up](docs/m63b1-review-fixes.md)
+retain regressions and tail-latency limitations. No new performance claim is made for packaging.
 
-Run Benchmark in a **new empty directory**: it writes `m4-frames.csv` and
-`m4-gpu-frames.csv` in the working directory. Never overwrite historical data.
+## Testing
 
-```sh
-mkdir -p build/benchmark-new-run
-(cd build/benchmark-new-run && ../m62-release/tiny2d_benchmark > trials.csv 2> environment.txt)
-python3 scripts/summarize_m4.py build/benchmark-new-run/trials.csv
-```
-
-Default measurement uses 30 warmup frames, 120 samples, five repeats, two workloads
-and 100/500/1000/5000 sprites. CPU submission and asynchronous GPU timer intervals
-are reported separately.
+M6.3c: Debug **40/40**, Release **40/40**, Headless **23/23**.
+[Logs, packaging checks and manual acceptance](docs/milestone-06-3c.md).
+Use the same configure/build/ctest sequence with `build/m63c-debug` and `Debug`;
+for headless use `build/m63c-headless`, `Release`, `-DTINY2D_OPENGL_TESTS=OFF`.
+Headless still requires platform build dependencies; CPU GameSession tests create no GL context.
+No hosted CI execution is claimed.
 
 ## Project Structure
 
-| Path | Purpose |
+| Directory | Role |
 |---|---|
-| engine/include, engine/src | Engine API and implementation |
-| sandbox/src, sandbox/assets | Scenes, Benchmark, shaders and original textures |
-| tests | CPU, injected-failure and real-driver regression tests |
-| scripts | Benchmark aggregation |
-| docs | Milestones, design, review notes and immutable historical measurements |
+| `engine/` | Math, Scene, collision, platform and rendering |
+| `game/` | CPU gameplay, difficulty and flow |
+| `sandbox/` | Developer scenes, standalone entry, HUD/VFX, assets |
+| `tests/` | CPU/GPU regressions and profiling fixtures |
+| `scripts/`, `cmake/` | Packaging, verification and bundle metadata |
+| `docs/` | Design, measured evidence, release and portfolio material |
 
-Milestones: [M1](docs/milestone-01.md), [M2](docs/milestone-02.md),
-[M3](docs/milestone-03.md), [M4](docs/milestone-04.md),
-[M4.1 review fixes](docs/m4-review-notes.md). Historical documents describe their
-stage; current batch behavior is specified in the batch design document.
+## Milestones
 
-## Roadmap
-
-M0–M6.2 are implemented. M6.3 will consider visual polish, measured performance
-optimization, extended playtesting and release packaging.
+[M0–M6.3b historical README](docs/development-history.md) preserves the earlier narrative.
+[M6.3a](docs/milestone-06-3a.md) adds difficulty; [M6.3b](docs/milestone-06-3b.md)
+adds presentation; [M6.3b.1](docs/m63b1-review-fixes.md) fixes priority/recovery;
+[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. M7 is not started.
 
 ## Known Limitations
 
-macOS-only build; no cross-platform or cross-driver support claim. OpenGL is Apple's
-system API and no alternative graphics backend is implemented. GPU work and destruction
-require the owning live context on the main thread; destruction misuse terminates.
-Queued textures must survive until flush. No sRGB pipeline or multithreaded OpenGL is provided. Manual input/window interaction,
-cross-display Retina transitions and long-duration GPU memory profiling remain pending.
-No GitHub CI workflow is currently configured; validation here is local.
+macOS only; no Intel/Universal validation or alternative rendering backend. Apple
+OpenGL is deprecated. Main-thread, current-context GPU lifetime is required; no
+multithreaded rendering, sRGB pipeline or full-process leak certification. Cross-system,
+Finder quarantine, resize/minimize, multi-display Retina and extended human playtesting
+remain acceptance work. [Media capture status](docs/media/README.md).
 
-Original texture copyright/CC0 notices are preserved in
-[LICENSE.txt](sandbox/assets/textures/LICENSE.txt) and
-[M4-LICENSE.txt](sandbox/assets/textures/M4-LICENSE.txt). libpng attribution is in
-[M3 documentation](docs/milestone-03.md). No repository-wide LICENSE file exists;
-this integration does not assign a new license to the engine code.
+## Credits & Licenses
 
-## M5 Development: Scene / Collision / Arena
-
-M5 adds CPU-only generation handles, deterministic Scene iteration, closed-set
-AABB/Circle collision events, and a bounded 60 Hz accumulator. SceneRenderer
-bridges numeric sprite asset keys to shared textures and retains ownership until
-BatchRenderer finishes its pass. Existing M0–M4.1 scenes remain available.
-
-```sh
-cmake -S . -B build/m5-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m5-debug --parallel
-ctest --test-dir build/m5-debug --output-on-failure
-./build/m5-debug/tiny2d_sandbox --scene arena-demo --frames 120
-./build/m5-debug/tiny2d_sandbox --scene arena-demo
-```
-
-WASD moves the player, arrows offset the follow camera, Q/E zoom, Escape exits.
-Arena always uses batching; renderer/sprite-count options retain their existing
-meaning for the old sprite demos. Finite Arena runs advance one fixed tick per
-render frame for reproducible lifecycle smoke coverage. Interactive runs use real
-time. This is a prototype, not a complete Arena Survivor game.
-
-See [M5 acceptance and limitations](docs/milestone-05.md),
-[scene ownership](docs/scene-architecture.md), [collision](docs/collision-design.md),
-[fixed timestep](docs/fixed-timestep.md), and [review notes](docs/m5-review-notes.md).
-
-M5.1 review fixes add enforced Scene identity, full-scene render preflight,
-pending-command cancellation and per-texture frame ownership. Predictable Scene
-input failures draw nothing; cancel cannot undo completed GPU draws. See
-[M5.1 contracts, tests and performance](docs/m51-review-fixes.md).
-
-### M6.2 Arena Survivor
-
-```bash
-./build/m62-release/tiny2d_sandbox --scene survivor-demo
-./build/m62-release/tiny2d_sandbox --scene survivor-demo --frames 600
-```
-
-WASD moves, arrows offset camera, Q/E zoom, Escape exits. Survive 5400 fixed ticks
-(90 simulation seconds) to win. HP zero ends the game; death wins same-tick ties.
-World simulation freezes at either outcome, while the HUD and result panel remain
-visible. Press and release R to restart. HP/bar, countdown and kills are rendered
-inside the window. Finite runs keep rendering to their limit after death.
-
-See [M6.2 validation](docs/milestone-06-2.md), [game loop](docs/game-loop-design.md),
-[HUD](docs/hud-rendering.md), and historical [M6.1](docs/milestone-06-1.md).
-
-## M6.3a difficulty and menu
-
-Survivor now opens a CPU-only difficulty-selection flow (default Lv.3); 1–5 selects,
-Enter starts, and terminal R restarts the applied level. Direct GameSession defaults
-remain Lv.1/M6.2. HUD shows the applied level at lower left using the existing UI pass.
-Finite --frames runs auto-start; --difficulty accepts 1..5.
-See [M6.3a validation and commands](docs/milestone-06-3a.md), [difficulty design](docs/difficulty-design.md)
-and [menu lifecycle](docs/menu-flow-design.md).
-
-## M6.3b combat presentation
-
-Bounded combat events feed CPU-only hit/death sparks, trails, center marks and damage
-feedback. World camera shake leaves UI independent. Difficulty rules are unchanged.
-FPS uses a recent one-second window, including menu rendering.
-See [milestone](docs/milestone-06-3b.md), [feedback](docs/combat-feedback-design.md),
-[lifecycle](docs/vfx-lifecycle.md) and [performance](docs/performance-m63b.md).
+**No repository-wide source license has been selected.** The owner must decide
+before formal release; this work does not assign MIT, Apache or GPL to Tiny2D.
+GLFW (zlib/libpng license) and libpng (PNG Reference Library License version 2)
+notices are preserved in [third-party credits](docs/third-party/README.md) and the App.
+Original procedural texture CC0 notices remain in [assets](sandbox/assets/textures/LICENSE.txt)
+and [M4 assets](sandbox/assets/textures/M4-LICENSE.txt).

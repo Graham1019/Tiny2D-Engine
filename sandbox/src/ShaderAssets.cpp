@@ -15,8 +15,14 @@ std::filesystem::path assetPath(const char* relative) {
     if (_NSGetExecutablePath(executable.data(), &size) != 0) {
         throw std::runtime_error("Cannot resolve executable path for shader assets");
     }
-    return std::filesystem::canonical(executable.data()).parent_path() /
-                      "assets" / relative;
+    const auto directory = std::filesystem::canonical(executable.data()).parent_path();
+    const bool bundle = directory.filename() == "MacOS" &&
+                        directory.parent_path().filename() == "Contents";
+    const auto root = bundle ? directory.parent_path() / "Resources/assets" : directory / "assets";
+    const auto result = root / relative;
+    if (!std::filesystem::is_regular_file(result))
+        throw std::runtime_error("Missing Tiny2D asset: " + result.string());
+    return result;
 }
 
 std::string readShaderAsset(const char* filename) {

@@ -1,0 +1,4 @@
+Tiny2D Survivor: Missing Tiny2D asset: /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d missing assets.Q4H9wQ/Test App.app/Contents/Resources/assets/textures/sprite.png
+Tiny2D Survivor: Missing Tiny2D asset: /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d missing assets.Q4H9wQ/Test App.app/Contents/Resources/assets/textures/sprite.png
+Tiny2D Survivor: Missing Tiny2D asset: /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d missing assets.Q4H9wQ/Test App.app/Contents/Resources/assets/textures/sprite.png
+Missing-asset diagnostic through symlink, spaces and unrelated cwd PASS (/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T//tiny2d missing assets.Q4H9wQ)

@@ -1,7 +1,9 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(Tiny2D VERSION 0.4.0 LANGUAGES CXX)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "26.0" CACHE STRING "Minimum macOS deployment target")
+
+project(Tiny2D VERSION 0.5.0 LANGUAGES CXX)
 
 if(NOT APPLE)
     message(FATAL_ERROR "M2 renderer currently supports macOS system OpenGL only.")
@@ -292,3 +294,25 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     target_compile_definitions(tiny2d_m63b1_benchmark PRIVATE M63B M63B1)
     target_link_libraries(tiny2d_m63b1_benchmark PRIVATE tiny2d_ui tiny2d_engine glfw OpenGL::GL)
 endif()
+
+# Dedicated distribution entry; shared Survivor implementation, unchanged sandbox CLI.
+add_executable(Tiny2DSurvivor MACOSX_BUNDLE
+    sandbox/src/SurvivorMain.cpp sandbox/src/SurvivorDemo.cpp sandbox/src/ShaderAssets.cpp)
+target_link_libraries(Tiny2DSurvivor PRIVATE tiny2d_engine tiny2d_ui)
+set_target_properties(Tiny2DSurvivor PROPERTIES
+    CXX_EXTENSIONS OFF
+    MACOSX_BUNDLE_BUNDLE_NAME "Tiny2D Survivor"
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Info.plist.in")
+# Output name must remain the executable name; bundle is renamed in distribution staging.
+add_custom_target(tiny2d_app_resources ALL
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/assets"
+    COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/licenses"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/sandbox/assets"
+        "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/docs/third-party"
+        "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/licenses"
+    VERBATIM)
+add_dependencies(Tiny2DSurvivor tiny2d_app_resources)
+add_custom_target(package_macos
+    COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
+    DEPENDS Tiny2DSurvivor VERBATIM)

@@ -1,0 +1,30 @@
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.5.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+build/m63c-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor: Mach-O 64-bit executable arm64
+Non-fat file: build/m63c-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor is architecture: arm64
+CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+OpenGL: 4.1 Metal - 90.5 | Apple M5 Pro
+Expected: broken.vert: compilation failed
+ERROR: 0:2: 'this' : Reserved word. 
+ERROR: 0:2: 'this' : syntax error: syntax error
+
+Expected: broken.frag: compilation failed
+ERROR: 0:2: 'invalid' : syntax error: syntax error
+
+Expected: Program link failed [vertex shader + fragment shader]
+ERROR: Input of fragment shader 'vColor' differs in type/qualifiers to that written by vertex shader
+ERROR: Input of fragment shader 'vColor' not written by vertex shader
+
+Expected: ShaderProgram::bind: moved-from object or wrong current context
+Expected: ShaderProgram::bind: requires the main thread and a current OpenGL context
+Expected: inactive or missing uniform: missing
+Expected: VertexArray::drawTriangles exceeds uploaded vertex data
+Expected: VertexArray: invalid or duplicate float attribute
+Expected: render exception propagated
+Real shader diagnostics, RGB pixel readback, resize, moves, destruction and exception unwinding passed
