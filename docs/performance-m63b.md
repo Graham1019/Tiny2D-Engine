@@ -54,3 +54,11 @@ menu, playing and terminal frames. First sample displays zero until a full windo
 non-drawable/unfocused samples, clock regression, and gaps over one second reset it.
 Restart does not include menu uptime in a lifetime denominator. Short windows preserve
 the last completed value. CPU tests inject exact times, pauses and 60/120 Hz streams.
+
+## M6.3b.1 review update
+
+Death > Hit > Trail now protects active hit/death feedback from trail saturation.
+CPU VFX/HUD preparation precedes both guarded World/UI passes. See
+[review fixes](m63b1-review-fixes.md) for deterministic eviction/drop semantics,
+exception/Context contracts, new tests and latest measurements. The M6.3b results
+above remain historical; new data lives in data/m63b1 without overwriting them.

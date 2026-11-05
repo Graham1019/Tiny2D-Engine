@@ -1,6 +1,6 @@
 # Bounded VFX lifecycle
 
-128 effect slots, overwritten in deterministic circular insertion order. Each slot
+128 effect slots, protected by Death > Hit > Trail priority (M6.3b.1). Each slot
 has at most four Sprite slots; trails use two. Another 49 slots cover player/enemy
 center marks for the production 48-enemy cap. Total world slots: 561. UI owns four
 edge slots. Empty/expired slots remain allocated but disabled: this is fixed capacity
@@ -14,11 +14,14 @@ not claim a globally allocation-free render path. The event ring itself never al
 GPU objects are never constructed by CombatVFX; shared white texture, shader and buffers
 remain owned by the existing renderer and are destroyed before Application's Window.
 
-At most 128 visual instances survive bursts; excess insertions overwrite circular
-slots. Effects and overwritten event history both contribute to dropped(). Rendering
-uses fixed slot order within each render order, ensuring deterministic transparency;
-it does not promise chronological alpha order after ring wrap. Hits may be replaced
-under extreme visual load, with no effect on gameplay or scoring.
+The original M6.3b circular writer is superseded: use the first free slot, otherwise
+lowest eligible priority then oldest creation sequence (index breaks ties). Incoming
+lower-priority instances are rejected when only higher-priority effects remain.
+Dropped counts one rejected or evicted effect, plus exact lost combat history; expired
+reuse costs zero. Reset clears sequence and counters. Trail/Hit/Death draw in that
+order; within a type, slot order remains stable. Same-type overload may evict old
+instances. No allocation or gameplay change is introduced. See
+[review fixes](m63b1-review-fixes.md) for tests and Context recovery boundaries.
 
 Validation includes 30,000 paired gameplay opportunities with/without presentation,
 30,000 high-density generation/expiry updates, 120 terminal/restart loops, ring wrap,

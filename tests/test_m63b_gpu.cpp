@@ -14,6 +14,17 @@ int main(){try{Window w(320,240,"M63b pixels");Camera2D cam(320,240),ui(320,240)
  auto contact=A::enemy(g,{0,0});g.fixedUpdate();v.consume(g);draw();check(pixel(1,100)[0]>100,"damage edge");auto hp=pixel(12,20);cam.move(3,2);cam.setZoom(2);draw();check(pixel(12,20)==hp,"HUD shake independent");
  A::erase(g,contact);
  for(int i=0;i<10001;++i){if(g.isPlaying()&&i%20==0){A::enemy(g,{60,0});A::shot(g,{60,0});A::shot(g,{60,0});}g.fixedUpdate();v.update(1./60);v.consume(g);draw();check(tex->nativeHandle()==handle&&glIsTexture(handle),"texture retained soak");}
+ // Real hit/death pixels survive continuous 64-projectile trail saturation.
+ for(bool kill:{false,true}){GameSession dense(quiet());tiny2d_vfx::CombatVFX fx;
+ for(int j=0;j<64;++j)A::shot(dense,{-1000,float(j*20)},1000);
+ for(int j=0;j<3;++j){dense.fixedUpdate();fx.consume(dense);}
+ auto victim=A::enemy(dense,{60,0});A::shot(dense,{60,0});if(kill)A::shot(dense,{60,0});dense.fixedUpdate();fx.consume(dense);if(!kill)A::erase(dense,victim);
+ Camera2D fixed(320,240);
+ auto effectDraw=[&]{fx.present(dense,320,240);w.clear(0,0,0);r.render(fx.scene(),fixed);};
+ effectDraw();check(pixel(220,120)[0]>240,"initial priority pixel");
+ for(int j=0;j<6;++j){fx.update(.01);dense.fixedUpdate();fx.consume(dense);}
+ effectDraw();auto protectedPixel=pixel(kill?225:223,120);check(protectedPixel[0]>100&&(kill?protectedPixel[1]<100:protectedPixel[1]>100),"priority pixels after repeated trails");
+ fx.update(.31);effectDraw();check(pixel(kill?225:223,120)[0]==0,"priority pixel expires");}
  v.reset();draw();check(pixel(1,100)[0]==0,"reset edge");glfwSetWindowSize(glfwGetCurrentContext(),800,600);w.pollEvents();auto fb=w.framebufferSize();glViewport(0,0,fb.width,fb.height);ui.setViewportSize(800,600);ui.setPosition(400,300);draw();check(pixel(24,40)[1]>180,"resize health");
  r.begin(ui);r.submit(v.overlay());Scene invalid;invalid.find(invalid.create())->sprite=SpriteData{99,{1,1}};rejects([&]{r.submit(invalid);});r.cancel();
  {struct Restore{Window&w;~Restore(){w.makeContextCurrent();}} restore{w};Window wrong(32,32,"wrong");rejects([&]{r.render(v.scene(),cam);});}

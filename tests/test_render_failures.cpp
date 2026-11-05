@@ -3,6 +3,7 @@
 #include "tiny2d/ShaderProgram.h"
 #include "tiny2d/BatchRenderer.h"
 #include "tiny2d/SceneRenderer.h"
+#include "../sandbox/src/RenderPass.h"
 #include "tiny2d/Texture2D.h"
 #include "tiny2d/VertexArray.h"
 #include "tiny2d/VertexBuffer.h"
@@ -152,6 +153,17 @@ int main() {
             fault=Fault::None;require(caught&&actualDraws==before,"cancel submitted after failed automatic flush");
             renderer.removeAsset(0);texture.reset();require(weak.expired(),"failed submit retained owners");
             renderer.begin(camera);renderer.end();
+        }
+
+        {
+            tiny2d::Scene scene;tiny2d::SceneRenderer renderer;tiny2d::Camera2D camera(100,100);
+            renderer.setAsset(0,std::make_shared<tiny2d::Texture2D>(tiny2d::ImageData{1,1,{255,255,255,255}}));
+            scene.find(scene.create())->sprite=tiny2d::SpriteData{};
+            bool caught=false;
+            try { tiny2d_ui::RenderPass pass(renderer,camera);renderer.submit(scene);fault=Fault::Upload;pass.end(); }
+            catch(const std::runtime_error& e){caught=std::string(e.what()).find("batch upload")!=std::string::npos;}
+            fault=Fault::None;require(caught&&!renderer.passActive(),"guard end runtime recovery failed");
+            tiny2d_ui::RenderPass pass(renderer,camera);pass.end();require(renderer.stats().drawCalls==0,"guard retained failed end queue");
         }
 
         for (auto failure : {Fault::Program, Fault::VertexShader, Fault::FragmentShader, Fault::Compile, Fault::Link}) {

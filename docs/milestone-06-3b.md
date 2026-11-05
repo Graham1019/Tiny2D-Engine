@@ -86,3 +86,11 @@ VFX rings can drop old visual events under overload; gameplay is unaffected. No 
 art assets, audio, buffs, maps, upgrade tree, general particle engine or release packaging.
 Next suggestion: M6.3c Release & Portfolio Packaging after review and manual acceptance;
 not started. Do not merge this PR automatically.
+
+## M6.3b.1 review update
+
+Death > Hit > Trail now protects active hit/death feedback from trail saturation.
+CPU VFX/HUD preparation precedes both guarded World/UI passes. See
+[review fixes](m63b1-review-fixes.md) for deterministic eviction/drop semantics,
+exception/Context contracts, new tests and latest measurements. The M6.3b results
+above remain historical; new data lives in data/m63b1 without overwriting them.

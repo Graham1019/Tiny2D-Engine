@@ -7,6 +7,7 @@
 #include "ui/DifficultyMenu.h"
 #include "vfx/CombatVFX.h"
 #include "FrameRate.h"
+#include "SurvivorPresentation.h"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
@@ -63,16 +64,14 @@ private:
                 uiCamera_.setViewportSize(size.width,size.height);uiCamera_.setPosition(size.width/2.f,size.height/2.f);
                 renderer_.render(menu_.scene(),uiCamera_);return;
             }
-            camera_.setViewportSize(size.width,size.height);
-            renderer_.begin(camera_);renderer_.submit(grid_);renderer_.submit(session_.game().scene());
-            vfx_.present(session_.game(),size.width,size.height);renderer_.submit(vfx_.scene());renderer_.end();
-            draws=renderer_.stats().drawCalls;
-            hud_.update(session_.game(),size.width,size.height,session_.difficulty());
-            uiCamera_.setViewportSize(size.width,size.height);uiCamera_.setPosition(size.width/2.f,size.height/2.f);
-            renderer_.begin(uiCamera_);renderer_.submit(hud_.scene());renderer_.submit(vfx_.overlay());renderer_.end();
-            uiDraws=renderer_.stats().drawCalls;
+            auto stats=tiny2d_ui::renderSurvivor(renderer_,grid_,session_.game(),vfx_,hud_,camera_,uiCamera_,size.width,size.height,session_.difficulty());
+            draws=stats.world.drawCalls;uiDraws=stats.ui.drawCalls;
         }
         if(session_.phase()==tiny2d_game::SurvivorPhase::DifficultySelection)return;
+        window().setTitle("Tiny2D Survivor | FPS: "+std::to_string(int(fps_.value()))+
+            " | HP: "+std::to_string(session_.game().playerHealth())+
+            " | Kills: "+std::to_string(session_.game().killCount())+
+            " | VFX: "+std::to_string(vfx_.active())+" | Draws: "+std::to_string(draws+uiDraws));
         ++frames_;
         if(limit_&&frames_>=limit_) {
             std::cout<<"Survivor frames="<<frames_<<" difficulty="<<unsigned(session_.difficulty())<<" ticks="<<session_.game().tickCount()<<" health="<<session_.game().playerHealth()

@@ -44,3 +44,11 @@ Markers render before effect sparks (a pixel regression caught the inverse order
 Grid contrast is reduced. Victory/GameOver panels have green/red accent rules; existing
 text and restart semantics are unchanged. Red screen edges submit after HUD in its
 existing UI pass. World submits grid, gameplay, then VFX in one pass; no new renderer.
+
+## M6.3b.1 review update
+
+Death > Hit > Trail now protects active hit/death feedback from trail saturation.
+CPU VFX/HUD preparation precedes both guarded World/UI passes. See
+[review fixes](m63b1-review-fixes.md) for deterministic eviction/drop semantics,
+exception/Context contracts, new tests and latest measurements. The M6.3b results
+above remain historical; new data lives in data/m63b1 without overwriting them.
