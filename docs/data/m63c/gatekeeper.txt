@@ -1,0 +1,2 @@
+build/m63c-dist/candidate-S0BApO/Tiny2D Survivor.app: accepted
+override=security disabled

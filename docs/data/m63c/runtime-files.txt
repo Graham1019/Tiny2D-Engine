@@ -1,0 +1,48 @@
+Tiny2DSur 1042 grahm  cwd    DIR               1,16       128             5594525 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.VuH90S/Tiny2D Survivor.app/Contents/Resources
+Tiny2DSur 1042 grahm  txt    REG               1,16    223232             5594521 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.VuH90S/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor
+Tiny2DSur 1042 grahm  txt    REG               1,16     72984              318148 /Library/Preferences/Logging/.plist-cache.tdGU1LhN
+Tiny2DSur 1042 grahm  txt    REG               1,16    263520             5594568 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.VuH90S/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+Tiny2DSur 1042 grahm  txt    REG               1,16    208272             5594563 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-release-validation.VuH90S/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+Tiny2DSur 1042 grahm  txt    REG               1,16       110 1152921500312103377 /System/Library/CoreServices/SystemVersion.bundle/English.lproj/SystemVersion.strings
+Tiny2DSur 1042 grahm  txt    REG               1,16    161761             5512683 /private/var/db/analyticsd/events.allowlist
+Tiny2DSur 1042 grahm  txt    REG               1,16    137016 1152921500312103066 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/SystemAppearance.car
+Tiny2DSur 1042 grahm  txt    REG               1,16     73240 1152921500312103051 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/FauxVibrantDark.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   1561920 1152921500312212598 /System/Library/Keyboard Layouts/AppleKeyboardLayouts.bundle/Contents/Resources/AppleKeyboardLayouts-L.dat
+Tiny2DSur 1042 grahm  txt    REG               1,16    139252               19369 /System/Library/Caches/com.apple.IntlDataCache.le.kbdx
+Tiny2DSur 1042 grahm  txt    REG               1,16     15375 1152921500312211132 /System/Library/Input Methods/SCIM.app/Contents/PlugIns/SCIM_Extension.appex/Contents/Resources/InfoPlist.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16    250306 1152921500312212600 /System/Library/Keyboard Layouts/AppleKeyboardLayouts.bundle/Contents/Resources/InfoPlist.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16     60821 1152921500312144241 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/Common.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16    248480 1152921500312573295 /usr/lib/libobjc-trampolines.dylib
+Tiny2DSur 1042 grahm  txt    REG               1,16      6918 1152921500312144319 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/InputManager.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16    177510 1152921500312144325 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/MenuCommands.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16   2374000 1152921500312573277 /usr/lib/dyld
+Tiny2DSur 1042 grahm  txt    REG               1,16  35444880 1152921500312583778 /usr/share/icu/icudt78l.dat
+Tiny2DSur 1042 grahm  txt    REG               1,16    142014 1152921500312146588 /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/Resources/RoleDescriptions.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16     20712 1152921500312282174 /System/Library/PrivateFrameworks/CoreUI.framework/Versions/A/Resources/DesignLibrary-macOS.bundle/Contents/Resources/macOSRepositories/DarkFauxVibrantStandard.car
+Tiny2DSur 1042 grahm  txt    REG               1,16    123226 1152921500312144094 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/Accessibility.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16     24216 1152921500312282178 /System/Library/PrivateFrameworks/CoreUI.framework/Versions/A/Resources/DesignLibrary-macOS.bundle/Contents/Resources/macOSRepositories/DarkStandard.car
+Tiny2DSur 1042 grahm  txt    REG               1,16     38776 1152921500312144327 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/Menus.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16   7795064 1152921500312103039 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/DarkAqua.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   6742984 1152921500312103070 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/VibrantDark.car
+Tiny2DSur 1042 grahm  txt    REG               1,16 160168520 1152921500312351601 /System/Library/PrivateFrameworks/SFSymbols.framework/Versions/A/Resources/CoreGlyphs.bundle/Contents/Resources/Assets.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   7912984 1152921500312103027 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/Aqua.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   7909644 1152921500312142364 /System/Library/Fonts/SFNS.ttf
+Tiny2DSur 1042 grahm  txt    REG               1,16   3364296 1152921500312103033 /System/Library/CoreServices/SystemAppearance.bundle/Contents/Resources/Assets.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   2044376 1152921500312144151 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/Assets.car
+Tiny2DSur 1042 grahm  txt    REG               1,16   1231744 1152921500312133329 /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/MacOS/AppleMetalOpenGLRenderer
+Tiny2DSur 1042 grahm  txt    REG               1,16     65536             5596671 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/C/io.github.graham1019.tiny2d.survivor/com.apple.metal/16777235_355/functions.data
+Tiny2DSur 1042 grahm  txt    REG               1,16  28437776 1152921500312129986 /System/Library/Extensions/AGXMetalG17X.bundle/Contents/MacOS/AGXMetalG17X
+Tiny2DSur 1042 grahm  txt    REG               1,16     85336 1152921500312284738 /System/Library/PrivateFrameworks/DesignLibrary.framework/Versions/A/Resources/Assets.car
+Tiny2DSur 1042 grahm  txt    REG               1,16  30683800 1152921500312129991 /System/Library/Extensions/AGXMetalG17X.bundle/Contents/Resources/ds.g17s
+Tiny2DSur 1042 grahm  txt    REG               1,16   2369592 1152921500312142288 /System/Library/Fonts/Helvetica.ttc
+Tiny2DSur 1042 grahm  txt    REG               1,13       104               36392 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/Resources/en.lproj/ServicesMenu.strings
+Tiny2DSur 1042 grahm  txt    REG               1,16     25779 1152921500312144441 /System/Library/Frameworks/AppKit.framework/Versions/C/Resources/Services.loctable
+Tiny2DSur 1042 grahm  txt    REG               1,16  13975552             5596887 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/0/com.apple.LaunchServices.dv/com.apple.LaunchServices-20971544-v2.csstore
+Tiny2DSur 1042 grahm    0r   CHR                3,2       0t0                 336 /dev/null
+Tiny2DSur 1042 grahm    1u   CHR                3,2       0t0                 336 /dev/null
+Tiny2DSur 1042 grahm    2u   CHR                3,2     0t259                 336 /dev/null
+Tiny2DSur 1042 grahm    3u  unix 0x9e8687316ef5cf12       0t0                     ->0xf11da146ad805e8e
+Tiny2DSur 1042 grahm    4r   REG               1,16    359704 1152921500312133337 /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/Resources/default.metallib
+Tiny2DSur 1042 grahm    5r   REG               1,16     36296 1152921500312133335 /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/Resources/PixelConverter.metallib
+Tiny2DSur 1042 grahm    6u   REG               1,16      1052             5596670 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/C/io.github.graham1019.tiny2d.survivor/com.apple.metal/16777235_355/functions.list
+Tiny2DSur 1042 grahm    7u   REG               1,16     65536             5596671 /private/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/C/io.github.graham1019.tiny2d.survivor/com.apple.metal/16777235_355/functions.data

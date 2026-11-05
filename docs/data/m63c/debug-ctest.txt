@@ -1,0 +1,29 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m63c-debug
+      Start  1: M3CPUTests
+ 1/40 Test  #1: M3CPUTests .......................   Passed    0.34 sec
+      Start  2: Vector2Tests
+ 2/40 Test  #2: Vector2Tests .....................   Passed    0.34 sec
+      Start  3: RenderFailureTests
+ 3/40 Test  #3: RenderFailureTests ...............   Passed    0.36 sec
+      Start  4: M3GPUTests
+sh: /bin/ps: Operation not permitted
+ 4/40 Test  #4: M3GPUTests .......................***Timeout  30.01 sec
+2026-11-05 15:14:20.451 tiny2d_m3_gpu_tests[99971:20621675] Error received in message reply handler: Connection invalid
+2026-11-05 15:14:20.451 tiny2d_m3_gpu_tests[99971:20621721] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-05 15:14:20.454 tiny2d_m3_gpu_tests[99971:20621675] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+
+      Start  5: TriangleRegression
+sh: /bin/ps: Operation not permitted
+ 5/40 Test  #5: TriangleRegression ...............***Timeout  30.01 sec
+2026-11-05 15:14:50.123 tiny2d_sandbox[750:20623623] Error received in message reply handler: Connection invalid
+2026-11-05 15:14:50.123 tiny2d_sandbox[750:20623631] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-05 15:14:50.125 tiny2d_sandbox[750:20623623] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+
+      Start  6: OpenGLResourceTests
+sh: /bin/ps: Operation not permitted
+ 6/40 Test  #6: OpenGLResourceTests ..............***Timeout  30.01 sec
+2026-11-05 15:15:20.142 tiny2d_render_tests[879:20625124] Error received in message reply handler: Connection invalid
+2026-11-05 15:15:20.142 tiny2d_render_tests[879:20625140] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-05 15:15:20.144 tiny2d_render_tests[879:20625124] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+
+      Start  7: SandboxSmokeRoot

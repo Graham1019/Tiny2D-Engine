@@ -1,0 +1,4 @@
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 500
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 5

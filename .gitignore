@@ -16,3 +16,6 @@ CMakeCache.txt
 *.a
 *.dylib
 *.dSYM/
+# Local release artifacts
+*.app/
+*.zip
