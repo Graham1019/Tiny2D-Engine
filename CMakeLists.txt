@@ -338,7 +338,8 @@ endif()
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
-    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp sandbox/src/ShaderAssets.cpp)
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp
+    lab/src/ShaderReloadManager.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
