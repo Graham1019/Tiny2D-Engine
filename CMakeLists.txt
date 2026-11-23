@@ -378,7 +378,8 @@ add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspec
     lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
-add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp lab/src/Metrics.cpp)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp
+    lab/src/MapApp.cpp lab/src/MapInspector.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
@@ -511,4 +512,7 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_dependencies(tiny2d_m91_gl tiny2d_lab_assets)
     add_test(NAME M91_TilemapGL COMMAND tiny2d_m91_gl)
     set_tests_properties(M91_TilemapGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    add_test(NAME M91_MapFiniteCLI COMMAND /usr/bin/env python3
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/m91_finite.py" "$<TARGET_FILE:tiny2d_lab>")
+    set_tests_properties(M91_MapFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 120)
 endif()

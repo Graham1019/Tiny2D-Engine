@@ -1,0 +1,17 @@
+build/m91-release/lab/tiny2d_lab --scene map --map-size 64x40 --size 800x450 --frames 1320 --seed 71 --map-script walk --view final --bloom on --gpu-timing on --inspector off --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmpxfdfrdkz/samples.csv
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=92.209 p95=121.875 p99=144.209
+metric=fixed_update n=1200 p50=0.209 p95=0.542 p99=1.209
+metric=prepare n=1200 p50=3.584 p95=6.042 p99=8.958
+metric=draw_calls n=1200 p50=7 p95=7 p99=7
+metric=sprites n=1200 p50=507 p95=517 p99=521
+metric=uploaded_bytes n=1200 p50=73008 p95=74448 p99=75024
+metric=world n=1200 p50=41.25 p95=58.625 p99=69.75
+metric=bright n=1200 p50=7.708 p95=12.542 p99=17.166
+metric=horizontal n=1200 p50=7.292 p95=12.333 p99=18
+metric=vertical n=1200 p50=6.625 p95=11.333 p99=16.667
+metric=output n=1200 p50=10.167 p95=16.625 p99=20.75
+metric=hud n=1200 p50=9.125 p95=13.292 p99=18.958
+status=ok scene=map frames=1320 ticks=1320 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 timestamp_bits=0 valid_gpu_samples=0

@@ -29,15 +29,22 @@ const std::string& legacyCpuColumns() {
 constexpr std::string_view particleCounters =
     ",active_particles,dropped_particles,active_fields,force_update_us,snapshot_prepare_us"
     ",instance_upload_us,instance_upload_bytes,active_instances,particle_draw_calls,valid_gpu_samples";
+constexpr std::string_view mapCounters =
+    ",map_generation_us,bfs_validation_us,collision_us,visible_tile_prepare_us,total_tiles,visible_tiles"
+    ",submitted_tile_quads,tile_draw_calls,tile_vertex_upload_bytes,camera_x,camera_y,player_x,player_y,hit_x,hit_y";
 std::string blanks(std::string_view header) {
     return std::string(std::count(header.begin(),header.end(),','),',');
 }
 void runConfig(std::ostream& out,const FrameInfo& f) {
-    out<<','<<f.seed<<','<<(f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
+    out<<','<<f.seed<<','<<(f.mapWidth?"map":f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
     if (f.particles) {
         out<<(f.demoScript?"demo":"none")<<','<<f.particleCapacity<<','<<f.particleRate<<',';
         if (f.particleSteady) out<<*f.particleSteady;
     } else out<<",,,";
+}
+void mapConfig(std::ostream& out,const FrameInfo& f) {
+    if (f.mapWidth) out<<','<<f.mapWidth<<','<<f.mapHeight<<','<<(f.mapWalk?"walk":"none");
+    else out<<",,,";
 }
 void galleryConfig(std::ostream& out,const FrameInfo& f) {
     out<<',';
@@ -66,7 +73,8 @@ Metrics::Metrics(const std::string& path) {
     for (unsigned i=0;i<=ShadowInspect;++i) out_<<','<<passNames[i]<<"_us";
     out_<<legacyCpuColumns()
         <<",particle_emission_us,seed,scene,particle_script,particle_capacity,particle_rate,particle_steady"
-        <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version\n";
+        <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version,map_width,map_height,map_script"
+        <<mapCounters<<'\n';
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
@@ -115,6 +123,20 @@ void Metrics::record(const CpuSample& c) {
     out_<<','<<c.validGpuSamples<<',';
     if (s.mask&(1u<<ShaderGalleryPass)) out_<<s.cpuUs[ShaderGalleryPass];
     galleryConfig(out_,c.info);
+    mapConfig(out_,c.info);
+    if (c.info.mapWidth) {
+        const auto& m=c.map;
+        out_<<',';
+        if (m.generationUs || m.validationUs) out_<<m.generationUs;
+        out_<<',';
+        if (m.generationUs || m.validationUs) out_<<m.validationUs;
+        out_<<','<<m.collisionUs<<','<<m.visiblePrepareUs<<','<<m.totalTiles<<','<<m.visibleTiles
+            <<','<<s.submittedTiles<<','<<s.tileDrawCalls<<','<<s.tileVertexBytes
+            <<','<<m.camera.x<<','<<m.camera.y<<','<<m.player.x<<','<<m.player.y<<','<<m.hitX<<','<<m.hitY;
+    } else {
+        static const auto emptyMap=blanks(mapCounters);
+        out_<<emptyMap;
+    }
     out_<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
@@ -133,6 +155,9 @@ void Metrics::write(const GpuSample& g) {
     out_<<emptyParticle;
     duration(ShaderGalleryPass+1);
     galleryConfig(out_,g.info);
+    mapConfig(out_,g.info);
+    static const auto emptyMap=blanks(mapCounters);
+    out_<<emptyMap;
     out_<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
