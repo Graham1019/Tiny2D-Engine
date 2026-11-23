@@ -39,7 +39,8 @@ struct Commands {
 class Controls {
 public:
     bool paused = false;
-    Action poll(Keys keys, bool active, double elapsed, Display& display, bool captured=false, Commands ui={});
+    Action poll(Keys keys, bool active, double elapsed, Display& display, bool captured=false, Commands ui={},
+                bool freshFocus=false);
 private:
     Keys previous_, blocked_;
     bool suspended_ = false;

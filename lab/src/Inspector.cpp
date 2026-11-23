@@ -8,6 +8,7 @@
 #include <cstring>
 
 namespace lab {
+bool cocoaKeyRepeats(GLFWwindow*,int scancode);
 namespace {
 using namespace ImGui;
 using U64=unsigned long long;
@@ -15,6 +16,14 @@ constexpr ImGuiKey keys[]={ImGuiKey_A,ImGuiKey_D,ImGuiKey_W,ImGuiKey_S,ImGuiKey_
     ImGuiKey_1,ImGuiKey_2,ImGuiKey_3,ImGuiKey_4,ImGuiKey_LeftBracket,ImGuiKey_RightBracket,
     ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape};
 static_assert(std::size(keys)==KeyCount);
+void cancelPendingInput(ImGuiIO& io) {
+    // A button normally fires on release. Cancel a pressed widget before
+    // clearing MouseDown, even if the stationary cursor will still hover it.
+    if (io.MouseDown[0] && ImGui::IsAnyItemActive()) ImGui::SetWindowFocus(nullptr);
+    io.ClearEventsQueue();
+    io.ClearInputKeys();
+    io.ClearInputMouse();
+}
 bool rawDown(ImGuiKey k) { return GetIO().KeysData[k-ImGuiKey_NamedKey_BEGIN].Down; }
 void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
     bool bloom=d.bloom,hud=d.hud;
@@ -152,6 +161,45 @@ Inspector::Inspector(tiny2d::Window& w,bool finite):window_(w.nativeHandle()),fi
         ImGui_ImplOpenGL3_Shutdown(); ImGui_ImplGlfw_Shutdown(); ImGui::DestroyContext();
         throw;
     }
+    if (!finite_) {
+        io.UserData=this;
+        // The official backend restores the original Window callback on shutdown.
+        glfwSetWindowFocusCallback(window_,focusChanged);
+    }
+}
+void Inspector::focusChanged(GLFWwindow* window,int focused) {
+    auto& io=ImGui::GetIO();
+    auto& inspector=*static_cast<Inspector*>(io.UserData);
+    // Cancel both undelivered transitions and ImGui's sampled down state at
+    // the callback boundary. The rest of this poll belongs to the new cycle.
+    cancelPendingInput(io);
+    inspector.focusGate_=true;
+    inspector.mouseBlocked_=true;
+    inspector.f2Down_=false;
+    inspector.freshFocus_=focused!=0;
+    inspector.restoreCursor_=focused!=0;
+    auto& held=inspector.heldAtLoss_;
+    if (!focused) {
+        // GLFW synthesizes releases *after* its focus-loss callback returns.
+        // Keep unresolved keys across successive focus changes.
+        for (int key=GLFW_KEY_SPACE;key<=GLFW_KEY_LAST;++key)
+            if (glfwGetKey(window,key)==GLFW_PRESS) held.set(key);
+    }
+    glfwSetKeyCallback(window,focused && held.any() ? keyAfterFocus : ImGui_ImplGlfw_KeyCallback);
+    ImGui_ImplGlfw_WindowFocusCallback(window,focused); // Chains Window's focus-loss latch.
+}
+void Inspector::keyAfterFocus(GLFWwindow* window,int key,int scancode,int action,int mods) {
+    if (action==GLFW_PRESS && key>=0 && key<=GLFW_KEY_LAST) {
+        auto& held=static_cast<Inspector*>(ImGui::GetIO().UserData)->heldAtLoss_;
+        if (held[key]) {
+            // The released GLFW cache labels the first native auto-repeat PRESS.
+            // A genuine fresh press, including one released while away, passes through.
+            if (cocoaKeyRepeats(window,scancode)) action=GLFW_REPEAT;
+            held.reset(key);
+            if (held.none()) glfwSetKeyCallback(window,ImGui_ImplGlfw_KeyCallback);
+        }
+    }
+    ImGui_ImplGlfw_KeyCallback(window,key,scancode,action,mods);
 }
 void Inspector::requireOwner() const {
     tiny2d::detail::requireContext("Lab Inspector");
@@ -164,10 +212,21 @@ void Inspector::discard() {
     if (active_) ImGui::EndFrame();
     active_=false; ready_=false;
 }
-void Inspector::suspend() { discard(); focusGate_=true; mouseBlocked_=true; }
+void Inspector::suspend() {
+    discard();
+    cancelPendingInput(ImGui::GetIO());
+    focusGate_=true; freshFocus_=false; mouseBlocked_=true; restoreCursor_=true;
+}
 RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,const Display& display,
         bool paused,const History& hist,const tiny2d::QueryCounts& counts,const std::string& reason,bool focused) {
     requireOwner(); discard();
+    if (restoreCursor_ && focused && !finite_) {
+        restoreCursor_=false;
+        if (glfwGetWindowAttrib(window_,GLFW_HOVERED)) {
+            double x,y; glfwGetCursorPos(window_,&x,&y);
+            ImGui::GetIO().AddMousePosEvent(float(x),float(y));
+        }
+    }
     ImGui_ImplOpenGL3_NewFrame(); ImGui_ImplGlfw_NewFrame();
     if (finite_) ImGui::GetIO().DeltaTime=1.f/60;
     ImGui::NewFrame(); active_=true;
@@ -175,10 +234,13 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     RoutedInput input;
     for (unsigned i=0;i<KeyCount;++i) input.keys[i]=rawDown(keys[i]);
     bool f2=rawDown(ImGuiKey_F2);
-    bool toggle=focused && !focusGate_ && f2 && !f2Down_ && !finite_;
+    input.freshFocus=focused && freshFocus_;
+    freshFocus_=false;
+    bool toggle=focused && (!focusGate_ || input.freshFocus) && f2 && !f2Down_ && !finite_;
     if (toggle) tools.visible=!tools.visible;
     f2Down_=f2;
     bool transition=toggle || first_ || focusGate_;
+    bool gateKeyboard=toggle || first_ || (focusGate_ && !input.freshFocus);
     first_=false; focusGate_=!focused;
     if (tools.visible) {
         const float w=std::min(292.f,std::max(1.f,io.DisplaySize.x-8));
@@ -208,7 +270,7 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         }
         End();
     }
-    input.captureKeyboard=transition || (tools.visible && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
+    input.captureKeyboard=gateKeyboard || (tools.visible && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
     const bool captured=transition || !focused || (tools.visible && (io.WantCaptureMouse || IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopup)));
     if (!io.MouseDown[0]) mouseBlocked_=false;
     if (captured && io.MouseDown[0]) mouseBlocked_=true;

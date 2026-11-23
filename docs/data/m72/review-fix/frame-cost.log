@@ -1,0 +1,51 @@
+Before source: git archive 1c73ed8ff0d4485499491c50651b8afe31034015
+The archived Release build and retained original Release executable had the same SHA-256; their Lab assets matched byte-for-byte.
+Both builds: Apple clang 21.0.0, -O3 -DNDEBUG, macOS 26.7.3 arm64.
+Command from repository root:
+python3 docs/data/m72/review-fix/compare.py run build/m72-review-baseline-1c73ed8/bin/lab/tiny2d_lab build/m72-review-release/lab/tiny2d_lab --samples-dir docs/data/m72/review-fix/frame-samples
+Offline reduction:
+python3 docs/data/m72/review-fix/compare.py summarize docs/data/m72/review-fix/frame-samples
+Interactive runs used the real-time input path with no injected events. Each child was terminated after the complete CPU sample rows were written. Finite runs exited normally.
+
+before /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-baseline-1c73ed8/bin/lab/tiny2d_lab sha256=428eb7839ce3478cb174920d6c53968de712011241fdc6b258da1aa7e2efaa9d
+after /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-release/lab/tiny2d_lab sha256=adbb32c66968b38be524368c89e37e5aab53af031dfe52824d0b2ad6b1682daa
+
+interactive before
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-baseline-1c73ed8/bin/lab/tiny2d_lab --scene neon --seed 71 --size 800x450 --view final --bloom on --inspector on --gpu-timing on --previews all --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-review-perf-sy2ra8cn/interactive-before.csv
+frames=121..1320 n=1200 ticks=9..465
+width=1600 height=900 draws=22 pass_mask=447 preview_draws=4 gui_draws=12 timestamp_bits=0 query_status=unavailable
+total_us p50/p95/p99 265.208 / 543.041 / 604.500
+gui_build_us p50/p95/p99 38.625 / 66.834 / 80.042
+gui_us p50/p95/p99 21.667 / 49.958 / 57.167
+
+interactive after
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-release/lab/tiny2d_lab --scene neon --seed 71 --size 800x450 --view final --bloom on --inspector on --gpu-timing on --previews all --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-review-perf-sy2ra8cn/interactive-after.csv
+frames=121..1320 n=1200 ticks=63..662
+width=1600 height=900 draws=22 pass_mask=447 preview_draws=4 gui_draws=12 timestamp_bits=0 query_status=unavailable
+total_us p50/p95/p99 206.625 / 258.667 / 282.792
+gui_build_us p50/p95/p99 28.209 / 38.125 / 55.708
+gui_us p50/p95/p99 16.541 / 20.250 / 23.417
+
+finite after
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-release/lab/tiny2d_lab --scene neon --seed 71 --size 800x450 --view final --bloom on --inspector on --gpu-timing on --previews all --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-review-perf-sy2ra8cn/finite-after.csv --frames 1320
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=160
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+status=ok frames=1320 ticks=1320 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=8 draws=22 sprites=999 upload_bytes=187882 batch_vertex_bytes=143856 rgba16f_attachment_bytes=20160000 attempt_passes=11 attempt_draws=22 attempt_complete=1
+frames=121..1320 n=1200 ticks=121..1320
+width=1600 height=900 draws=22 pass_mask=447 preview_draws=4 gui_draws=12 timestamp_bits=0 query_status=unavailable
+total_us p50/p95/p99 158.666 / 195.833 / 226.167
+gui_build_us p50/p95/p99 10.042 / 23.917 / 37.750
+gui_us p50/p95/p99 12.583 / 18.541 / 23.166
+
+finite before
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-baseline-1c73ed8/bin/lab/tiny2d_lab --scene neon --seed 71 --size 800x450 --view final --bloom on --inspector on --gpu-timing on --previews all --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-review-perf-sy2ra8cn/finite-before.csv --frames 1320
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=160
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+status=ok frames=1320 ticks=1320 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=8 draws=22 sprites=999 upload_bytes=187882 batch_vertex_bytes=143856 rgba16f_attachment_bytes=20160000 attempt_passes=11 attempt_draws=22 attempt_complete=1
+frames=121..1320 n=1200 ticks=121..1320
+width=1600 height=900 draws=22 pass_mask=447 preview_draws=4 gui_draws=12 timestamp_bits=0 query_status=unavailable
+total_us p50/p95/p99 159.333 / 204.500 / 244.459
+gui_build_us p50/p95/p99 10.875 / 29.917 / 41.250
+gui_us p50/p95/p99 12.958 / 19.541 / 24.208

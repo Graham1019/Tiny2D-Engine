@@ -35,7 +35,7 @@ python3 docs/data/m72/measure.py summarize
 
 `Window` 持有唯一 GLFW 窗口与原 OpenGL Core Context。仅 Lab 工具目标链接 Dear ImGui v1.93.0，官方标签解析到 `c1aaac65e896a45f81f47a4d68f9959e0f86c859`。CMake 从仓库源码构建，GL 使用项目现有的 Apple 系统头。ImGui 使用动态字体纹理和实际 framebuffer scale，面板位置、控件、鼠标均以逻辑点计算。许可证、使用文件和后端补丁记录在[依赖说明](../third_party/imgui/README.md)与[完整许可证](../third_party/imgui/LICENSE.txt)。
 
-1. GLFW poll 原始事件。官方 GLFW backend 安装并串联回调，接收按键、字符、滚轮、鼠标与焦点。Window 自己的焦点回调记下同一轮 poll 内的失焦，framebuffer resize 回调继续属于 Window。
+1. GLFW poll 原始事件。交互 Lab 在焦点回调中取消上一周期的输入，再转交官方 GLFW backend。官方后端串联 Window 的失焦回调，接收键盘、字符、滚轮与鼠标。Window 继续处理 framebuffer resize。
 2. 查询逻辑与像素尺寸，在帧边界提交完整目标组替换，回收可读的旧 query。真实失焦和不可绘制使固定时钟丢弃累积时间。有限帧沿用原有 drawable 等待上限。
 3. GUI NewFrame 构建控件。F2 使用原始键的按下边沿，即使输入框持有键盘也可切换。键盘捕获和活动控件屏蔽场景动作，已按住的键进入释放门控。Return 属于输入框，场景没有 Return 松开动作。鼠标按下时判定归属，面板切换、弹出层和恢复帧额外屏蔽穿透；拖出再松开不会拾取。
 4. UI 和键盘的动作边沿取并集，显示参数在固定更新前应用。调度优先级依次为 Reset、Pause 切换、暂停单步或运行时累积时钟。捕获键盘期间运行中的时钟继续推进。列表选中走工具路径。重置保留暂停、显示、工具开关和布局，增加 epoch，清除选择、已展示几何与场景性能窗口。
@@ -132,3 +132,63 @@ sh docs/data/m72/verify-demo.sh
 M7.1 用户反馈交互和视觉无异常，PR #11 已合并。本次 M7.2 的自动注入覆盖不替代人的键鼠手感与视觉验收。请在常用窗口尺寸下拖动/折叠面板，暂停后单步跟随 Bolt，观察槽位复用，再以不同 backing scale 的显示器验证跨屏字体、点击与最小化恢复。本次机器仅覆盖 Apple M5 Pro、arm64、macOS 26.7.3、同一屏幕的两个 framebuffer 尺寸。支持非零 timestamp bits 的另一台真实设备仍需复核 GPU 时间与帧延迟。
 
 M7.3 可在 Controls 命令中增加经过验证的光照参数，在 Pipeline 的需求判断中加入 Light Buffer，复用带 generation 的纹理借用、显示转换与 timestamp 区间。新增 Pass 时一起扩展名称、mask、区间数、CSV 和像素 fixture。本 PR 停在 Inspector 的源码 Review 和人工试玩。
+
+## Review Fix
+
+本次修复从 PR #12 的 `1c73ed8ff0d4485499491c50651b8afe31034015` 开始。以下补测独立保存，上一节的八组性能数据仍对应原测量提交。
+
+### 焦点恢复与输入队列
+
+GLFW 可在一次 poll 中派发多组按下、释放和焦点事件。官方后端把事件交给 ImGui，默认的事件队列可能要经过多次 NewFrame 才能消费完。旧实现只封住恢复第一帧观察到的键，第二帧就可能把上个焦点周期的 R 当作一次新命令。真实后端定向测试将 W、R、P、B、F2 连同失焦和恢复放在同一批次。旧代码在随后 16 帧执行了 1 次 Reset，另有 14 帧处于暂停、13 帧关闭 Bloom、12 帧隐藏 Inspector。[修复前记录](data/m72/review-fix/focus-before.log)
+
+`Inspector::focusChanged` 在 GLFW 派发失焦和得焦时清除 ImGui 的待消费事件与已采样按键、鼠标状态，再转发一次官方回调。失焦前已按下的控件先取消按压，恢复时重新取得静止光标的逻辑坐标。`Controls::poll` 仍丢弃失焦期间累积的时间。后端能确认按键来自恢复后的新周期时，同一轮 poll 内的真实新按下也可立即生效，文本框继续按 `WantCaptureKeyboard` 和活动控件状态捕获输入。
+
+macOS 的 GLFW 3.5.1 在通知失焦后为已按下的键合成释放。若某键实际仍按住，Cocoa 的下一次自动重复可能被 GLFW 标为首次 PRESS。Lab 只为失焦时仍按下的键保留标记。遇到对应的第一次 PRESS 时，用 AppKit 的窗口、scancode 和 `NSEvent.isARepeat` 核对，恢复重复事件的含义，再交给官方后端。失焦期间释放、恢复后重新按下的键直接生效。该检查发生在按键回调中，AppKit 是 macOS 系统框架。[原生重复的定向复现](data/m72/review-fix/focus-native-before.log)
+
+逐步修复时分别保留了两次中间失败记录。仅清 ImGui 队列时，Cocoa 自动重复仍触发一次 Reset。恢复光标坐标后，已按下的 Bloom 控件会把清空 MouseDown 当作释放。最终代码先取消活动控件，再清输入状态。[控件误释放复现](data/m72/review-fix/focus-widget-before.log)
+
+修复后，同一批 W/R/P/B/F2 在 16 帧内造成的误操作均为 0。恢复同轮新按 R 恰好 Reset 一次，跨两轮焦点切换的原生自动重复产生 0 次 Reset。按住 Bloom 控件切窗保留原值，恢复后不移动鼠标即可正常重新点击。测试通过本进程的 AppKit 队列和实际安装的 GLFW/ImGui 回调注入事件，保留了文本捕获、持键关闭面板、拖出释放与暂停单步断言。[修复后记录](data/m72/review-fix/focus-after.log) · [连续七次运行](data/m72/review-fix/focus-repeat.log)
+
+### GPU 最新帧与历史窗口
+
+查询槽按物理编号遍历。较低编号的槽可能已经复用给新帧，较高编号的槽还在等待旧帧。基线测试实际得到回收顺序 1、3、2，直接追加使 Timing 显示的最新帧从 3 退回 2。[修复前记录](data/m72/review-fix/history-before.log)
+
+`History::recordGpu` 在进入显示窗口时校验发起 epoch 和完成状态。通常的顺序结果直接插到末尾，迟到的结果按发起帧 ID 用二分查找定位插入。超过 120 条时从队首淘汰。面板原有的末项读取因此总能得到当前 epoch 已完成的最大帧 ID。CSV 按实际回收事件写出，保留发起帧、Tick、epoch 和回收帧。查询池仍按每个请求的实际结果计数。
+
+用 fake timestamp 后端驱动生产查询池和历史更新路径。单次回收 1、3、2 后 Latest 为 3，分两次回收 5、4 后 Latest 保持 5。Reset 后旧 epoch 的帧 6 仍被回收，当前 Latest 保持新 epoch 的帧 7。最后才返回帧 10 时，窗口仍完整保留 14–133。133 个请求对应 131 completed、0 pending、1 skipped、1 invalid，CSV 有 132 条唯一回收记录，各行均核对了原 Tick、epoch 与状态。[修复后记录](data/m72/review-fix/history-after.log)
+
+### 复跑本次回归
+
+在仓库根目录执行。两项回归在已有的 M72 测试目标中运行，`M72InspectorGL` 需要可用的 macOS 图形登录会话。
+
+```sh
+cmake -S . -B build/m72-review-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
+cmake -S . -B build/m72-review-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake -S . -B build/m72-review-off -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=OFF
+for cfg in debug release off; do cmake --build "build/m72-review-$cfg" --parallel 4; done
+ctest --test-dir build/m72-review-debug -R '^(M72CPU|M72InspectorGL)$' --repeat until-fail:7 --output-on-failure
+for cfg in debug release off; do ctest --test-dir "build/m72-review-$cfg" --output-on-failure; done
+```
+
+| CTest 配置 | 通过 / 总数 | 失败 |
+|---|---:|---:|
+| [Debug，OpenGL ON](data/m72/review-fix/ctest-debug.log) | 45 / 45 | 0 |
+| [Release，OpenGL ON](data/m72/review-fix/ctest-release.log) | 45 / 45 | 0 |
+| [Release，OpenGL OFF](data/m72/review-fix/ctest-off.log) | 25 / 25 | 0 |
+
+最终 Debug 构建的两项 M72 定向测试各连续通过 7 次。Release 在 seed 71、Tick 4、工具全关时分别生成 Scene、Bright、Blur、Final，四张 PNG 均与 M7.1 文件逐字节相同。Neon 带四预览的有限帧完成 13 帧 / 13 Tick。按各自的进程 ID 确认交互 Neon 与独立经典 Survivor 有可见窗口。原 Sandbox 的三角形、500 immediate、500 batch、5000 multitexture 最终帧分别为 1 / 500 / 1 / 5 Draw。[定向重复](data/m72/review-fix/targeted-debug.log) · [入口、PNG 校验和与窗口记录](data/m72/review-fix/entries.log)
+
+### 受影响配置的 Release 对照
+
+同一台 Apple M5 Pro，macOS 26.7.3、Apple clang 21.0.0、OpenGL 4.1 Metal 90.5。修复前取自 `1c73ed8` 的源码归档，修复后取自本次提交的生产代码，日志记录两份可执行文件的 SHA-256。两边均取 seed 71、Final、Bloom、HUD、Inspector、四项预览并请求 GPU 计时。实际 framebuffer 为 1600×900，1–120 帧预热，121–1320 帧计入最近秩分位数。[运行命令和完整输出](data/m72/review-fix/frame-cost.log)
+
+| 模式 | 修复前 CPU 帧 p50 / p95 / p99（µs） | 修复后 CPU 帧 p50 / p95 / p99（µs） |
+|---|---:|---:|
+| 交互，无键鼠操作 | 265.208 / 543.041 / 604.500 | 206.625 / 258.667 / 282.792 |
+| 有限帧，固定 1320 Tick | 159.333 / 204.500 / 244.459 | 158.666 / 195.833 / 226.167 |
+
+四组各有 1200 个 CPU 样本，所有样本的实际 Draw 都为 22，其中 GUI 12、预览转换 4，Pass mask 为 447。有限帧两侧的采样 Tick 完全对齐。交互侧按真实时间推进，采样 Tick 分别为 9–465 和 63–662，单轮分位数差异不足以归因提速。原生重复判定只在焦点恢复后的候选按键回调执行。GPU 查询仍使用八槽非阻塞池，实机返回 0 个 timestamp 有效位，两边均报告 unavailable、0 个 GPU 样本。可离线重算全部帧分位数。[原始采样](data/m72/review-fix/frame-samples) · [重算脚本](data/m72/review-fix/compare.py)
+
+另外单测 CPU 侧历史更新，每 32 条有一条迟到时，每条均摊 p50 / p95 / p99 从 12.04 / 13.59 / 14.77 变为 7.57 / 7.89 / 8.63 ns。每个样本汇总 1024 次插入，预热 64 组，测量 512 组。计时只包围历史容器更新，GPU 驱动回收和面板绘制在区间之外。[测试源文件](data/m72/review-fix/history-cost.cpp) · [命令和记录](data/m72/review-fix/history-cost.log)
+
+人工验收仍需实际键鼠跨应用、macOS 最小化恢复，以及在不同 backing scale 的屏幕间移动窗口后检查拾取和字体。在 timestamp 有效位非零的设备上，还需观察真实 GPU 样本、帧延迟及 Reset 后的显示。

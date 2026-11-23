@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <set>
+#include <sstream>
 #include <tuple>
 
 using namespace lab;
@@ -92,33 +93,128 @@ void selection() {
 }
 class FakeQueries : public tiny2d::TimestampQueries {
 public:
-    std::array<bool,8> ready{};
-    std::array<unsigned,8> writes{};
-    std::array<std::uint64_t,8> values{};
+    std::array<bool,Timer::capacity> ready{};
+    std::array<unsigned,Timer::capacity> writes{};
+    std::array<std::uint64_t,Timer::capacity> values{};
     unsigned reads=0;
     void stamp(unsigned i) override { ++writes.at(i); ready.at(i)=false; }
     bool available(unsigned i) override {return ready.at(i);}
     std::uint64_t result(unsigned i) override {check(ready.at(i),"read pending result"); ++reads; return values.at(i);}
 };
+struct TempCSV {
+    std::filesystem::path path=std::filesystem::temp_directory_path()/("tiny2d-m72-"+std::to_string(getpid())+".csv");
+    ~TempCSV() { std::error_code ec; std::filesystem::remove(path,ec); }
+};
 void retirementCSV() {
-    auto path=std::filesystem::temp_directory_path()/("tiny2d-m72-"+std::to_string(getpid())+".csv");
-    struct Remove { std::filesystem::path path; ~Remove(){std::error_code ec;std::filesystem::remove(path,ec);} } remove{path};
+    TempCSV file;
     FrameInfo info; info.id=121; info.epoch=7; info.tick=81; info.timing=true; info.measurement=true;
     {
-        Metrics stream(path.string());
+        Metrics stream(file.path.string());
         CpuSample cpu; cpu.info=info; cpu.status=tiny2d::QueryStatus::Pending;
         stream.record(cpu);
         GpuSample gpu{info,123,tiny2d::QueryStatus::Complete,{}};
         gpu.us[0]=2.5;
         stream.retired(gpu); // Exit before another poll or CPU frame can flush the retirement.
     }
-    std::ifstream input(path);
+    std::ifstream input(file.path);
     std::string header,cpu,gpu;
     std::getline(input,header);std::getline(input,cpu);std::getline(input,gpu);
     auto columns=[](const auto& s){return std::count(s.begin(),s.end(),',');};
     check(columns(header)==columns(cpu) && columns(cpu)==columns(gpu),"rectangular retirement CSV");
     check(cpu.find(",pending,,")!=cpu.npos && gpu.find("gpu,121,81,7,") == 0 &&
           gpu.find(",completed,123,2.5,")!=gpu.npos,"delayed CSV retains frame and empty unmeasured intervals");
+}
+void orderedGpuHistory() {
+    using S=tiny2d::QueryStatus;
+    using Ring=tiny2d::TimestampRing<FrameInfo,PassCount+1,2>;
+    FakeQueries q;
+    q.bits=32;
+    Ring ring(q);
+    TempCSV file;
+    Metrics csv(file.path.string());
+    History history;
+    std::uint64_t epoch=1;
+    std::vector<std::uint64_t> retired;
+    auto issue=[&](unsigned id,bool complete=true) {
+        FrameInfo f;
+        f.id=id; f.epoch=epoch; f.tick=epoch==1 ? 100+id : id-7;
+        auto status=ring.begin(f);
+        if (status==S::Pending) {
+            ring.mark(0,false);
+            if (complete) ring.mark(0,true);
+            ring.finish(f,complete);
+        }
+        return status;
+    };
+    auto poll=[&](unsigned received,std::initializer_list<unsigned> readySlots) {
+        for (auto slot:readySlots) {
+            unsigned start=slot*(Ring::capacity/2);
+            q.ready[start]=q.ready[start+1]=true;
+        }
+        ring.poll([&](FrameInfo f,S status,const Timer::Durations& us) {
+            GpuSample sample{f,received,status,us};
+            retired.push_back(f.id);
+            csv.retired(sample);
+            history.recordGpu(epoch,sample);
+        });
+        csv.flushRetired();
+        const auto& c=ring.counts;
+        check(c.requested==c.completed+c.pending+c.skipped+c.invalid,"history poll counts partition");
+    };
+
+    issue(1); issue(2); poll(3,{0});
+    issue(3); poll(4,{0,1}); // Reused slot 0 retires ahead of older slot 1.
+    check(retired==std::vector<std::uint64_t>{1,3,2},"real ring retirement order");
+    check(history.gpu.size()==3,"all three completed frames enter history");
+    std::cout<<"retired=1,3,2 latest="<<history.gpu.back().info.id<<'\n';
+    check(history.gpu.back().info.id==3 && history.gpu[1].info.id==2 &&
+          history.gpu.back().received==4,"latest must be frame 3 after retiring 1,3,2");
+
+    issue(4); issue(5); poll(6,{1});
+    check(history.gpu.size()==4 && history.gpu.back().info.id==5,"newest frame completes first");
+    poll(7,{0});
+    check(history.gpu.size()==5 && history.gpu.back().info.id==5 && history.gpu[3].info.id==4,
+          "cross-poll late frame");
+
+    issue(6); // Old epoch stays pending across Reset.
+    ++epoch; history={};
+    issue(7); check(issue(8)==S::Skipped,"full ring skips frame 8");
+    poll(9,{1});
+    issue(9,false);
+    check(ring.counts.pending==1 && ring.counts.invalid==1,"partial counts before retirement");
+    poll(10,{0,1});
+    check(history.gpu.size()==1 && history.gpu.back().info.id==7 && history.gpu.back().info.epoch==epoch,
+          "late old epoch and invalid record excluded from current history");
+
+    issue(10); // Keep the oldest slot pending beyond the entire 120-frame window.
+    for (unsigned id=11;id<=133;++id) { issue(id); poll(id+1,{1}); }
+    poll(134,{0});
+    poll(135,{}); // Retired slots must not emit twice.
+    check(history.gpu.size()==120,"bounded GPU history");
+    for (unsigned i=0;i<120;++i) check(history.gpu[i].info.id==14+i,"retains newest 120 originating frames");
+    const auto& c=ring.counts;
+    check(c.requested==133 && c.completed==131 && c.pending==0 && c.skipped==1 && c.invalid==1,
+          "history leaves lifetime query counts intact");
+
+    csv.close();
+    std::ifstream input(file.path);
+    std::string line;
+    std::getline(input,line); // Header.
+    std::set<unsigned> csvIds;
+    while (std::getline(input,line)) {
+        std::istringstream fields(line);
+        std::string kind,idText,tickText,epochText;
+        std::getline(fields,kind,','); std::getline(fields,idText,',');
+        std::getline(fields,tickText,','); std::getline(fields,epochText,',');
+        const auto id=std::stoul(idText);
+        check(kind=="gpu" && id>=1 && id<=133 && id!=8 && csvIds.insert(id).second,"one row per retirement");
+        check(std::stoul(epochText)==(id<=6?1:2) && std::stoul(tickText)==(id<=6?100+id:id-7),
+              "CSV preserves issuing epoch and tick");
+        check(line.find(id==9?",invalid,":",completed,")!=line.npos,"CSV retirement status");
+    }
+    check(csvIds.size()==c.completed+c.invalid,"CSV includes every retired frame, even after Reset or eviction");
+    std::cout<<"cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 "
+                "pending=0 skipped=1 invalid=1, unique GPU CSV rows=132\n";
 }
 void queries() {
     using S=tiny2d::QueryStatus;
@@ -147,5 +243,5 @@ void queries() {
           c.requested==c.completed+c.invalid+c.pending+c.skipped,"partition and wrap rejection");
 }
 }
-int main() { try {cli(); ownership(); selection(); queries(); retirementCSV();}
+int main() { try {cli(); ownership(); selection(); queries(); retirementCSV(); orderedGpuHistory();}
 catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;} }

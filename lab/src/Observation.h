@@ -1,6 +1,7 @@
 #pragma once
 #include "Presentation.h"
 #include "tiny2d/TimestampQueries.h"
+#include <algorithm>
 #include <deque>
 
 namespace lab {
@@ -27,11 +28,22 @@ struct GpuSample {
     Timer::Durations us;
 };
 struct History {
+    static constexpr std::size_t capacity=120;
     std::deque<CpuSample> cpu;
     std::deque<GpuSample> gpu;
     template<class T> static void append(std::deque<T>& window,T sample) {
-        if (window.size()==120) window.pop_front();
+        if (window.size()==capacity) window.pop_front();
         window.push_back(std::move(sample));
+    }
+    void recordGpu(std::uint64_t currentEpoch,const GpuSample& sample) {
+        if (sample.info.epoch!=currentEpoch || sample.status!=tiny2d::QueryStatus::Complete) return;
+        // A reused query slot can retire before an older slot, even across polls.
+        auto pos=gpu.end();
+        if (!gpu.empty() && sample.info.id<gpu.back().info.id)
+            pos=std::lower_bound(gpu.begin(),gpu.end(),sample.info.id,
+                [](const GpuSample& item,std::uint64_t id){return item.info.id<id;});
+        gpu.insert(pos,sample);
+        if (gpu.size()>capacity) gpu.pop_front();
     }
 };
 }

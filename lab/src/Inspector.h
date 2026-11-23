@@ -1,6 +1,9 @@
 #pragma once
 #include "Pipeline.h"
 #include <imgui.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <bitset>
 
 namespace lab {
 struct ToolState {
@@ -11,6 +14,7 @@ struct RoutedInput {
     Commands commands;
     Keys keys;
     bool captureKeyboard=false;
+    bool freshFocus=false; // Keyboard snapshot contains only events received after GLFW focus gain.
     std::optional<tiny2d::Vector2> click;
 };
 class Inspector {
@@ -30,7 +34,10 @@ private:
     GLFWwindow* window_;
     std::uint64_t atlasBytes_=0;
     bool finite_,active_=false,ready_=false,focusGate_=false,f2Down_=false,mouseBlocked_=false;
-    bool first_=true;
+    bool first_=true, freshFocus_=false, restoreCursor_=false;
+    std::bitset<GLFW_KEY_LAST+1> heldAtLoss_;
+    static void focusChanged(GLFWwindow*,int);
+    static void keyAfterFocus(GLFWwindow*,int key,int scancode,int action,int mods);
     char filter_[64]{};
     void requireOwner() const;
     std::string renderer_,version_;

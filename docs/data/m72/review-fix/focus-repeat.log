@@ -1,0 +1,23 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.86 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.88 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.90 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.88 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.84 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.85 sec
+    Start 45: M72InspectorGL
+1/1 Test #45: M72InspectorGL ...................   Passed    0.85 sec
+
+100% tests passed out of 1
+
+Label Time Summary:
+gui       =   0.85 sec*proc (1 test)
+opengl    =   0.85 sec*proc (1 test)
+
+Total Test time (real) =   6.07 sec

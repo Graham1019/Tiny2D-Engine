@@ -1,0 +1,38 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m72-review-debug
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.36 sec
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 44: M72CPU
+    Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 44: M72CPU
+1/2 Test #44: M72CPU ...........................   Passed    0.01 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    1.19 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.85 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.84 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.82 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.83 sec
+    Start 45: M72InspectorGL
+    Test #45: M72InspectorGL ...................   Passed    0.83 sec
+    Start 45: M72InspectorGL
+2/2 Test #45: M72InspectorGL ...................   Passed    0.85 sec
+
+100% tests passed out of 2
+
+Label Time Summary:
+cpu       =   0.01 sec*proc (1 test)
+gui       =   0.85 sec*proc (1 test)
+opengl    =   0.85 sec*proc (1 test)
+
+Total Test time (real) =   6.62 sec

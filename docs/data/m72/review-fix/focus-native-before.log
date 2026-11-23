@@ -1,0 +1,31 @@
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 45
+    Start 45: M72InspectorGL
+
+45: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/lab/tiny2d_m72_gl
+45: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug
+45: Test timeout computed to be: 60
+45: pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+45: fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+45: Cocoa auto-repeat with cleared GLFW key cache: reset=1
+45: first native repeat misclassified as a fresh GLFW_PRESS
+1/1 Test #45: M72InspectorGL ...................***Failed    0.64 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+gui       =   0.64 sec*proc (1 test)
+opengl    =   0.64 sec*proc (1 test)
+
+Total Test time (real) =   0.64 sec
+
+The following tests FAILED:
+	 45 - M72InspectorGL (Failed)                           gui opengl

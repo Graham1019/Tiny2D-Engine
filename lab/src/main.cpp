@@ -119,15 +119,11 @@ void run(Options o) {
                         if (status==tiny2d::QueryStatus::Complete) ++measurement.completed;
                         else ++measurement.invalid;
                     }
-                    if (f.epoch==epoch && status==tiny2d::QueryStatus::Complete)
-                        History::append(history.gpu,sample);
+                    history.recordGpu(epoch,sample);
                 });
                 cpu.poll=micros(polling);
             }
-            if (!o.frames && window.takeFocusLoss()) {
-                controls.poll({},false,0,o.display);
-                gui->suspend();
-            }
+            if (!o.frames && window.takeFocusLoss()) controls.poll({},false,0,o.display);
             RoutedInput routed;
             if (gui) {
                 const auto build=Clock::now();
@@ -139,7 +135,7 @@ void run(Options o) {
             const auto oldView=o.display.view;
             Action action;
             if (o.frames) action.steps=1;
-            else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands);
+            else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands,routed.freshFocus);
             if (action.exit) break;
             if (action.reset) {
                 ++epoch; neon=Neon(o.seed); presented={}; tools.selected.reset(); history={}; last={};

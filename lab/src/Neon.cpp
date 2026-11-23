@@ -68,7 +68,7 @@ Options parse(int argc, const char* const* argv) {
     return o;
 }
 
-Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captured, Commands ui) {
+Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captured, Commands ui, bool freshFocus) {
     Action a;
     if (!active) {
         suspended_ = true;
@@ -77,7 +77,9 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
         return a;
     }
     if (suspended_) {
-        blocked_ = keys;
+        // A focus-aware backend has already canceled stale downs. Preserve new
+        // presses received after gain, including those in the very same poll.
+        blocked_ = freshFocus ? Keys{} : keys;
         suspended_ = false;
         dt = 0;
     }

@@ -9,6 +9,7 @@
 
 using namespace tiny2d;
 using namespace lab;
+void postCocoaResetKey(GLFWwindow*, bool down, bool repeat);
 namespace lab {
 struct PipelineProbe {
     static std::array<unsigned,4> hdrNames(const Pipeline& p) {
@@ -134,6 +135,119 @@ void imageOrientation(Window& window) {
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);glDisable(GL_FRAMEBUFFER_SRGB);
 }
+void focusBatches(Window& window) {
+    Inspector gui(window,false);
+    Neon neon(71); Controls controls; Display display; ToolState tools;
+    auto* w=window.nativeHandle();
+    auto tick=[&](bool focused=true) {
+        if (window.takeFocusLoss()) controls.poll({},false,0,display);
+        auto input=gui.build(tools,neon,1,display,controls.paused,{},{},"off",focused);
+        auto action=controls.poll(input.keys,focused,1./60,display,input.captureKeyboard,input.commands,input.freshFocus);
+        gui.discard();
+        return action;
+    };
+    auto key=[&](int code,int action){ImGui_ImplGlfw_KeyCallback(w,code,0,action,0);};
+    auto tap=[&](int code){key(code,GLFW_PRESS);key(code,GLFW_RELEASE);};
+    // GLFW has no callback getter. Borrow and immediately restore the installed
+    // chain so injected focus events enter through the same boundary as OS events.
+    const auto focus=glfwSetWindowFocusCallback(w,nullptr);
+    glfwSetWindowFocusCallback(w,focus);
+    auto refocus=[&] { focus(w,GLFW_FALSE); focus(w,GLFW_TRUE); };
+
+    tick(); tick();
+    // One GLFW poll can enqueue all these events before the next ImGui NewFrame.
+    tap(GLFW_KEY_W); tap(GLFW_KEY_R); tap(GLFW_KEY_P); tap(GLFW_KEY_B); tap(GLFW_KEY_F2);
+    refocus();
+    int resets=0, pausedFrames=0, bloomOffFrames=0, hiddenFrames=0, movement=0;
+    for (int i=0;i<16;++i) {
+        auto a=tick();
+        resets+=a.reset; pausedFrames+=controls.paused; bloomOffFrames+=!display.bloom;
+        hiddenFrames+=!tools.visible; movement+=std::abs(a.motion.y);
+    }
+    std::cout<<"pre-loss batch after restore: resets="<<resets<<" paused_frames="<<pausedFrames
+             <<" bloom_off_frames="<<bloomOffFrames<<" hidden_frames="<<hiddenFrames
+             <<" movement="<<movement<<'\n';
+    check(!resets && !pausedFrames && !bloomOffFrames && !hiddenFrames && !movement,
+          "commands from the previous focus cycle were replayed");
+
+    key(GLFW_KEY_W,GLFW_PRESS); check(tick().motion.y==-1,"W moves before focus loss");
+    tap(GLFW_KEY_P); refocus();
+    // A new R press+release belongs to the new focus cycle, even in the same poll.
+    tap(GLFW_KEY_R);
+    resets=0;
+    for (int i=0;i<6;++i) {
+        auto a=tick(); resets+=a.reset;
+        check(!a.motion.y && !controls.paused,"held W and queued P suppressed");
+    }
+    check(resets==1,"fresh R immediately after gain survives the recovery boundary");
+    key(GLFW_KEY_W,GLFW_RELEASE); tick();
+    key(GLFW_KEY_W,GLFW_PRESS); check(tick().motion.y==-1,"release then re-press W after restore");
+    key(GLFW_KEY_W,GLFW_RELEASE); tick();
+
+    for (int code:{GLFW_KEY_W,GLFW_KEY_R,GLFW_KEY_F2}) key(code,GLFW_PRESS);
+    tick();
+    const bool wasVisible=tools.visible;
+    focus(w,GLFW_FALSE);
+    // GLFW documents synthetic releases after the loss callback. A held key's
+    // GLFW_REPEAT is not a new key press in the official backend.
+    for (int code:{GLFW_KEY_W,GLFW_KEY_R,GLFW_KEY_F2}) key(code,GLFW_RELEASE);
+    tick(false);
+    tap(GLFW_KEY_B); // Inactive input may also be queued before a later poll restores focus.
+    focus(w,GLFW_TRUE);
+    for (int i=0;i<4;++i) {
+        for (int code:{GLFW_KEY_W,GLFW_KEY_R,GLFW_KEY_F2}) key(code,GLFW_REPEAT);
+        auto a=tick();
+        check(!a.reset && !a.motion.y && tools.visible==wasVisible && display.bloom,
+              "held repeats and unfocused transitions cannot arm scene/tool keys");
+    }
+    for (int code:{GLFW_KEY_W,GLFW_KEY_R,GLFW_KEY_F2}) key(code,GLFW_RELEASE);
+    tick();
+    key(GLFW_KEY_R,GLFW_PRESS); check(tick().reset && !tick().reset,"fresh R fires once");
+    key(GLFW_KEY_R,GLFW_RELEASE); tick();
+    key(GLFW_KEY_F2,GLFW_PRESS); tick(); check(tools.visible!=wasVisible,"fresh F2 edge rearmed");
+    key(GLFW_KEY_F2,GLFW_RELEASE); tick();
+    std::cout<<"fresh same-poll R="<<resets<<", held W/R/F2 repeats filtered, release/re-press accepted\n";
+
+    glfwFocusWindow(w); glfwPollEvents(); tick();
+    postCocoaResetKey(w,true,false);
+    check(glfwGetKey(w,GLFW_KEY_R)==GLFW_PRESS && tick().reset,"native R arms before focus loss");
+    focus(w,GLFW_FALSE);
+    postCocoaResetKey(w,false,false); // Put GLFW in the same state as its synthetic focus-loss release.
+    focus(w,GLFW_TRUE);
+    refocus(); // The key can stay physically held across another focus cycle.
+    postCocoaResetKey(w,true,true);
+    const bool replayed=tick().reset;
+    std::cout<<"Cocoa auto-repeat with cleared GLFW key cache: reset="<<replayed<<'\n';
+    check(!replayed,"first native repeat misclassified as a fresh GLFW_PRESS");
+    postCocoaResetKey(w,false,false); tick();
+    postCocoaResetKey(w,true,false); check(tick().reset,"native release/re-press rearmed R");
+    focus(w,GLFW_FALSE);
+    postCocoaResetKey(w,false,false);
+    focus(w,GLFW_TRUE);
+    postCocoaResetKey(w,true,false);
+    check(tick().reset && !tick().reset,"physical release while away and fresh R on return");
+    postCocoaResetKey(w,false,false); tick();
+
+    struct RestoreCursor {
+        GLFWwindow* window;
+        double x,y;
+        ~RestoreCursor() { glfwSetCursorPos(window,x,y); glfwPollEvents(); }
+    } restore{w,0,0};
+    glfwGetCursorPos(w,&restore.x,&restore.y);
+    glfwSetCursorPos(w,522,112); glfwPollEvents();
+    ImGui_ImplGlfw_CursorEnterCallback(w,GLFW_TRUE);
+    ImGui_ImplGlfw_CursorPosCallback(w,522,112); tick();
+    auto button=[&](int action){ImGui_ImplGlfw_MouseButtonCallback(w,0,action,0);};
+    button(GLFW_PRESS); tick();
+    check(ImGui::IsAnyItemActive() && display.bloom,"Bloom checkbox pressed before focus loss");
+    focus(w,GLFW_FALSE); button(GLFW_RELEASE); focus(w,GLFW_TRUE); tick();
+    std::cout<<"held Bloom checkbox on refocus: bloom="<<display.bloom<<'\n';
+    check(display.bloom,"focus-loss release must cancel pressed widget");
+    const auto cursor=ImGui::GetIO().MousePos;
+    check(std::abs(cursor.x-522)<2 && std::abs(cursor.y-112)<2,"stationary cursor restored");
+    button(GLFW_PRESS); tick(); button(GLFW_RELEASE); tick();
+    check(!display.bloom,"fresh stationary click after refocus toggles Bloom");
+}
 void interaction(Window& window,const std::filesystem::path& evidence) {
     auto* w=window.nativeHandle(); window.pollEvents();
     Pipeline pipe; pipe.resize(window.framebufferSize()); Inspector gui(window,false); ToolState tools;
@@ -147,13 +261,13 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         CpuSample c;
         if (timer.hasOutstanding()) timer.poll([&](FrameInfo f,QueryStatus status,const Timer::Durations& us) {
             check(status==QueryStatus::Complete && us[0],"real available timestamp");
-            History::append(history.gpu,{f,frame,status,us});
+            history.recordGpu(1,{f,frame,status,us});
         });
         if (queries->bits && frame>1) c.poll=micros(start);
         auto building=Clock::now();
         routed=gui.build(tools,n,1,d,controls.paused,history,timer.counts,queries->reason,true);
         c.build=micros(building);
-        action=controls.poll(routed.keys,true,1./60,d,routed.captureKeyboard,routed.commands);
+        action=controls.poll(routed.keys,true,1./60,d,routed.captureKeyboard,routed.commands,routed.freshFocus);
         Content rect{0,0,window.size()};
         if (tools.visible && routed.click) tools.selected=shown.pick(*routed.click,rect,d.view,pipe.generation(),n,1);
         auto updating=Clock::now();
@@ -228,5 +342,5 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
 }
 int main(int argc,char** argv) { try {
     Window window(800,450,"M7.2 Inspector integration");
-    pixels(window); imageOrientation(window); interaction(window,argc==2?argv[1]:"");
+    pixels(window); imageOrientation(window); focusBatches(window); interaction(window,argc==2?argv[1]:"");
 } catch (const std::exception& e) {std::cerr<<e.what()<<'\n';return 1;} }

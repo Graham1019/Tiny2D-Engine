@@ -1,0 +1,32 @@
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 45
+    Start 45: M72InspectorGL
+
+45: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/lab/tiny2d_m72_gl
+45: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug
+45: Test timeout computed to be: 60
+45: pre-loss batch after restore: resets=1 paused_frames=14 bloom_off_frames=13 hidden_frames=12 movement=0
+45: commands from the previous focus cycle were replayed
+1/1 Test #45: M72InspectorGL ...................***Failed    0.58 sec
+
+0% tests passed, 1 tests failed out of 1
+
+Label Time Summary:
+gui       =   0.58 sec*proc (1 test)
+opengl    =   0.58 sec*proc (1 test)
+
+Total Test time (real) =   0.58 sec
+
+The following tests FAILED:
+	 45 - M72InspectorGL (Failed)                           gui opengl
+Errors while running CTest
+Output from these tests are in: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-debug/Testing/Temporary/LastTest.log
+Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
