@@ -2,13 +2,15 @@
 #include "OpenGL.h"
 #include <stdexcept>
 namespace tiny2d {
-Texture2D::Texture2D(const ImageData& image,TextureFilter filter)
+Texture2D::Texture2D(const ImageData& image,TextureFilter filter,TextureWrap wrap)
     : object_(detail::ObjectKind::Texture),width_(image.width),height_(image.height) {
     GLint units=0;glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,&units);maxUnits_=static_cast<unsigned>(units);
     GLint maxSize=0; glGetIntegerv(GL_MAX_TEXTURE_SIZE,&maxSize);
     if(width_<=0||height_<=0||width_>maxSize||height_>maxSize||
        static_cast<std::uint64_t>(width_)*height_*4!=image.pixels.size()||
-       (filter!=TextureFilter::Linear&&filter!=TextureFilter::Nearest)) throw std::invalid_argument("invalid RGBA8 texture dimensions, pixels or filter");
+       (filter!=TextureFilter::Linear&&filter!=TextureFilter::Nearest)||
+       (wrap!=TextureWrap::ClampToEdge&&wrap!=TextureWrap::Repeat))
+        throw std::invalid_argument("invalid RGBA8 texture dimensions, pixels, filter or wrap");
     // Restore pixel-store and binding even when upload fails. No PBO uploads.
     struct Restore {
         GLint alignment=0,binding=0,row=0,rows=0,pixels=0,pbo=0;
@@ -20,7 +22,8 @@ Texture2D::Texture2D(const ImageData& image,TextureFilter filter)
     glBindTexture(GL_TEXTURE_2D,object_.id());
     const GLint f=filter==TextureFilter::Linear?GL_LINEAR:GL_NEAREST;
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,f); glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,f);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE); glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    const GLint wrapping=wrap==TextureWrap::Repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE;
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,wrapping); glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,wrapping);
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width_,height_,0,GL_RGBA,GL_UNSIGNED_BYTE,image.pixels.data());
     detail::checkGL("RGBA8 texture upload");
 }
