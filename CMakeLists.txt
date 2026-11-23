@@ -19,6 +19,8 @@ find_package(PNG REQUIRED) # Local libpng; brew install libpng. No configure-tim
 
 # 引擎静态库
 add_library(tiny2d_engine STATIC
+    engine/src/Renderer/DebugDraw.cpp
+    engine/src/Renderer/TimestampQueries.cpp
     engine/src/Scene/Scene.cpp
     engine/src/Physics/Collision2D.cpp
     engine/src/Renderer/SceneRenderer.cpp
@@ -320,13 +322,24 @@ add_custom_target(package_macos
     DEPENDS Tiny2DSurvivor VERBATIM)
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
-add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Presentation.cpp
+add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Presentation.cpp
     lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui PRIVATE glfw OpenGL::GL)
-add_executable(tiny2d_lab lab/src/main.cpp)
+add_library(tiny2d_lab_imgui STATIC
+    third_party/imgui/imgui.cpp third_party/imgui/imgui_draw.cpp
+    third_party/imgui/imgui_widgets.cpp third_party/imgui/imgui_tables.cpp
+    third_party/imgui/backends/imgui_impl_glfw.cpp third_party/imgui/backends/imgui_impl_opengl3.cpp)
+target_include_directories(tiny2d_lab_imgui PUBLIC third_party/imgui third_party/imgui/backends)
+target_compile_definitions(tiny2d_lab_imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM GLFW_INCLUDE_NONE)
+target_compile_features(tiny2d_lab_imgui PRIVATE cxx_std_17)
+target_link_libraries(tiny2d_lab_imgui PRIVATE glfw OpenGL::GL)
+add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/Capture.cpp)
+target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG)
+target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
-target_link_libraries(tiny2d_lab PRIVATE tiny2d_lab_core glfw OpenGL::GL PNG::PNG)
+target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
 add_custom_target(tiny2d_lab_assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/lab/assets"
@@ -350,4 +363,20 @@ if(BUILD_TESTING)
             -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/m71_relocated.cmake")
         set_tests_properties(M71GPU M71RelocatedCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
     endif()
+endif()
+
+if(BUILD_TESTING)
+    add_executable(tiny2d_m72_cpu tests/test_m72_cpu.cpp)
+    target_link_libraries(tiny2d_m72_cpu PRIVATE tiny2d_lab_core)
+    add_test(NAME M72CPU COMMAND tiny2d_m72_cpu)
+    set_tests_properties(M72CPU PROPERTIES LABELS "cpu")
+endif()
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m72_gl tests/test_m72_gl.cpp)
+    target_link_libraries(tiny2d_m72_gl PRIVATE tiny2d_inspector glfw OpenGL::GL)
+    target_include_directories(tiny2d_m72_gl PRIVATE engine/src/Renderer)
+    set_target_properties(tiny2d_m72_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m72_gl tiny2d_lab_assets)
+    add_test(NAME M72InspectorGL COMMAND tiny2d_m72_gl)
+    set_tests_properties(M72InspectorGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
 endif()

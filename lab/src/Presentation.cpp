@@ -67,10 +67,23 @@ void arena(Quads& out) {
 }
 std::string dims(tiny2d::Size s) { return std::to_string(s.width)+"X"+std::to_string(s.height); }
 }
+void Picture::debugLines(const std::vector<tiny2d::DebugLine>& lines,Color c) {
+    for (const auto& l:lines) segment(debug,l.from,l.to,1.4f/worldCamera.zoom(),c);
+}
+void Picture::bounds(const Objects& objects,std::optional<LabHandle> selected,bool all,bool selection) {
+    std::vector<tiny2d::DebugLine> lines;
+    for (const auto& obj:objects) {
+        bool highlight=selection && selected && *selected==obj.id;
+        if (!all && !highlight) continue;
+        lines.clear();
+        tiny2d::outline(tiny2d::Circle{obj.position,obj.radius+3/worldCamera.zoom()},lines);
+        debugLines(lines,highlight ? Color{1,.72f,.25f,1} : Color{.2f,.75f,.72f,1});
+    }
+}
 void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size logical,
                       tiny2d::Size pixels,const Stats& last) {
     d.validate();
-    world.clear(); hud.clear();
+    world.clear(); hud.clear(); debug.clear();
     worldCamera.setViewportSize(logical.width,logical.height);
     worldCamera.setZoom(std::min(logical.width/800.f,logical.height/450.f));
     hudCamera.setViewportSize(logical.width,logical.height);
@@ -78,15 +91,15 @@ void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size lo
     arena(world);
     for (const auto& b : n.bolts) if (b.age>=0) {
         const float t=float(b.age)/Neon::flight;
-        const auto along=[&](float u){return Vector2{b.start.x+(b.end.x-b.start.x)*u,b.start.y+(b.end.y-b.start.y)*u};};
-        segment(world,along(std::max(0.f,t-.14f)),along(t),2.5f,{1.0f,.18f,.025f,1});
-        segment(world,along(t-.025f),along(t+.025f),4,amber);
+
+        segment(world,along(b,std::max(0.f,t-.14f)),along(b,t),2.5f,{1.0f,.18f,.025f,1});
+        segment(world,along(b,t-.025f),along(b,t+.025f),4,amber);
     }
     for (const auto& b : n.bursts) if (b.age>=0) {
         const float t=float(b.age)/Neon::flash;
         Color plasma{4*(1-t),.2f*(1-t),4.6f*(1-t),1};
         for (int i=0;i<12;++i) {
-            const float a=b.angle+i*pi/6, r=9+t*(i%2?27:40);
+            const float a=b.angle+i*pi/6, r=burstRadius(t,i%2);
             segment(world,polar(b.center,r,a),polar(b.center,r+8*(1-t),a),2,plasma);
         }
     }

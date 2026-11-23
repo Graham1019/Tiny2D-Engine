@@ -833,7 +833,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &last_array_buffer);
 #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_BUFFER_PIXEL_UNPACK
     GLint last_pixel_unpack_buffer = 0;
-    if (bd->GlVersion >= 210) { glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &last_pixel_unpack_buffer); glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0); }
+    if (bd->GlVersion >= 210) { glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING, &last_pixel_unpack_buffer); }
 #endif
 #ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
     GLint last_vertex_array;
@@ -975,7 +975,10 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     glShaderSource(vert_handle, 2, vertex_shader_with_version, nullptr);
     glCompileShader(vert_handle);
     if (!CheckShader(vert_handle, "vertex shader"))
+    {
+        glDeleteShader(vert_handle);
         return false;
+    }
 
     const GLchar* fragment_shader_with_version[2] = { bd->GlslVersionString, fragment_shader };
     GLuint frag_handle;
@@ -983,7 +986,11 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     glShaderSource(frag_handle, 2, fragment_shader_with_version, nullptr);
     glCompileShader(frag_handle);
     if (!CheckShader(frag_handle, "fragment shader"))
+    {
+        glDeleteShader(vert_handle);
+        glDeleteShader(frag_handle);
         return false;
+    }
 
     // Link
     bd->ShaderHandle = glCreateProgram();
@@ -991,7 +998,13 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
     glAttachShader(bd->ShaderHandle, frag_handle);
     glLinkProgram(bd->ShaderHandle);
     if (!CheckProgram(bd->ShaderHandle, "shader program"))
+    {
+        glDeleteProgram(bd->ShaderHandle);
+        bd->ShaderHandle = 0;
+        glDeleteShader(vert_handle);
+        glDeleteShader(frag_handle);
         return false;
+    }
 
     glDetachShader(bd->ShaderHandle, vert_handle);
     glDetachShader(bd->ShaderHandle, frag_handle);
