@@ -17,10 +17,10 @@ public:
         GLint major=0,minor=0;
         glGetIntegerv(GL_MAJOR_VERSION,&major); glGetIntegerv(GL_MINOR_VERSION,&minor);
         if ((major<3 || (major==3 && minor<3)) && !glfwExtensionSupported("GL_ARB_timer_query")) {
-            reason="requires GL 3.3 or ARB_timer_query"; return;
+            reason="N/A: requires GL 3.3 or ARB_timer_query"; return;
         }
         if (!glfwGetProcAddress("glQueryCounter") || !glfwGetProcAddress("glGetQueryObjectui64v")) {
-            reason="timestamp entry point unavailable"; return;
+            reason="N/A: timestamp entry point unavailable"; return;
         }
         glGetQueryiv(GL_TIMESTAMP,GL_QUERY_COUNTER_BITS,&bits);
         detail::checkGL("GL_TIMESTAMP counter bits");

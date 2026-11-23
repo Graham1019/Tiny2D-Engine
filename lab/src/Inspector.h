@@ -23,10 +23,12 @@ public:
                       const History&,const tiny2d::QueryCounts&,const std::string& capability,bool focused);
     unsigned finish(const ToolState&,Pipeline&,std::uint64_t frame,std::uint64_t tick);
     void submit(Stats&);
+    std::uint64_t atlasBytes() const { return atlasBytes_; }
     void discard();
     void suspend();
 private:
     GLFWwindow* window_;
+    std::uint64_t atlasBytes_=0;
     bool finite_,active_=false,ready_=false,focusGate_=false,f2Down_=false,mouseBlocked_=false;
     bool first_=true;
     char filter_[64]{};

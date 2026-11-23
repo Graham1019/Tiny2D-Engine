@@ -17,18 +17,31 @@ void run(Options o) {
     Stats last, attempt;
     std::uint64_t frames=0, storage=0;
     tiny2d::Size logical{}, pixels{};
+    // Keep the Context alive while reporting and retiring queries on every exit path.
+    std::optional<tiny2d::Window> owner;
+    std::unique_ptr<tiny2d::TimestampQueries> queries;
+    std::unique_ptr<Timer> timer;
+    tiny2d::QueryCounts measurement;
     auto summary=[&](const char* status) {
+        const auto counts=timer ? timer->counts : tiny2d::QueryCounts{};
+        std::cout<<"gpu_requested="<<counts.requested<<" completed="<<counts.completed<<" pending="<<counts.pending
+                 <<" skipped="<<counts.skipped<<" invalid="<<counts.invalid<<" reason="
+                 <<(queries?queries->reason:(o.timing?"not initialized":"timing off"))<<'\n';
+        if (o.frames) std::cout<<"measurement_gpu_requested="<<measurement.requested
+            <<" completed="<<measurement.completed<<" pending="<<measurement.pending
+            <<" skipped="<<measurement.skipped<<" invalid="<<measurement.invalid<<'\n';
         std::cout<<"status="<<status<<" frames="<<frames<<" ticks="<<neon.tick<<" seed="<<o.seed
                  <<" window="<<logical.width<<'x'<<logical.height<<" framebuffer="<<pixels.width<<'x'<<pixels.height
                  <<" view="<<name(o.display.view)<<" bloom="<<(o.display.bloom?"on":"off")
                  <<" strength="<<o.display.strength/10.f<<" last_passes="<<last.passes
                  <<" fullscreen="<<last.fullscreen<<" draws="<<last.draws<<" sprites="<<last.sprites
-                 <<" upload_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
+                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload)
+                 <<" batch_vertex_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
                  <<" attempt_passes="<<attempt.passes<<" attempt_draws="<<attempt.draws
                  <<" attempt_complete="<<attempt.complete<<'\n';
     };
     try {
-        tiny2d::Window window(o.width,o.height,"Tiny2D Lab / Neon");
+        auto& window=owner.emplace(o.width,o.height,"Tiny2D Lab / Neon");
         tiny2d::Input input(window);
         if (o.frames) glfwSwapInterval(0);
         GLint profile;
@@ -38,8 +51,6 @@ void run(Options o) {
         ToolState tools{o.inspector,o.timing,o.previews};
         std::unique_ptr<Inspector> gui;
         if (!o.frames || tools.visible) gui=std::make_unique<Inspector>(window,o.frames.has_value());
-        std::unique_ptr<tiny2d::TimestampQueries> queries;
-        std::unique_ptr<Timer> timer;
         auto enableTimer=[&] {
             if (timer) return;
             queries=tiny2d::openTimestampQueries(Timer::capacity);
@@ -49,7 +60,6 @@ void run(Options o) {
         if (tools.timing) enableTimer();
         Metrics csv(o.metrics);
         History history;
-        tiny2d::QueryCounts measurement;
         Presented presented;
         std::uint64_t epoch=1;
         std::vector<CpuSample> samples;
@@ -59,6 +69,7 @@ void run(Options o) {
         std::optional<Clock::time_point> unavailableSince;
         std::string resizeError;
         while (!o.frames || frames<*o.frames) {
+            csv.flushRetired(); // Outside both clocks, including delayed warmup records.
             window.pollEvents();
             if (window.shouldClose()) {
                 if (o.frames) throw std::runtime_error("window closed before requested frames");
@@ -98,12 +109,11 @@ void run(Options o) {
             auto& info=cpu.info;
             info.id=frames+1; info.generation=renderer.generation(); info.logical=logical; info.pixels=pixels;
             info.measurement=info.id>120 && info.id<=1320;
-            std::vector<GpuSample> arrived;
             if (timer && timer->hasOutstanding()) {
                 const auto polling=Clock::now();
                 timer->poll([&](FrameInfo f,tiny2d::QueryStatus status,const Timer::Durations& times) {
                     GpuSample sample{f,info.id,status,times};
-                    arrived.push_back(sample);
+                    csv.retired(sample);
                     if (f.measurement) {
                         --measurement.pending;
                         if (status==tiny2d::QueryStatus::Complete) ++measurement.completed;
@@ -177,6 +187,7 @@ void run(Options o) {
                 renderer.draw(picture,o.display,attempt,draw);
                 info.mask=attempt.mask;
                 if (draw.timer) draw.timer->mark(0,true);
+                if (gui) attempt.fontBytes=gui->atlasBytes();
                 cpu.stats=attempt; cpu.hdrBytes=storage; cpu.previewBytes=renderer.previewBytes();
                 cpu.total=micros(start);
                 if (o.frames && frames+1==*o.frames && !o.capture.empty()) capture(o.capture,pixels);
@@ -186,9 +197,13 @@ void run(Options o) {
                     throw std::runtime_error(std::string("window submission: ")+(error?error:"unknown error"));
             } catch (...) {
                 info.mask=attempt.mask;
-                if (draw.timer) draw.timer->finish(info,false);
+                if (draw.timer) {
+                    draw.timer->finish(info,false);
+                    csv.retired({info,info.id,tiny2d::QueryStatus::Invalid,{}});
+                    if (info.measurement) { --measurement.pending; ++measurement.invalid; }
+                }
                 if (gui) gui->discard();
-                if (draw.timer) std::cerr<<"GPU partial frame "<<info.id<<" invalid="<<timer->counts.invalid<<'\n';
+
                 throw;
             }
             ++frames;
@@ -197,17 +212,9 @@ void run(Options o) {
             last=attempt;
             History::append(history.cpu,cpu);
             csv.record(cpu);
-            for (const auto& result:arrived) csv.record(result);
             if (o.frames && info.measurement) samples.push_back(cpu);
         }
         report(samples);
-        const auto counts=timer ? timer->counts : tiny2d::QueryCounts{};
-        std::cout<<"gpu_requested="<<counts.requested<<" completed="<<counts.completed<<" pending="<<counts.pending
-                 <<" skipped="<<counts.skipped<<" invalid="<<counts.invalid<<" reason="
-                 <<(queries?queries->reason:"timing off")<<'\n';
-        if (o.frames) std::cout<<"measurement_gpu_requested="<<measurement.requested
-            <<" completed="<<measurement.completed<<" pending="<<measurement.pending
-            <<" skipped="<<measurement.skipped<<" invalid="<<measurement.invalid<<'\n';
         csv.close();
     } catch (...) {
         summary("error");

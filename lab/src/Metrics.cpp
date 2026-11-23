@@ -20,6 +20,7 @@ const char* status(QueryStatus s) {
 }
 Metrics::Metrics(const std::string& path) {
     if (path.empty()) return;
+    retired_.reserve(9);
     out_.exceptions(std::ios::badbit|std::ios::failbit);
     try { out_.open(path); }
     catch (const std::ios_base::failure& e) { throw std::runtime_error("open metrics "+path+": "+e.what()); }
@@ -54,13 +55,25 @@ void Metrics::record(const CpuSample& c) {
     for (auto bytes:s.passBytes) out_<<','<<bytes;
     out_<<'\n';
 }
-void Metrics::record(const GpuSample& g) {
+void Metrics::write(const GpuSample& g) {
     if (!out_.is_open()) return;
     prefix(g.info,"gpu",g.status); out_<<g.received;
     for (auto us:g.us) {out_<<','; if (g.status==QueryStatus::Complete && us) out_<<*us;}
     out_<<std::string(16+2*PassCount,',')<<'\n';
 }
-void Metrics::close() { if (out_.is_open()) out_.close(); }
+void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
+void Metrics::flushRetired() {
+    for (const auto& result:retired_) write(result);
+    retired_.clear();
+}
+void Metrics::close() {
+    if (!out_.is_open()) return;
+    flushRetired();
+    out_.close();
+}
+Metrics::~Metrics() {
+    try {close();} catch (const std::exception& e) {std::cerr<<"close metrics: "<<e.what()<<'\n';}
+}
 void report(const std::vector<CpuSample>& samples) {
     if (samples.empty()) return;
     auto metric=[&](const char* label,auto value) {

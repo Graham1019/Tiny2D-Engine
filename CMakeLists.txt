@@ -366,7 +366,7 @@ if(BUILD_TESTING)
 endif()
 
 if(BUILD_TESTING)
-    add_executable(tiny2d_m72_cpu tests/test_m72_cpu.cpp)
+    add_executable(tiny2d_m72_cpu tests/test_m72_cpu.cpp lab/src/Metrics.cpp)
     target_link_libraries(tiny2d_m72_cpu PRIVATE tiny2d_lab_core)
     add_test(NAME M72CPU COMMAND tiny2d_m72_cpu)
     set_tests_properties(M72CPU PROPERTIES LABELS "cpu")

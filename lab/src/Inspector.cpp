@@ -278,5 +278,6 @@ void Inspector::submit(Stats& s) {
     s.vertexBytes=actual.VertexBytes; s.indexBytes=actual.IndexBytes; s.draws+=actual.Draws;
     if (data->Textures) for (auto* tex:*data->Textures)
         if (tex->TexID!=ImTextureID_Invalid) s.fontBytes+=tex->Width*tex->Height*4ull;
+    atlasBytes_=s.fontBytes;
 }
 }

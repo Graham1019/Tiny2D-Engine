@@ -1,5 +1,8 @@
 #include "M5Test.h"
-#include "Observation.h"
+#include "Metrics.h"
+#include <algorithm>
+#include <filesystem>
+#include <unistd.h>
 #include <cmath>
 #include <set>
 #include <tuple>
@@ -75,6 +78,12 @@ void selection() {
                           content.y+(1-m[5]*n.player.y-m[13])*39.5f};
     Presented snap{objects(n,6),cam,content,View::Scene,4,33,n.tick};
     auto pick=[&](auto c,View v,unsigned gen){return snap.pick(cursor,c,v,gen,n,6);};
+    for (float density:{1.f,1.5f,2.f}) {
+        // Convert native pixel positions to GLFW logical points exactly once.
+        const float pixelX=(cursor.x-content.x)*density,pixelY=(cursor.y-content.y)*density;
+        auto world=cam.viewportToWorld({pixelX/density,pixelY/density});
+        check(std::abs(world.x-n.player.x)<.001f && std::abs(world.y-n.player.y)<.001f,"logical inverse across densities");
+    }
     auto h=pick(content,View::Scene,4);
     check(h && h->kind==ObjectKind::Player,"inverse of actual projection");
     check(!pick(content,View::Final,4) && !pick(content,View::Scene,5) &&
@@ -91,6 +100,26 @@ public:
     bool available(unsigned i) override {return ready.at(i);}
     std::uint64_t result(unsigned i) override {check(ready.at(i),"read pending result"); ++reads; return values.at(i);}
 };
+void retirementCSV() {
+    auto path=std::filesystem::temp_directory_path()/("tiny2d-m72-"+std::to_string(getpid())+".csv");
+    struct Remove { std::filesystem::path path; ~Remove(){std::error_code ec;std::filesystem::remove(path,ec);} } remove{path};
+    FrameInfo info; info.id=121; info.epoch=7; info.tick=81; info.timing=true; info.measurement=true;
+    {
+        Metrics stream(path.string());
+        CpuSample cpu; cpu.info=info; cpu.status=tiny2d::QueryStatus::Pending;
+        stream.record(cpu);
+        GpuSample gpu{info,123,tiny2d::QueryStatus::Complete,{}};
+        gpu.us[0]=2.5;
+        stream.retired(gpu); // Exit before another poll or CPU frame can flush the retirement.
+    }
+    std::ifstream input(path);
+    std::string header,cpu,gpu;
+    std::getline(input,header);std::getline(input,cpu);std::getline(input,gpu);
+    auto columns=[](const auto& s){return std::count(s.begin(),s.end(),',');};
+    check(columns(header)==columns(cpu) && columns(cpu)==columns(gpu),"rectangular retirement CSV");
+    check(cpu.find(",pending,,")!=cpu.npos && gpu.find("gpu,121,81,7,") == 0 &&
+          gpu.find(",completed,123,2.5,")!=gpu.npos,"delayed CSV retains frame and empty unmeasured intervals");
+}
 void queries() {
     using S=tiny2d::QueryStatus;
     FakeQueries q; tiny2d::TimestampRing<FrameInfo,2,2> ring(q);
@@ -118,5 +147,5 @@ void queries() {
           c.requested==c.completed+c.invalid+c.pending+c.skipped,"partition and wrap rejection");
 }
 }
-int main() { try {cli(); ownership(); selection(); queries();}
+int main() { try {cli(); ownership(); selection(); queries(); retirementCSV();}
 catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;} }
