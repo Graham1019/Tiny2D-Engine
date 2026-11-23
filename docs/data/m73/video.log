@@ -1,0 +1,6 @@
+Production path: Neon::update -> Picture::prepare -> Pipeline::draw -> GL_BACK BGRA readback (before swap)
+seed=71 ticks=1080 frames=540 fps=30 framebuffer=1600x900 duration=18s
+AVAssetReader decode: 540 frames with consecutive n/30 presentation timestamps, 1600x900, 30 fps, duration 18s, codec avc1
+Frames inspected: 30 (legacy), 150 (lit Final), 300 (Light), 390 (Final + radii).
+Reproduce from repository root after Release build: sh docs/data/m73/record-demo.sh /tmp/m73-demo.mp4
+10d271cd8ecca13b1d12151e65805e0cf1d121ed8d79639bcf9b3c5554648932  docs/media/m73/demo.mp4

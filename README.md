@@ -78,8 +78,13 @@ No arguments still select the original immediate sprite demo.
 
 Move the cyan Player with WASD and hold Space to fire. **F2** toggles the Inspector.
 Click a Player, Relay, Bolt or Burst in Scene or Final, or use the **Objects** tab in
-any view. Enable **Buffers** for four display-mapped thumbnails. **Timing** shows
+any view. Enable **Buffers** for display-mapped thumbnails. **Timing** shows
 CPU submission and the latest available GPU timestamp measurements with their frame IDs.
+
+**L** enables dynamic lighting. Cyan light follows the player, orange light travels with each bolt,
+and amber relays and fading violet bursts illuminate the grid. **5** shows the linear Light Buffer
+through the display transform. The **Lighting** tab controls ambient intensity, global strength,
+radius scale and radius outlines. Lighting defaults to off.
 
 **1–4** select Scene, Bright, Blur and Final. **B** toggles Bloom, **[ / ]** adjust
 strength by 0.1, **P** pauses, **.** advances one paused tick, **R** resets the seed
@@ -87,15 +92,15 @@ and **F1** toggles the HUD. Escape exits when the scene owns keyboard input.
 
 ```sh
 cd /Users/grahm/Desktop/Tiny2D-Engine
-cmake -S . -B build/m72-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m72-release --parallel
-./build/m72-release/lab/tiny2d_lab --scene neon
-./build/m72-release/lab/tiny2d_lab --seed 71 --frames 4 --view final --capture /tmp/neon.png
-./build/m72-release/lab/tiny2d_lab --seed 71 --frames 4 --inspector on --previews all --gpu-timing on --capture /tmp/neon-tools.png
+cmake -S . -B build/m73-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m73-release --parallel
+./build/m73-release/lab/tiny2d_lab --scene neon --lighting on --view final
+./build/m73-release/lab/tiny2d_lab --seed 71 --frames 4 --lighting on --view light --capture /tmp/neon-light.png
 ```
 
-![Lab Inspector with four display-mapped buffers](docs/data/m72/buffers.png)
+![Neon Lighting Inspector and five GPU buffer previews](docs/media/m73/inspector.png)
 
+[M7.3 dynamic lighting, tests and measurements](docs/milestone-07-3.md) ·
 [M7.2 controls, measurements and verification](docs/milestone-07-2.md) ·
 [M7.1 rendering pipeline](docs/milestone-07-1.md) · [Lab roadmap](docs/lab-roadmap.md)
 
@@ -146,7 +151,7 @@ No hosted CI execution is claimed.
 [M0–M6.3b historical README](docs/development-history.md) preserves the earlier narrative.
 [M6.3a](docs/milestone-06-3a.md) adds difficulty; [M6.3b](docs/milestone-06-3b.md)
 adds presentation; [M6.3b.1](docs/m63b1-review-fixes.md) fixes priority/recovery;
-[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab and [M7.2](docs/milestone-07-2.md) adds its Inspector.
+[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab, [M7.2](docs/milestone-07-2.md) adds its Inspector, and [M7.3](docs/milestone-07-3.md) lights its surfaces.
 
 ## Known Limitations
 
