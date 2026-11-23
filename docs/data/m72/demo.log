@@ -1,0 +1,46 @@
++ lab=./build/m72-release/lab/tiny2d_lab
++ sandbox=./build/m72-release/tiny2d_sandbox
++ for view in scene bright blur final
++ ./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --frames 4 --view scene --bloom on --inspector off --gpu-timing off --capture /tmp/m72-scene.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=scene bloom=on strength=1.2 last_passes=3 fullscreen=1 draws=3 sprites=960 upload_bytes=138240 batch_vertex_bytes=138240 rgba16f_attachment_bytes=20160000 attempt_passes=3 attempt_draws=3 attempt_complete=1
++ cmp /tmp/m72-scene.png docs/media/m71-scene.png
++ for view in scene bright blur final
++ ./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --frames 4 --view bright --bloom on --inspector off --gpu-timing off --capture /tmp/m72-bright.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=bright bloom=on strength=1.2 last_passes=4 fullscreen=2 draws=4 sprites=981 upload_bytes=141264 batch_vertex_bytes=141264 rgba16f_attachment_bytes=20160000 attempt_passes=4 attempt_draws=4 attempt_complete=1
++ cmp /tmp/m72-bright.png docs/media/m71-bright.png
++ for view in scene bright blur final
++ ./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --frames 4 --view blur --bloom on --inspector off --gpu-timing off --capture /tmp/m72-blur.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=blur bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=964 upload_bytes=138816 batch_vertex_bytes=138816 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
++ cmp /tmp/m72-blur.png docs/media/m71-blur.png
++ for view in scene bright blur final
++ ./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --frames 4 --view final --bloom on --inspector off --gpu-timing off --capture /tmp/m72-final.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=969 upload_bytes=139536 batch_vertex_bytes=139536 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
++ cmp /tmp/m72-final.png docs/media/m71-final.png
++ ./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --frames 4 --view final --bloom on --inspector on --previews all --gpu-timing on --capture docs/data/m72/buffers.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=160
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=8 draws=22 sprites=983 upload_bytes=184750 batch_vertex_bytes=141552 rgba16f_attachment_bytes=20160000 attempt_passes=11 attempt_draws=22 attempt_complete=1
++ ./build/m72-release/lab/tiny2d_m72_gl docs/data/m72
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
++ ./build/m72-release/tiny2d_sandbox --scene triangle --frames 4
+Frames: 4 | Draw calls in final frame: 1
++ ./build/m72-release/tiny2d_sandbox --scene sprites --renderer immediate --sprite-count 500 --frames 4
+Frames: 4 | Draw calls in final frame: 500
++ ./build/m72-release/tiny2d_sandbox --scene sprites --renderer batch --sprite-count 500 --frames 4
+Frames: 4 | Draw calls in final frame: 1
++ ./build/m72-release/tiny2d_sandbox --scene multitexture --renderer batch --sprite-count 5000 --frames 4
+Frames: 4 | Draw calls in final frame: 5

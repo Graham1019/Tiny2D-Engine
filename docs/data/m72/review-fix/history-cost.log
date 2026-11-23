@@ -1,0 +1,21 @@
+CPU-side steady clock; nanoseconds per retired record averaged over a block of 1024 updates.
+Per distribution: 64 warmup blocks discarded, 512 measured blocks; nearest-rank p50/p95/p99.
+No GL calls, driver polling, CSV, rendering, or fake timestamp values are timed.
+The mixed stream delivers one adjacent pair out of order per 32 records. The baseline checksum follows the last arrival; the fix follows the greatest originating frame.
+Base source: build/m72-review-baseline-1c73ed8/src, unpacked from 1c73ed8ff0d4485499491c50651b8afe31034015.
+C++17; same host and compiler, macOS arm64.
+Commands (from repository root):
+  baseline=build/m72-review-baseline-1c73ed8/src
+  probe=docs/data/m72/review-fix/history-cost.cpp
+  /usr/bin/c++ -O3 -DNDEBUG -std=c++17 -DM72_BEFORE -I"$baseline/lab/src" -I"$baseline/engine/include" "$probe" -o build/m72-history-cost-before
+  /usr/bin/c++ -O3 -DNDEBUG -std=c++17 -Ilab/src -Iengine/include "$probe" -o build/m72-history-cost-after
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
++zsh:17> ./build/m72-history-cost-before
+ordered ns/record p50=15.54 p95=15.75 p99=16.28 blocks=512 records/block=1024 retained=120 latest_checksum=170164224
+one_late_per_32 ns/record p50=12.04 p95=13.59 p99=14.77 blocks=512 records/block=1024 retained=120 latest_checksum=170163648
++zsh:18> ./build/m72-history-cost-after
+ordered ns/record p50=7.20 p95=7.41 p99=8.10 blocks=512 records/block=1024 retained=120 latest_checksum=170164224
+one_late_per_32 ns/record p50=7.57 p95=7.89 p99=8.63 blocks=512 records/block=1024 retained=120 latest_checksum=170164224

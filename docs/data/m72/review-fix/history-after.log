@@ -1,0 +1,60 @@
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 25
+    Start 25: M72CPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/tiny2d_m72_cpu
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+25: Test timeout computed to be: 1500
+25: retired=1,3,2 latest=3
+25: cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 pending=0 skipped=1 invalid=1, unique GPU CSV rows=132
+    Test #25: M72CPU ...........................   Passed    0.36 sec
+    Start 25: M72CPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/tiny2d_m72_cpu
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+25: Test timeout computed to be: 1500
+25: retired=1,3,2 latest=3
+25: cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 pending=0 skipped=1 invalid=1, unique GPU CSV rows=132
+    Test #25: M72CPU ...........................   Passed    0.01 sec
+    Start 25: M72CPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/tiny2d_m72_cpu
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+25: Test timeout computed to be: 1500
+25: retired=1,3,2 latest=3
+25: cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 pending=0 skipped=1 invalid=1, unique GPU CSV rows=132
+    Test #25: M72CPU ...........................   Passed    0.00 sec
+    Start 25: M72CPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/tiny2d_m72_cpu
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+25: Test timeout computed to be: 1500
+25: retired=1,3,2 latest=3
+25: cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 pending=0 skipped=1 invalid=1, unique GPU CSV rows=132
+    Test #25: M72CPU ...........................   Passed    0.01 sec
+    Start 25: M72CPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless/tiny2d_m72_cpu
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m72-headless
+25: Test timeout computed to be: 1500
+25: retired=1,3,2 latest=3
+25: cross-poll latest=5, reset latest=7, window=14..133, requested=133 completed=131 pending=0 skipped=1 invalid=1, unique GPU CSV rows=132
+1/1 Test #25: M72CPU ...........................   Passed    0.01 sec
+
+The following tests passed:
+	M72CPU
+
+100% tests passed out of 1
+
+Label Time Summary:
+cpu    =   0.01 sec*proc (1 test)
+
+Total Test time (real) =   0.38 sec

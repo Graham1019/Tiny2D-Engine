@@ -65,6 +65,10 @@ Window::Window(int width, int height, const std::string& title) {
     makeContextCurrent();
     // Future OpenGL function loader initialization belongs here.
     glfwSwapInterval(1);
+    glfwSetWindowUserPointer(handle_.get(),this);
+    glfwSetWindowFocusCallback(handle_.get(),[](GLFWwindow* window,int focused) {
+        if (!focused) static_cast<Window*>(glfwGetWindowUserPointer(window))->lostFocus_=true;
+    });
     glfwSetFramebufferSizeCallback(handle_.get(), framebufferResized);
     const auto dimensions = framebufferSize();
     glViewport(0, 0, dimensions.width, dimensions.height);
@@ -80,6 +84,9 @@ void Window::framebufferResized(GLFWwindow* window, int width, int height) {
     glfwMakeContextCurrent(previous);
 }
 
+bool Window::takeFocusLoss() noexcept {
+    const bool lost=lostFocus_; lostFocus_=false; return lost;
+}
 bool Window::iconified() const { return glfwGetWindowAttrib(handle_.get(), GLFW_ICONIFIED) == GLFW_TRUE; }
 bool Window::shouldClose() const { return glfwWindowShouldClose(handle_.get()); }
 void Window::requestClose() { glfwSetWindowShouldClose(handle_.get(), GLFW_TRUE); }

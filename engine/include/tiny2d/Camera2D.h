@@ -1,5 +1,6 @@
 #pragma once
 #include "tiny2d/Mat4.h"
+#include "tiny2d/Vector2.h"
 namespace tiny2d {
 // CPU-only. Position is the world-space center; viewport uses logical pixels.
 class Camera2D {
@@ -10,6 +11,7 @@ public:
     void setZoom(float zoom);
     float zoom() const { return zoom_; }
     void setViewportSize(float width,float height);
+    Vector2 viewportToWorld(Vector2 point) const; // Logical points relative to content origin.
     Mat4 viewProjectionMatrix() const;
 private:
     float x_=0,y_=0,width_=1,height_=1,zoom_=1;

@@ -24,6 +24,8 @@ public:
     Window(Window&&) = delete;
     Window& operator=(Window&&) = delete;
 
+    GLFWwindow* nativeHandle() const noexcept { return handle_.get(); } // Borrowed for platform integrations.
+    bool takeFocusLoss() noexcept; // Includes a loss and regain within one event poll.
     bool iconified() const;
     bool shouldClose() const;
     void requestClose();
@@ -37,6 +39,7 @@ public:
 
 private:
     friend class Input;
+    bool lostFocus_=false;
     struct Runtime;
     struct WindowDeleter {
         void operator()(GLFWwindow* window) const noexcept;

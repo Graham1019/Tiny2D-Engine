@@ -31,6 +31,7 @@ void Display::validate() const {
 }
 Options parse(int argc, const char* const* argv) {
     Options o;
+    std::optional<bool> inspector, timing;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -47,6 +48,10 @@ Options parse(int argc, const char* const* argv) {
             else if (value == "final") o.display.view = View::Final;
             else throw std::invalid_argument("unknown --view");
         } else if (key == "--bloom" && (value == "on" || value == "off")) o.display.bloom = value == "on";
+        else if ((key=="--inspector" || key=="--gpu-timing") && (value=="on" || value=="off")) {
+            (key=="--inspector" ? inspector : timing) = value=="on";
+        } else if (key=="--previews" && (value=="off" || value=="all")) o.previews=value=="all";
+        else if (key=="--metrics" && !value.empty()) o.metrics=value;
         else if (key == "--size") {
             const auto split = value.find('x');
             if (split == value.npos) throw std::invalid_argument("--size expects WIDTHxHEIGHT");
@@ -57,10 +62,13 @@ Options parse(int argc, const char* const* argv) {
         else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
     }
     if (!o.capture.empty() && !o.frames) throw std::invalid_argument("--capture requires --frames");
+    o.inspector=inspector.value_or(!o.frames);
+    o.timing=timing.value_or(!o.frames);
+    if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
     return o;
 }
 
-Action Controls::poll(Keys keys, bool active, double dt, Display& d) {
+Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captured, Commands ui, bool freshFocus) {
     Action a;
     if (!active) {
         suspended_ = true;
@@ -69,13 +77,16 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d) {
         return a;
     }
     if (suspended_) {
-        blocked_ = keys;
+        // A focus-aware backend has already canceled stale downs. Preserve new
+        // presses received after gain, including those in the very same poll.
+        blocked_ = freshFocus ? Keys{} : keys;
         suspended_ = false;
         dt = 0;
     }
+    if (captured) blocked_ |= keys;
     blocked_ &= keys;
     keys &= ~blocked_;
-    const Keys pressed = keys & ~previous_;
+    const Keys pressed = (keys & ~previous_) | ui.edges;
     previous_ = keys;
     a.exit = pressed[Escape];
     if (pressed[Bloom]) d.bloom = !d.bloom;
@@ -83,6 +94,8 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d) {
     for (int k=Scene; k<=Final; ++k)
         if (pressed[k]) d.view = static_cast<View>(k-Scene);
     d.strength = std::clamp(d.strength + pressed[Stronger] - pressed[Weaker],0,30);
+    if (ui.strength) d.strength = std::clamp(*ui.strength,0,30);
+    if (ui.view) d.view = *ui.view;
     a.motion = {keys[Right]-keys[Left],keys[Down]-keys[Up],keys[Fire]};
     if (pressed[Reset]) {
         a.reset = true;
@@ -104,11 +117,11 @@ Neon::Neon(std::uint32_t seed) : rng_(seed) {
 }
 void Neon::burst(tiny2d::Vector2 p) {
     rng_ = 1664525u * rng_ + 1013904223u;
-    bursts[nextBurst_] = {p,0,float(rng_ >> 8) * (6.2831853f / 16777216.f)};
+    bursts[nextBurst_] = {p,0,float(rng_ >> 8) * (6.2831853f / 16777216.f),bursts[nextBurst_].generation+1};
     nextBurst_ = (nextBurst_+1) % bursts.size();
 }
 void Neon::fire() {
-    bolts[nextBolt_] = {player,relays[nextRelay_],0};
+    bolts[nextBolt_] = {player,relays[nextRelay_],0,bolts[nextBolt_].generation+1};
     nextBolt_ = (nextBolt_+1) % bolts.size();
     nextRelay_ = (nextRelay_+1) % relays.size();
 }

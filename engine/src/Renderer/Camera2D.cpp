@@ -14,6 +14,9 @@ void Camera2D::setViewportSize(float w,float h) {
     if(!std::isfinite(w)||!std::isfinite(h)||w<1||h<1||w>1000000||h>1000000) throw std::invalid_argument("invalid camera viewport [1,1000000]");
     width_=w; height_=h;
 }
+Vector2 Camera2D::viewportToWorld(Vector2 point) const {
+    return {x_ + (point.x - width_/2)/zoom_, y_ + (point.y - height_/2)/zoom_};
+}
 Mat4 Camera2D::viewProjectionMatrix() const {
     return Mat4::orthographic(-width_/2,width_/2,-height_/2,height_/2)*Mat4::scale(zoom_,zoom_)*Mat4::translation(-x_,-y_);
 }

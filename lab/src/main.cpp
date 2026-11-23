@@ -1,7 +1,8 @@
-#include "Pipeline.h"
+#include "Inspector.h"
+#include "Metrics.h"
 #include "OpenGL.h"
 #include "tiny2d/Input.h"
-#include <png.h>
+#include "Capture.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -9,50 +10,6 @@
 
 namespace lab {
 namespace {
-Keys readKeys(const tiny2d::Input& input) {
-    constexpr std::array<int,KeyCount> codes{{GLFW_KEY_A,GLFW_KEY_D,GLFW_KEY_W,GLFW_KEY_S,
-        GLFW_KEY_SPACE,GLFW_KEY_B,GLFW_KEY_1,GLFW_KEY_2,GLFW_KEY_3,GLFW_KEY_4,
-        GLFW_KEY_LEFT_BRACKET,GLFW_KEY_RIGHT_BRACKET,GLFW_KEY_P,GLFW_KEY_PERIOD,GLFW_KEY_R,
-        GLFW_KEY_F1,GLFW_KEY_ESCAPE}};
-    Keys result;
-    for (unsigned i=0;i<codes.size();++i) result[i]=input.isKeyPressed(codes[i]);
-    return result;
-}
-// CLI-only capture of the final back buffer, outside sampling, before swap.
-// The application owns this context's default read binding and pixel-pack state.
-void capture(const std::string& path,tiny2d::Size size) {
-    std::vector<png_byte> pixels(std::size_t(size.width)*size.height*4);
-    glReadBuffer(GL_BACK);
-    glReadPixels(0,0,size.width,size.height,GL_RGBA,GL_UNSIGNED_BYTE,pixels.data());
-    tiny2d::detail::checkGL("Lab capture");
-    png_image image{};
-    image.version=PNG_IMAGE_VERSION;
-    image.width=size.width; image.height=size.height; image.format=PNG_FORMAT_RGBA;
-    if (!png_image_write_to_file(&image,path.c_str(),0,pixels.data(),-size.width*4,nullptr))
-        throw std::runtime_error("PNG capture "+path+": "+image.message);
-}
-struct Sample { double update,prepare,frame; Stats stats; };
-void report(const std::vector<Sample>& samples) {
-    if (samples.empty()) return;
-    auto metric=[&](const char* name,auto value) {
-        std::vector<double> sorted;
-        for (const auto& sample:samples) sorted.push_back(value(sample));
-        std::sort(sorted.begin(),sorted.end());
-        auto percentile=[&](double p){ return sorted[std::size_t(std::ceil(p*sorted.size()))-1]; };
-        std::cout<<"metric="<<name<<" p50="<<percentile(.50)<<" p95="<<percentile(.95)
-                 <<" p99="<<percentile(.99)<<'\n';
-    };
-    std::cout<<"warmup=120 samples="<<samples.size()<<" clock=steady units=us\n";
-    metric("fixed_update",[](const Sample& s){return s.update;});
-    metric("prepare",[](const Sample& s){return s.prepare;});
-    constexpr const char* passes[]={"scene","bright","horizontal","vertical","output","hud"};
-    for (unsigned i=0;i<PassCount;++i)
-        metric(passes[i],[&](const Sample& s){return s.stats.cpuUs[i];});
-    metric("frame",[](const Sample& s){return s.frame;});
-    metric("draw_calls",[](const Sample& s){return s.stats.draws;});
-    metric("sprites",[](const Sample& s){return s.stats.sprites;});
-    metric("uploaded_bytes",[](const Sample& s){return s.stats.bytes;});
-}
 void run(Options o) {
     Neon neon(o.seed);
     Controls controls;
@@ -60,31 +17,59 @@ void run(Options o) {
     Stats last, attempt;
     std::uint64_t frames=0, storage=0;
     tiny2d::Size logical{}, pixels{};
+    // Keep the Context alive while reporting and retiring queries on every exit path.
+    std::optional<tiny2d::Window> owner;
+    std::unique_ptr<tiny2d::TimestampQueries> queries;
+    std::unique_ptr<Timer> timer;
+    tiny2d::QueryCounts measurement;
     auto summary=[&](const char* status) {
+        const auto counts=timer ? timer->counts : tiny2d::QueryCounts{};
+        std::cout<<"gpu_requested="<<counts.requested<<" completed="<<counts.completed<<" pending="<<counts.pending
+                 <<" skipped="<<counts.skipped<<" invalid="<<counts.invalid<<" reason="
+                 <<(queries?queries->reason:(o.timing?"not initialized":"timing off"))<<'\n';
+        if (o.frames) std::cout<<"measurement_gpu_requested="<<measurement.requested
+            <<" completed="<<measurement.completed<<" pending="<<measurement.pending
+            <<" skipped="<<measurement.skipped<<" invalid="<<measurement.invalid<<'\n';
         std::cout<<"status="<<status<<" frames="<<frames<<" ticks="<<neon.tick<<" seed="<<o.seed
                  <<" window="<<logical.width<<'x'<<logical.height<<" framebuffer="<<pixels.width<<'x'<<pixels.height
                  <<" view="<<name(o.display.view)<<" bloom="<<(o.display.bloom?"on":"off")
                  <<" strength="<<o.display.strength/10.f<<" last_passes="<<last.passes
                  <<" fullscreen="<<last.fullscreen<<" draws="<<last.draws<<" sprites="<<last.sprites
-                 <<" upload_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
+                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload)
+                 <<" batch_vertex_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
                  <<" attempt_passes="<<attempt.passes<<" attempt_draws="<<attempt.draws
                  <<" attempt_complete="<<attempt.complete<<'\n';
     };
     try {
-        tiny2d::Window window(o.width,o.height,"Tiny2D Lab / Neon");
+        auto& window=owner.emplace(o.width,o.height,"Tiny2D Lab / Neon");
         tiny2d::Input input(window);
         if (o.frames) glfwSwapInterval(0);
         GLint profile;
         glGetIntegerv(GL_CONTEXT_PROFILE_MASK,&profile);
-        std::cout<<"profile="<<((profile & GL_CONTEXT_CORE_PROFILE_BIT)?"core":"other")<<" opengl="<<glGetString(GL_VERSION)<<" renderer="<<glGetString(GL_RENDERER)<<'\n';
+        std::cout<<"profile="<<((profile & GL_CONTEXT_CORE_PROFILE_BIT)?"core":"other")<<" opengl="<<glGetString(GL_VERSION)<<" vendor="<<glGetString(GL_VENDOR)<<" renderer="<<glGetString(GL_RENDERER)<<'\n';
         Pipeline renderer;
-        std::vector<Sample> samples;
+        ToolState tools{o.inspector,o.timing,o.previews};
+        std::unique_ptr<Inspector> gui;
+        if (!o.frames || tools.visible) gui=std::make_unique<Inspector>(window,o.frames.has_value());
+        auto enableTimer=[&] {
+            if (timer) return;
+            queries=tiny2d::openTimestampQueries(Timer::capacity);
+            timer=std::make_unique<Timer>(*queries);
+            std::cout<<"timestamp="<<queries->reason<<" capacity="<<Timer::capacity<<'\n';
+        };
+        if (tools.timing) enableTimer();
+        Metrics csv(o.metrics);
+        History history;
+        Presented presented;
+        std::uint64_t epoch=1;
+        std::vector<CpuSample> samples;
         samples.reserve(1200);
         auto previous=Clock::now();
         Clock::duration waited{};
         std::optional<Clock::time_point> unavailableSince;
         std::string resizeError;
         while (!o.frames || frames<*o.frames) {
+            csv.flushRetired(); // Outside both clocks, including delayed warmup records.
             window.pollEvents();
             if (window.shouldClose()) {
                 if (o.frames) throw std::runtime_error("window closed before requested frames");
@@ -111,6 +96,8 @@ void run(Options o) {
             if (!drawable) {
                 if (!unavailableSince) unavailableSince=start;
                 controls.poll({},false,0,o.display);
+                if (gui) gui->suspend();
+                presented={};
                 glfwWaitEventsTimeout(.05);
                 continue;
             }
@@ -118,30 +105,113 @@ void run(Options o) {
                 waited+=start-*unavailableSince;
                 unavailableSince.reset();
             }
+            CpuSample cpu;
+            auto& info=cpu.info;
+            info.id=frames+1; info.generation=renderer.generation(); info.logical=logical; info.pixels=pixels;
+            info.measurement=info.id>120 && info.id<=1320;
+            if (timer && timer->hasOutstanding()) {
+                const auto polling=Clock::now();
+                timer->poll([&](FrameInfo f,tiny2d::QueryStatus status,const Timer::Durations& times) {
+                    GpuSample sample{f,info.id,status,times};
+                    csv.retired(sample);
+                    if (f.measurement) {
+                        --measurement.pending;
+                        if (status==tiny2d::QueryStatus::Complete) ++measurement.completed;
+                        else ++measurement.invalid;
+                    }
+                    history.recordGpu(epoch,sample);
+                });
+                cpu.poll=micros(polling);
+            }
+            if (!o.frames && window.takeFocusLoss()) controls.poll({},false,0,o.display);
+            RoutedInput routed;
+            if (gui) {
+                const auto build=Clock::now();
+                routed=gui->build(tools,neon,epoch,o.display,controls.paused,history,
+                        timer?timer->counts:tiny2d::QueryCounts{},queries?queries->reason:"off",input.focused());
+                cpu.build=micros(build);
+            }
+            const Content content{0,0,logical};
+            const auto oldView=o.display.view;
             Action action;
             if (o.frames) action.steps=1;
-            else action=controls.poll(readKeys(input),input.focused(),dt,o.display);
+            else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands,routed.freshFocus);
             if (action.exit) break;
-            if (action.reset) neon=Neon(o.seed);
+            if (action.reset) {
+                ++epoch; neon=Neon(o.seed); presented={}; tools.selected.reset(); history={}; last={};
+            } else if (tools.visible && routed.click && oldView==o.display.view &&
+                       (oldView==View::Final || oldView==View::Scene)) {
+                tools.selected=presented.pick(*routed.click,content,o.display.view,info.generation,neon,epoch);
+            }
             const auto updateStart=Clock::now();
             for (unsigned i=0;i<action.steps;++i) neon.update(action.motion);
-            const double update=micros(updateStart);
+            cpu.update=micros(updateStart);
+            info.tick=neon.tick; info.epoch=epoch; info.display=o.display;
+            info.inspector=tools.visible; info.timing=tools.timing;
             const auto prepareStart=Clock::now();
             picture.prepare(neon,o.display,controls.paused,logical,pixels,last);
-            const double prepare=micros(prepareStart);
+            Presented next;
+            if (tools.visible) {
+                next={objects(neon,epoch),picture.worldCamera,content,o.display.view,info.generation,info.id,neon.tick};
+                if (tools.selected && !resolve(neon,epoch,*tools.selected)) tools.selected.reset();
+                if (tools.bounds || (tools.outline && tools.selected))
+                    picture.bounds(next.objects,tools.selected,tools.bounds,tools.outline);
+            }
+            cpu.prepare=micros(prepareStart);
             storage=renderer.storage();
-            renderer.draw(picture,o.display,attempt);
-            const double frame=micros(start);
-            if (o.frames && frames+1==*o.frames && !o.capture.empty()) capture(o.capture,pixels);
-            window.swapBuffers();
-            const char* error=nullptr;
-            if (glfwGetError(&error)!=GLFW_NO_ERROR)
-                throw std::runtime_error(std::string("window submission: ")+(error?error:"unknown error"));
+            DrawTools draw;
+            if (gui) {
+                const auto build=Clock::now();
+                draw.previews=gui->finish(tools,renderer,info.id,info.tick);
+                cpu.build+=micros(build);
+                if (tools.visible) draw.gui=[&](Stats& s){gui->submit(s);};
+            }
+            info.previews=draw.previews;
+            if (tools.timing) {
+                enableTimer();
+                info.timestampBits=queries->bits;
+                cpu.status=timer->begin(info);
+                if (info.measurement && queries->bits) {
+                    ++measurement.requested;
+                    if (cpu.status==tiny2d::QueryStatus::Pending) ++measurement.pending;
+                    else ++measurement.skipped;
+                }
+                if (cpu.status==tiny2d::QueryStatus::Pending) draw.timer=timer.get();
+            }
+            try {
+                if (draw.timer) draw.timer->mark(0,false);
+                renderer.draw(picture,o.display,attempt,draw);
+                info.mask=attempt.mask;
+                if (draw.timer) draw.timer->mark(0,true);
+                if (gui) attempt.fontBytes=gui->atlasBytes();
+                cpu.stats=attempt; cpu.hdrBytes=storage; cpu.previewBytes=renderer.previewBytes();
+                cpu.total=micros(start);
+                if (o.frames && frames+1==*o.frames && !o.capture.empty()) capture(o.capture,pixels);
+                window.swapBuffers();
+                const char* error=nullptr;
+                if (glfwGetError(&error)!=GLFW_NO_ERROR)
+                    throw std::runtime_error(std::string("window submission: ")+(error?error:"unknown error"));
+            } catch (...) {
+                info.mask=attempt.mask;
+                if (draw.timer) {
+                    draw.timer->finish(info,false);
+                    csv.retired({info,info.id,tiny2d::QueryStatus::Invalid,{}});
+                    if (info.measurement) { --measurement.pending; ++measurement.invalid; }
+                }
+                if (gui) gui->discard();
+
+                throw;
+            }
             ++frames;
+            if (draw.timer) draw.timer->finish(info,true);
+            presented=std::move(next);
             last=attempt;
-            if (o.frames && frames>120 && samples.size()<1200) samples.push_back({update,prepare,frame,last});
+            History::append(history.cpu,cpu);
+            csv.record(cpu);
+            if (o.frames && info.measurement) samples.push_back(cpu);
         }
         report(samples);
+        csv.close();
     } catch (...) {
         summary("error");
         throw;
@@ -151,6 +221,12 @@ void run(Options o) {
 }
 }
 int main(int argc,char** argv) {
+    if (argc==2 && std::string_view(argv[1])=="--help") {
+        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final] "
+                 <<"[--bloom on|off] [--capture PNG] [--inspector on|off] [--gpu-timing on|off] "
+                 <<"[--previews off|all] [--metrics CSV]\nInteractive: Inspector and GPU timing on. Finite frames: both off. Previews default off.\n";
+        return 0;
+    }
     try { lab::run(lab::parse(argc,argv)); }
     catch (const std::exception& e) { std::cerr<<"Tiny2D Lab: "<<e.what()<<'\n'; return 1; }
 }

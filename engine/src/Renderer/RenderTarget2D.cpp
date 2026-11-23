@@ -10,8 +10,8 @@ std::uint64_t RenderTarget2D::storageBytes(int width, int height) {
     return std::uint64_t(width) * height * 8;
 }
 
-RenderTarget2D::RenderTarget2D(const std::string& name, int w, int h) : width_(w), height_(h) {
-    const auto label = name + " " + std::to_string(w) + "x" + std::to_string(h) + " RGBA16F";
+RenderTarget2D::RenderTarget2D(const std::string& name, int w, int h, Format format) : width_(w), height_(h) {
+    const auto label = name + " " + std::to_string(w) + "x" + std::to_string(h) + (format==Format::HDR16F ? " RGBA16F" : " RGBA8");
     storageBytes(w,h);
     GLint limit;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &limit);
@@ -37,7 +37,7 @@ RenderTarget2D::RenderTarget2D(const std::string& name, int w, int h) : width_(w
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, w, h, 0, GL_RGBA, GL_HALF_FLOAT, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, format==Format::HDR16F ? GL_RGBA16F : GL_RGBA8, w, h, 0, GL_RGBA, format==Format::HDR16F ? GL_HALF_FLOAT : GL_UNSIGNED_BYTE, nullptr);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo_.id());
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_.id(), 0);
     const GLenum status = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);

@@ -1,0 +1,3 @@
+Dear ImGui v1.93.0, commit `c1aaac65e896a45f81f47a4d68f9959e0f86c859`, from https://github.com/ocornut/imgui. Core, embedded font/sources and GLFW backend are verbatim. See LICENSE.txt and notices in the source headers. Only the Lab tools link this copy.
+
+The OpenGL3 backend includes Apple's system gl3.h with IMGUI_IMPL_OPENGL_LOADER_CUSTOM. Its optional RenderDrawData statistics argument counts draw calls after clip/callback filtering and vertex/index payload at the per-list upload. Device creation keeps the caller’s unpack buffer bound during compilation and deletes partially created shaders/programs on failure. Compare against the files at the pinned commit to audit the patch.
