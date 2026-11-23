@@ -4,6 +4,7 @@
 #include "NormalMaterial.h"
 #include "Occlusion.h"
 #include "ShaderAssets.h"
+#include "ShaderReloadManager.h"
 #include <stdexcept>
 #include <cmath>
 #include <algorithm>
@@ -271,6 +272,8 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
     triangle_.requireCurrent("Lab draw");
     d.validate();
     if (!drawable_) throw std::logic_error("Lab draw requires a matching drawable target group");
+    if (tools.gallery && (d.lighting || tools.particles))
+        throw std::logic_error("Shader Gallery requires its standalone HDR scene");
     auto& t=*targets_;
     const bool mix=d.view==View::Final && d.bloom && d.strength>0;
     auto previewNeeded=[&](View v){return (tools.previews & (1u<<unsigned(v)))!=0;};
@@ -330,7 +333,20 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
     };
     {
         FrameState state;
-        if (!d.lighting) {
+        if (tools.gallery) {
+            pass(ShaderGalleryPass,[&] {
+                t.scene.bindDraw();
+                // An edited fragment may discard. Start its HDR image from defined black.
+                constexpr GLfloat black[]={0,0,0,1};
+                glClearBufferfv(GL_COLOR,0,black);
+                const auto& shader=tools.gallery->program();
+                shader.bind();
+                shader.setFloat("uTime",float(double(tools.tick)*FixedTimestep::step));
+                shader.setVec2("uResolution",float(t.scene.width()),float(t.scene.height()));
+                glBindVertexArray(triangle_.id());
+                triangle();
+            });
+        } else if (!d.lighting) {
             pass(World,[&] {
                 t.scene.bindDraw();
                 constexpr GLfloat background[]={.002f,.004f,.008f,1};

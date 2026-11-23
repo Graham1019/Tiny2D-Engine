@@ -26,7 +26,10 @@ std::filesystem::path assetPath(const char* relative) {
 }
 
 std::string readShaderAsset(const char* filename) {
-    const auto path = assetPath((std::string("shaders/")+filename).c_str());
+    return readShaderFile(assetPath((std::string("shaders/")+filename).c_str()));
+}
+
+std::string readShaderFile(const std::filesystem::path& path) {
     std::ifstream file(path, std::ios::binary);
     if (!file) throw std::runtime_error("Cannot open shader asset: " + path.string());
     std::string source{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};

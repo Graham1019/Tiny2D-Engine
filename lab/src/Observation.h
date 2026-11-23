@@ -1,4 +1,5 @@
 #pragma once
+#include "GalleryEffect.h"
 #include "Presentation.h"
 #include "tiny2d/TimestampQueries.h"
 #include <algorithm>
@@ -15,6 +16,8 @@ struct FrameInfo {
     bool particles=false, demoScript=false;
     std::uint32_t seed=71, particleCapacity=0, particleRate=0;
     std::optional<std::uint32_t> particleSteady;
+    std::optional<GalleryEffect> galleryEffect;
+    std::uint64_t shaderVersion=0;
 };
 using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
 struct CpuSample {

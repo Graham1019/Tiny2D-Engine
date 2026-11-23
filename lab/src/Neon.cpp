@@ -56,7 +56,7 @@ void Display::validate() const {
 Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
-    bool particleOption=false;
+    bool particleOption=false, effectOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -64,7 +64,14 @@ Options parse(int argc, const char* const* argv) {
         if (key == "--scene") {
             if (value=="neon") o.scene=LabScene::Neon;
             else if (value=="particles") o.scene=LabScene::Particles;
-            else throw std::invalid_argument("--scene expects neon or particles");
+            else if (value=="shaders") o.scene=LabScene::Shaders;
+            else throw std::invalid_argument("--scene expects neon, particles or shaders");
+        } else if (key=="--effect") {
+            effectOption=true;
+            const auto effect=std::find_if(galleryEffects.begin(),galleryEffects.end(),
+                [&](auto item) { return value==galleryName(item); });
+            if (effect==galleryEffects.end()) throw std::invalid_argument("--effect expects aurora, orbitals or contours");
+            o.effect=*effect;
         } else if (key=="--particle-capacity" || key=="--particle-steady" || key=="--particle-rate") {
             particleOption=true;
             const auto n=number(value,key);
@@ -119,7 +126,15 @@ Options parse(int argc, const char* const* argv) {
     o.timing=timing.value_or(!o.frames);
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
     const bool particles=o.scene==LabScene::Particles;
+    const bool shaders=o.scene==LabScene::Shaders;
     o.display.lighting=lighting.value_or(particles);
+    if (effectOption && !shaders) throw std::invalid_argument("--effect requires --scene shaders");
+    if (shaders) {
+        o.display.demoOccluders=false;
+        if (o.display.lighting || o.display.normalMapping || o.display.shadows ||
+            o.display.view==View::Light || o.display.view==View::Normal || o.display.view==View::Shadow)
+            throw std::invalid_argument("shader gallery supports unlit HDR views scene, bright, blur and final");
+    }
     if (particleOption && !particles) throw std::invalid_argument("particle options require --scene particles");
     if (!o.particleCapacity || o.particleCapacity>ParticleSimulation::maxCapacity ||
         o.particleSteady.value_or(0)>o.particleCapacity || o.particleRate>ParticleSimulation::maxRate)

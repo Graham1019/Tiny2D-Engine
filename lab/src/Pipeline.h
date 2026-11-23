@@ -7,6 +7,7 @@
 
 namespace lab {
 class ParticleRenderer;
+class ShaderReloadManager;
 struct ParticleRenderSnapshot;
 using Clock = std::chrono::steady_clock;
 inline double micros(Clock::time_point start) {
@@ -20,6 +21,7 @@ struct DrawTools {
     std::optional<LabHandle> shadowSource;
     std::uint64_t frame=0, tick=0, epoch=0;
     const ParticleRenderSnapshot* particles=nullptr; // Borrowed only for this synchronous draw.
+    const ShaderReloadManager* gallery=nullptr; // Same borrowing rule, with reloads between draws.
 };
 class Pipeline {
 public:

@@ -338,7 +338,8 @@ endif()
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
-    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp sandbox/src/ShaderAssets.cpp)
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp
+    lab/src/ShaderReloadManager.cpp lab/src/ShaderGallery.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
@@ -349,11 +350,11 @@ target_include_directories(tiny2d_lab_imgui PUBLIC third_party/imgui third_party
 target_compile_definitions(tiny2d_lab_imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM GLFW_INCLUDE_NONE)
 target_compile_features(tiny2d_lab_imgui PRIVATE cxx_std_17)
 target_link_libraries(tiny2d_lab_imgui PRIVATE glfw OpenGL::GL)
-add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp
+add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp lab/src/ShaderPanel.cpp
     lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
-add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/Metrics.cpp)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
@@ -464,4 +465,16 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
         "-DEXE=$<TARGET_FILE:tiny2d_lab>" "-DSTAGE=${CMAKE_BINARY_DIR}/m81-finite"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/m81_finite.cmake")
     set_tests_properties(M81_ParticleInstancingGL M81_ParticleInspectorGL M81_ParticleFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m82_gl tests/test_m82_gl.cpp)
+    target_include_directories(tiny2d_m82_gl PRIVATE engine/src/Renderer)
+    target_link_libraries(tiny2d_m82_gl PRIVATE tiny2d_inspector glfw OpenGL::GL)
+    set_target_properties(tiny2d_m82_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m82_gl tiny2d_lab_assets)
+    add_test(NAME M82_ShaderGalleryGL COMMAND tiny2d_m82_gl)
+    add_test(NAME M82_ShaderFiniteCLI COMMAND /usr/bin/env python3
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/m82_finite.py" "$<TARGET_FILE:tiny2d_lab>" "${CMAKE_BINARY_DIR}/m82-finite")
+    set_tests_properties(M82_ShaderGalleryGL M82_ShaderFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 90)
 endif()
