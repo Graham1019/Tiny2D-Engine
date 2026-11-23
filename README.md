@@ -110,6 +110,15 @@ cmake --build build/m74b-release --parallel
 
 ![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
 
+## Tiny2D Lab · Shader Gallery
+
+Run `build/m82-release/lab/tiny2d_lab --scene shaders --effect aurora` to open the
+gallery. Select Aurora, Orbitals or Contours in the Inspector. Pause with **P**,
+edit the displayed fragment file and press **F5**. A valid edit advances the
+exhibit's version. A failed edit leaves the previous picture visible alongside
+the driver diagnostic. Use **B** or views **1–4** to inspect the HDR highlights.
+[Build instructions, recovery screenshots, pixel measurements and Mac checklist](docs/milestone-08-2.md)
+
 [M8.1 Particle Forcefield Playground, native captures and measurements](docs/milestone-08-1.md) ·
 [M7.4b shadow geometry, HDR pixel tests and measurements](docs/milestone-07-4b.md) ·
 [M7.4a normal materials, framebuffer readbacks and measurements](docs/milestone-07-4a.md) ·

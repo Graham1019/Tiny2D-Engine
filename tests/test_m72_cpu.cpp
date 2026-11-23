@@ -27,6 +27,16 @@ void cli() {
     for (auto name:{"--inspector","--gpu-timing","--previews","--metrics"}) {
         const char* bad[]={"lab",name,""}; rejects([&]{parse(3,bad);});
     }
+    for (auto effect:galleryEffects) {
+        const char* args[]={"lab","--effect",galleryName(effect),"--scene","shaders"};
+        const auto gallery=parse(5,args);
+        check(gallery.scene==LabScene::Shaders && gallery.effect==effect &&
+              !gallery.display.lighting,"gallery CLI effect and lighting");
+    }
+    const char* badEffect[]={"lab","--scene","shaders","--effect","missing"};
+    const char* wrongScene[]={"lab","--scene","particles","--effect","aurora"};
+    const char* wrongView[]={"lab","--scene","shaders","--view","shadow"};
+    for (const auto* args:{badEffect,wrongScene,wrongView}) rejects([&]{parse(5,args);});
 }
 void ownership() {
     Controls c; Display d; Keys held;
@@ -124,36 +134,42 @@ void retirementCSV() {
     check(cpu.find(",pending,,")!=cpu.npos && gpu.find("gpu,121,81,7,") == 0 &&
           gpu.find(",completed,123,2.5,")!=gpu.npos,"delayed CSV retains frame and empty unmeasured intervals");
 }
-void particleTimestampCSV() {
-    static_assert(ShadowInspect==15 && ParticleEmission==16);
+void appendedTimestampCSV(bool gallery) {
+    static_assert(ShadowInspect==15 && ParticleEmission==16 && ShaderGalleryPass==17);
+    const auto pass=gallery ? ShaderGalleryPass : ParticleEmission;
     FakeQueries queries;
     queries.bits=32;
     Timer ring(queries);
     CpuSample cpu;
     auto& info=cpu.info;
-    info.timing=info.particles=info.demoScript=true;
+    info.timing=true;
+    info.particles=info.demoScript=!gallery;
+    if (gallery) {
+        info.galleryEffect=GalleryEffect::Contours;
+        info.shaderVersion=12;
+    }
     info.seed=83;
     info.particleSteady=0;
     info.particleCapacity=8192;
     info.particleRate=720;
     cpu.status=ring.begin(info);
     ring.mark(0,false);
-    ring.mark(ParticleEmission+1,false);
-    ring.mark(ParticleEmission+1,true);
+    ring.mark(pass+1,false);
+    ring.mark(pass+1,true);
     ring.mark(0,true);
     ring.finish(info,true);
     queries.ready.fill(true);
     queries.values[1]=5000;
-    queries.values[(ParticleEmission+1)*2]=100;
-    queries.values[(ParticleEmission+1)*2+1]=2100;
+    queries.values[(pass+1)*2]=100;
+    queries.values[(pass+1)*2+1]=2100;
     TempCSV file;
     Metrics csv(file.path.string());
-    cpu.stats.mask=1u<<ParticleEmission;
-    cpu.stats.cpuUs[ParticleEmission]=3.5;
+    cpu.stats.mask=1u<<pass;
+    cpu.stats.cpuUs[pass]=3.5;
     csv.record(cpu);
     ring.poll([&](auto frame,auto status,const auto& durations) {
-        check(status==tiny2d::QueryStatus::Complete && durations[ParticleEmission+1]==2.,
-              "appended particle interval retired in microseconds");
+        check(status==tiny2d::QueryStatus::Complete && durations[pass+1]==2.,
+              "appended pass interval retired in microseconds");
         csv.retired({frame,2,status,durations});
     });
     csv.close();
@@ -168,7 +184,7 @@ void particleTimestampCSV() {
         return fields;
     };
     auto header=row(), submitted=row(), retired=row();
-    check(header.size()==submitted.size() && header.size()==retired.size(),"particle CSV widths");
+    check(header.size()==submitted.size() && header.size()==retired.size(),"CPU/GPU CSV widths");
     auto col=[&](const char* name) {
         auto it=std::find(header.begin(),header.end(),name);
         check(it!=header.end(),"missing CSV column");
@@ -176,7 +192,13 @@ void particleTimestampCSV() {
     };
     check(col("update_us")==42 && col("world_draws")==58 && col("fullscreen")==121 &&
           col("particle_emission_us")==122,"M7 schema indices retained");
-    check(submitted[col("particle_emission_us")]=="3.5" && retired[col("particle_emission_us")]=="2" &&
+    if (gallery) {
+        check(col("shader_gallery_us")==col("valid_gpu_samples")+1 &&
+              submitted[col("shader_gallery_us")]=="3.5" && retired[col("shader_gallery_us")]=="2" &&
+              retired[col("scene")]=="shaders" && retired[col("gallery_effect")]=="contours" &&
+              retired[col("shader_version")]=="12" && retired[col("particle_emission_us")].empty() &&
+              retired[col("particle_steady")].empty(),"gallery issuing effect, version and pass on retirement");
+    } else check(submitted[col("particle_emission_us")]=="3.5" && retired[col("particle_emission_us")]=="2" &&
           retired[col("scene")]=="particles" && retired[col("seed")]=="83" &&
           retired[col("particle_steady")]=="0" && retired[col("particle_script")]=="demo" &&
           retired[col("instance_upload_us")].empty() && retired[col("shadow_inspect_us")].empty(),
@@ -301,5 +323,5 @@ void queries() {
           c.requested==c.completed+c.invalid+c.pending+c.skipped,"partition and wrap rejection");
 }
 }
-int main() { try {cli(); ownership(); selection(); queries(); retirementCSV(); particleTimestampCSV(); orderedGpuHistory();}
+int main() { try {cli(); ownership(); selection(); queries(); retirementCSV(); appendedTimestampCSV(false); appendedTimestampCSV(true); orderedGpuHistory();}
 catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;} }

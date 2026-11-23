@@ -1,7 +1,7 @@
 #!/bin/sh
-# Run in the repository root after building m81-release. Compare against tracked reference images.
+# Run in the repository root. Set RELEASE_DIR to compare a newer build against the same images.
 set -eu
-release=build/m81-release
+release=${RELEASE_DIR:-build/m81-release}
 lab=$release/lab/tiny2d_lab
 work=$(mktemp -d "$release/m81-history.XXXXXX")
 compare() {

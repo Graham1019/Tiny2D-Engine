@@ -1,0 +1,5 @@
+GL=4.1 Metal - 90.5 renderer=Apple M5 Pro
+effect=aurora tick=90 hdr_peak=6.13672 max_display_error=0.00196046 bloom_changed_fraction=0.468153 tick_changed_fraction=0.483497
+effect=orbitals tick=90 hdr_peak=8.78906 max_display_error=0.00196018 bloom_changed_fraction=0.248302 tick_changed_fraction=0.0249341
+effect=contours tick=90 hdr_peak=3.73242 max_display_error=0.00196046 bloom_changed_fraction=0.949333 tick_changed_fraction=0.888036
+rollback=compile,link,inactive,type,array,sampler,attribute,output_location,file wrong_context=blocked foreign_draw_state=restored worker=blocked alternating_commits=6 exact_HDR_restored=yes bound_program_retired=yes

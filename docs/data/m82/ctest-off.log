@@ -1,0 +1,68 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m82-off
+      Start  1: M3CPUTests
+ 1/30 Test  #1: M3CPUTests .......................   Passed    0.36 sec
+      Start  2: Vector2Tests
+ 2/30 Test  #2: Vector2Tests .....................   Passed    0.36 sec
+      Start  3: RenderFailureTests
+ 3/30 Test  #3: RenderFailureTests ...............   Passed    0.36 sec
+      Start  4: M5_scene
+ 4/30 Test  #4: M5_scene .........................   Passed    0.39 sec
+      Start  5: M5_collision
+ 5/30 Test  #5: M5_collision .....................   Passed    1.95 sec
+      Start  6: M5_fixed_step
+ 6/30 Test  #6: M5_fixed_step ....................   Passed    0.36 sec
+      Start  7: M61_combat
+ 7/30 Test  #7: M61_combat .......................   Passed    0.36 sec
+      Start  8: M61_projectiles
+ 8/30 Test  #8: M61_projectiles ..................   Passed    0.36 sec
+      Start  9: M61_spawning
+ 9/30 Test  #9: M61_spawning .....................   Passed    0.36 sec
+      Start 10: M62_game_phase
+10/30 Test #10: M62_game_phase ...................   Passed    0.69 sec
+      Start 11: M62_restart
+11/30 Test #11: M62_restart ......................   Passed    0.46 sec
+      Start 12: M62_hud
+12/30 Test #12: M62_hud ..........................   Passed    0.35 sec
+      Start 13: M63a_difficulty
+13/30 Test #13: M63a_difficulty ..................   Passed    0.35 sec
+      Start 14: M63a_flow
+14/30 Test #14: M63a_flow ........................   Passed    0.35 sec
+      Start 15: M63a_pacing
+15/30 Test #15: M63a_pacing ......................   Passed    0.40 sec
+      Start 16: M63a_invalid_difficulty_0
+16/30 Test #16: M63a_invalid_difficulty_0 ........   Passed    0.12 sec
+      Start 17: M63a_invalid_difficulty_6
+17/30 Test #17: M63a_invalid_difficulty_6 ........   Passed    0.00 sec
+      Start 18: M63a_invalid_difficulty_-1
+18/30 Test #18: M63a_invalid_difficulty_-1 .......   Passed    0.00 sec
+      Start 19: M63a_invalid_difficulty_abc
+19/30 Test #19: M63a_invalid_difficulty_abc ......   Passed    0.00 sec
+      Start 20: M63b_events
+20/30 Test #20: M63b_events ......................   Passed    0.36 sec
+      Start 21: M63b_vfx
+21/30 Test #21: M63b_vfx .........................   Passed    0.54 sec
+      Start 22: M63b_fps
+22/30 Test #22: M63b_fps .........................   Passed    0.37 sec
+      Start 23: M63b_priority
+23/30 Test #23: M63b_priority ....................   Passed    1.88 sec
+      Start 24: M81_ParticleSimulationCPU
+24/30 Test #24: M81_ParticleSimulationCPU ........   Passed    0.35 sec
+      Start 25: M71CPU
+25/30 Test #25: M71CPU ...........................   Passed    0.37 sec
+      Start 26: M72CPU
+26/30 Test #26: M72CPU ...........................   Passed    0.01 sec
+      Start 27: M73_cpu
+27/30 Test #27: M73_cpu ..........................   Passed    0.36 sec
+      Start 28: M73_controls
+28/30 Test #28: M73_controls .....................   Passed    0.35 sec
+      Start 29: M74a_NormalMaterialsCPU
+29/30 Test #29: M74a_NormalMaterialsCPU ..........   Passed    0.45 sec
+      Start 30: M74b_OcclusionCPU
+30/30 Test #30: M74b_OcclusionCPU ................   Passed    0.37 sec
+
+100% tests passed out of 30
+
+Label Time Summary:
+cpu    =   6.04 sec*proc (13 tests)
+
+Total Test time (real) =  13.02 sec
