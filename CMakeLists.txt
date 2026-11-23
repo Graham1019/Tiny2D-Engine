@@ -323,6 +323,19 @@ add_custom_target(package_macos
     COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
     DEPENDS Tiny2DSurvivor VERBATIM)
 
+# Particle simulation and its tests have no platform, renderer or ImGui link dependencies.
+add_library(tiny2d_particles STATIC lab/src/ParticleSimulation.cpp engine/src/Math/Vector2.cpp)
+target_include_directories(tiny2d_particles PUBLIC lab/src engine/include)
+target_compile_features(tiny2d_particles PUBLIC cxx_std_17)
+set_target_properties(tiny2d_particles PROPERTIES CXX_EXTENSIONS OFF)
+if(BUILD_TESTING)
+    # Exercise the production pause/step clock alongside the simulation.
+    add_executable(tiny2d_m81_cpu tests/test_m81_cpu.cpp lab/src/Neon.cpp lab/src/NormalMaterial.cpp)
+    target_link_libraries(tiny2d_m81_cpu PRIVATE tiny2d_particles)
+    add_test(NAME M81_ParticleSimulationCPU COMMAND tiny2d_m81_cpu)
+    set_tests_properties(M81_ParticleSimulationCPU PROPERTIES LABELS "cpu")
+endif()
+
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
     lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
