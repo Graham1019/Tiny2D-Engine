@@ -74,6 +74,26 @@ The developer executable remains `build/m63c-release/tiny2d_sandbox`:
 
 No arguments still select the original immediate sprite demo.
 
+## Tiny2D Lab · Neon
+
+Move the cyan emitter with WASD and hold Space to fire orange bolts. Inspect the
+linear HDR scene, extracted highlights, separable blur and final composite with
+**1–4**. **B** toggles Bloom, **[ / ]** adjust its strength, **P** pauses,
+**.** advances one paused tick, **R** resets, **F1** toggles the HUD and **Escape** exits.
+
+```sh
+cd /Users/grahm/Desktop/Tiny2D-Engine
+cmake -S . -B build/m71-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m71-release --target tiny2d_lab --parallel
+./build/m71-release/lab/tiny2d_lab --scene neon
+# Deterministic run, with the final displayed frame saved before swap.
+./build/m71-release/lab/tiny2d_lab --seed 71 --frames 4 --bloom on --view final --capture /tmp/neon.png
+```
+
+![Neon at tick 4 with Bloom enabled](docs/media/m71-final.png)
+
+[Four views, controls, measurements and verification](docs/milestone-07-1.md) · [Lab roadmap](docs/lab-roadmap.md)
+
 ## Architecture
 
 CPU gameplay owns rules and collision; presentation consumes copied combat events.
@@ -95,6 +115,8 @@ retain regressions and tail-latency limitations. No new performance claim is mad
 
 ## Testing
 
+M7.1 passed **43/43 Debug**, **43/43 Release** and **24/24** with OpenGL tests disabled. [M7.1 evidence](docs/milestone-07-1.md)
+
 M6.3c: Debug **40/40**, Release **40/40**, Headless **23/23**.
 [Logs, packaging checks and manual acceptance](docs/milestone-06-3c.md).
 Use the same configure/build/ctest sequence with `build/m63c-debug` and `Debug`;
@@ -108,6 +130,7 @@ No hosted CI execution is claimed.
 |---|---|
 | `engine/` | Math, Scene, collision, platform and rendering |
 | `game/` | CPU gameplay, difficulty and flow |
+| `lab/` | Independent Neon demo, HDR passes, observation and finite-frame capture |
 | `sandbox/` | Developer scenes, standalone entry, HUD/VFX, assets |
 | `tests/` | CPU/GPU regressions and profiling fixtures |
 | `scripts/`, `cmake/` | Packaging, verification and bundle metadata |
@@ -118,13 +141,13 @@ No hosted CI execution is claimed.
 [M0–M6.3b historical README](docs/development-history.md) preserves the earlier narrative.
 [M6.3a](docs/milestone-06-3a.md) adds difficulty; [M6.3b](docs/milestone-06-3b.md)
 adds presentation; [M6.3b.1](docs/m63b1-review-fixes.md) fixes priority/recovery;
-[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. M7 is not started.
+[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab.
 
 ## Known Limitations
 
 macOS only; no Intel/Universal validation or alternative rendering backend. Apple
 OpenGL is deprecated. Main-thread, current-context GPU lifetime is required; no
-multithreaded rendering, sRGB pipeline or full-process leak certification. Cross-system,
+multithreaded rendering or full-process leak certification. The Lab has its own explicit HDR-to-sRGB output contract. Cross-system,
 Finder quarantine, resize/minimize, multi-display Retina and extended human playtesting
 remain acceptance work. [Media capture status](docs/media/README.md).
 

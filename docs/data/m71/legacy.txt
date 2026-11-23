@@ -1,0 +1,5 @@
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 500
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 5
+Tiny2DSurvivor.app launched; observed its on-screen layer-0 window 802x632 points including decoration.
