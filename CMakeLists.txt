@@ -323,6 +323,21 @@ add_custom_target(package_macos
     COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
     DEPENDS Tiny2DSurvivor VERBATIM)
 
+# Seeded world data can be used without a renderer, window or graphics context.
+add_library(tiny2d_world STATIC
+    engine/src/Math/Vector2.cpp
+    engine/src/World/TileMap.cpp
+    engine/src/World/MapGenerator.cpp)
+target_include_directories(tiny2d_world PUBLIC engine/include)
+target_compile_features(tiny2d_world PUBLIC cxx_std_17)
+set_target_properties(tiny2d_world PROPERTIES CXX_EXTENSIONS OFF)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m91_generation tests/m91_map_generation.cpp)
+    target_link_libraries(tiny2d_m91_generation PRIVATE tiny2d_world)
+    add_test(NAME M91_MapGenerationCPU COMMAND tiny2d_m91_generation)
+    set_tests_properties(M91_MapGenerationCPU PROPERTIES LABELS "cpu")
+endif()
+
 # Particle simulation and its tests have no platform, renderer or ImGui link dependencies.
 add_library(tiny2d_particles STATIC lab/src/ParticleSimulation.cpp engine/src/Math/Vector2.cpp)
 target_include_directories(tiny2d_particles PUBLIC lab/src engine/include)
