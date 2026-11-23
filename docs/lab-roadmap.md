@@ -5,8 +5,8 @@
 | M7.1 | 独立 Lab 入口、neon、RGBA16F 目标、Bloom 和四种观察模式 | 已合并 PR #11；用户反馈交互与视觉试玩无异常 |
 | M7.2 | [对象检查、拾取、缓冲预览、输入捕获与性能观测](milestone-07-2.md) | 已合并 PR #12，用户完成七项 Mac 人工验收 |
 | M7.3 | [二维动态点光、表面合成与 LightBuffer 检查](milestone-07-3.md) | PR #13 已合并，主设备七项人工验收通过 |
-| M7.4a | [世界空间法线材质、方向光照与 NormalBuffer](milestone-07-4a.md) | 等待源码 Review 与人工验收 |
-| M7.4b | 每盏灯与接收点之间的遮挡阴影 | 规划中 |
+| M7.4a | [世界空间法线材质、方向光照与 NormalBuffer](milestone-07-4a.md) | PR #14 已合并，主设备七项人工验收通过 |
+| M7.4b | [逐灯硬遮挡、可见度遮罩与 Shadow Inspector](milestone-07-4b.md) | 等待源码 Review 与主设备人工试玩 |
 | M8.1 | 粒子力场游乐场 | 规划中 |
 | M8.2 | Shader 展厅与安全热重载 | 规划中 |
 | M9.1 | 种子地图、连通性、Tilemap 与地图碰撞 | 规划中 |

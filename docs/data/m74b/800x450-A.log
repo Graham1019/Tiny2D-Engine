@@ -1,0 +1,24 @@
+build/m74b-release/lab/tiny2d_lab --seed 71 --size 800x450 --frames 1320 --view final --lighting on --normal-mapping on --normal-material tile --shadows off --occluders none --shadow-lights 4 --bloom on --inspector off --previews off --gpu-timing on --metrics docs/data/m74b/800x450-A.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=272
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=151.084 p95=190.208 p99=211.291
+metric=fixed_update n=1200 p50=0.083 p95=0.208 p99=0.458
+metric=prepare n=1200 p50=8.249 p95=12.5 p99=16.083
+metric=light_extract n=1200 p50=0.209 p95=0.583 p99=1.583
+metric=draw_calls n=1200 p50=10 p95=10 p99=10
+metric=sprites n=1200 p50=1060 p95=1071 p99=1075
+metric=uploaded_bytes n=1200 p50=152864 p95=154448 p99=155024
+metric=bright n=1200 p50=7.208 p95=10.708 p99=14.042
+metric=horizontal n=1200 p50=6.958 p95=10.75 p99=13.208
+metric=vertical n=1200 p50=6.5 p95=9.5 p99=12.584
+metric=output n=1200 p50=9.916 p95=15.042 p99=19.417
+metric=hud n=1200 p50=35.5 p95=48.709 p99=58.666
+metric=albedo n=1200 p50=31.833 p95=49.167 p99=60.583
+metric=emission n=1200 p50=13.209 p95=19.125 p99=24.125
+metric=light n=1200 p50=8.291 p95=12.458 p99=16.291
+metric=scene_compose n=1200 p50=7.709 p95=11.625 p99=14.25
+metric=normal n=1200 p50=8.5 p95=13.083 p99=16.792
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=10 fullscreen=6 draws=10 sprites=1048 upload_bytes=151136 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=150912 rgba16f_attachment_bytes=66240000 attempt_passes=10 attempt_draws=10 attempt_complete=1

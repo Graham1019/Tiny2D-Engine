@@ -1,0 +1,33 @@
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 52
+    Start 52: M74b_OcclusionGL
+
+52: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release/lab/tiny2d_m74b_gl
+52: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release
+52: Test timeout computed to be: 60
+52: source=(-20,0) CPU/GPU blocked=145 visible=694
+52: two-light target world=(12,3) red=0.25 green=0.25 blue=3.56836 alpha=1
+52: source=(26,6) CPU/GPU blocked=118 visible=548
+52: source=(20,0) CPU/GPU blocked=205 visible=633
+52: Neon seed=71 tick=0 player=(-62,12) sample=(-120,49) player_visible=0 amber_visible=1 fb=360x220
+52: Neon seed=71 tick=36 player=(-148.4,12) sample=(-120,49) player_visible=1 amber_visible=1 fb=360x220
+1/1 Test #52: M74b_OcclusionGL .................   Passed    0.22 sec
+
+The following tests passed:
+	M74b_OcclusionGL
+
+100% tests passed out of 1
+
+Label Time Summary:
+gui       =   0.22 sec*proc (1 test)
+opengl    =   0.22 sec*proc (1 test)
+
+Total Test time (real) =   0.22 sec

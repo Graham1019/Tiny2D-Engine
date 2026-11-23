@@ -1,0 +1,66 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m74b-off
+      Start  1: M3CPUTests
+ 1/29 Test  #1: M3CPUTests .......................   Passed    0.00 sec
+      Start  2: Vector2Tests
+ 2/29 Test  #2: Vector2Tests .....................   Passed    0.00 sec
+      Start  3: RenderFailureTests
+ 3/29 Test  #3: RenderFailureTests ...............   Passed    0.00 sec
+      Start  4: M5_scene
+ 4/29 Test  #4: M5_scene .........................   Passed    0.02 sec
+      Start  5: M5_collision
+ 5/29 Test  #5: M5_collision .....................   Passed    0.00 sec
+      Start  6: M5_fixed_step
+ 6/29 Test  #6: M5_fixed_step ....................   Passed    0.00 sec
+      Start  7: M61_combat
+ 7/29 Test  #7: M61_combat .......................   Passed    0.00 sec
+      Start  8: M61_projectiles
+ 8/29 Test  #8: M61_projectiles ..................   Passed    0.00 sec
+      Start  9: M61_spawning
+ 9/29 Test  #9: M61_spawning .....................   Passed    0.01 sec
+      Start 10: M62_game_phase
+10/29 Test #10: M62_game_phase ...................   Passed    0.01 sec
+      Start 11: M62_restart
+11/29 Test #11: M62_restart ......................   Passed    0.00 sec
+      Start 12: M62_hud
+12/29 Test #12: M62_hud ..........................   Passed    0.00 sec
+      Start 13: M63a_difficulty
+13/29 Test #13: M63a_difficulty ..................   Passed    0.00 sec
+      Start 14: M63a_flow
+14/29 Test #14: M63a_flow ........................   Passed    0.01 sec
+      Start 15: M63a_pacing
+15/29 Test #15: M63a_pacing ......................   Passed    0.02 sec
+      Start 16: M63a_invalid_difficulty_0
+16/29 Test #16: M63a_invalid_difficulty_0 ........   Passed    0.00 sec
+      Start 17: M63a_invalid_difficulty_6
+17/29 Test #17: M63a_invalid_difficulty_6 ........   Passed    0.01 sec
+      Start 18: M63a_invalid_difficulty_-1
+18/29 Test #18: M63a_invalid_difficulty_-1 .......   Passed    0.00 sec
+      Start 19: M63a_invalid_difficulty_abc
+19/29 Test #19: M63a_invalid_difficulty_abc ......   Passed    0.00 sec
+      Start 20: M63b_events
+20/29 Test #20: M63b_events ......................   Passed    0.00 sec
+      Start 21: M63b_vfx
+21/29 Test #21: M63b_vfx .........................   Passed    0.18 sec
+      Start 22: M63b_fps
+22/29 Test #22: M63b_fps .........................   Passed    0.00 sec
+      Start 23: M63b_priority
+23/29 Test #23: M63b_priority ....................   Passed    0.00 sec
+      Start 24: M71CPU
+24/29 Test #24: M71CPU ...........................   Passed    1.64 sec
+      Start 25: M72CPU
+25/29 Test #25: M72CPU ...........................   Passed    1.01 sec
+      Start 26: M73_cpu
+26/29 Test #26: M73_cpu ..........................   Passed    0.98 sec
+      Start 27: M73_controls
+27/29 Test #27: M73_controls .....................   Passed    0.52 sec
+      Start 28: M74a_NormalMaterialsCPU
+28/29 Test #28: M74a_NormalMaterialsCPU ..........   Passed    0.53 sec
+      Start 29: M74b_OcclusionCPU
+29/29 Test #29: M74b_OcclusionCPU ................   Passed    0.53 sec
+
+100% tests passed out of 29
+
+Label Time Summary:
+cpu    =   5.25 sec*proc (12 tests)
+
+Total Test time (real) =   5.53 sec
