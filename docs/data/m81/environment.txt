@@ -1,0 +1,51 @@
+M8.1 native macOS verification
+$ git rev-parse origin/main
+71cb6ffe7aee8896a31c0bf1dbf4eae1544872cf
+$ git show -s --format=%P origin/main
+01416891212ea39315ca34fbca0d1bace274d5ec 576573d3756276a63790e35c26eed8779c78332d
+$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.7.3
+BuildVersion:		25G342
+$ uname -m
+arm64
+$ c++ --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ cmake --version
+cmake version 4.4.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+$ file build/m81-release/lab/tiny2d_lab
+build/m81-release/lab/tiny2d_lab: Mach-O 64-bit executable arm64
+$ otool -L build/m81-off/tiny2d_m81_cpu
+build/m81-off/tiny2d_m81_cpu:
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+cmake -S . -B build/m81-debug -DCMAKE_BUILD_TYPE=Debug -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m81-debug --parallel 5
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=ON
+cmake -S . -B build/m81-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m81-release --parallel 5
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=ON
+cmake -S . -B build/m81-off -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=OFF
+cmake --build build/m81-off --parallel 5
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=OFF
+Last target in debug build log: [100%] Built target tiny2d_m81_app
+Last target in release build log: [100%] Built target tiny2d_m81_app
+Last target in off build log: [100%] Built target tiny2d_lab
+38a03e52a49366be880ec8a9247248c89319972a1396298b72c731fe6983f436 build/m81-release/lab/tiny2d_lab
+2fc959df76c2e905b3d82ab481fb205df7ea5c05fca31dfc61785262442037dd build/m81-release/lab/tiny2d_m81_gl
+c02a2950334a92b96479a8186138c83cd08ee07b38f505a5dd16b63553b052ff build/m81-release/lab/tiny2d_m81_app
+1361dbd1c52b10a5f250741514b8f88b73a0e47163f388f9fa89b448f87b8f15 build/m81-release/lab/assets/shaders/particle.vert
+034a4487de5e5a324fb6d6d25b290f0551919ef12d94e3bbb36f341bc540ce78 build/m81-release/lab/assets/shaders/particle.frag
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0 capacity=288

@@ -110,6 +110,7 @@ cmake --build build/m74b-release --parallel
 
 ![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
 
+[M8.1 Particle Forcefield Playground, native captures and measurements](docs/milestone-08-1.md) ·
 [M7.4b shadow geometry, HDR pixel tests and measurements](docs/milestone-07-4b.md) ·
 [M7.4a normal materials, framebuffer readbacks and measurements](docs/milestone-07-4a.md) ·
 [M7.3 dynamic lighting, tests and measurements](docs/milestone-07-3.md) ·

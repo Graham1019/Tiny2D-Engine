@@ -1,0 +1,327 @@
+capture=docs/media/m81/attractor.png ticks=160
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=40 clock=steady units=us
+metric=frame n=40 p50=163.584 p95=193.292 p99=195.625
+metric=fixed_update n=40 p50=15.791 p95=19.166 p99=20.5
+metric=prepare n=40 p50=11.917 p95=14.375 p99=15.042
+metric=light_extract n=40 p50=0 p95=0 p99=0
+metric=draw_calls n=40 p50=10 p95=10 p99=10
+metric=sprites n=40 p50=970 p95=981 p99=982
+metric=uploaded_bytes n=40 p50=198016 p95=205024 p99=206800
+metric=bright n=40 p50=6.375 p95=7.958 p99=9.541
+metric=horizontal n=40 p50=6.334 p95=7.417 p99=8.208
+metric=vertical n=40 p50=5.958 p95=7.333 p99=7.958
+metric=output n=40 p50=8.958 p95=12.666 p99=14.666
+metric=hud n=40 p50=37.334 p95=44.875 p99=53.542
+metric=debug n=40 p50=7.417 p95=10.084 p99=12.834
+metric=albedo n=40 p50=22.541 p95=35.541 p99=45.292
+metric=emission n=40 p50=1.333 p95=1.875 p99=6.167
+metric=light n=40 p50=7.5 p95=12.208 p99=12.5
+metric=scene_compose n=40 p50=7.125 p95=9.75 p99=13.666
+metric=particle_emission n=40 p50=15 p95=19.375 p99=21.917
+status=ok scene=particles frames=160 ticks=160 seed=71 script=demo capacity=4096 active=2048 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=65536 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/repulsor.png ticks=340
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=220 clock=steady units=us
+metric=frame n=220 p50=173.958 p95=216.125 p99=229.25
+metric=fixed_update n=220 p50=20.166 p95=26.083 p99=30.083
+metric=prepare n=220 p50=13.209 p95=19.791 p99=22.125
+metric=light_extract n=220 p50=0 p95=0 p99=0
+metric=draw_calls n=220 p50=10 p95=10 p99=10
+metric=sprites n=220 p50=961 p95=974 p99=981
+metric=uploaded_bytes n=220 p50=214544 p95=216240 p99=216736
+metric=bright n=220 p50=6.667 p95=8.459 p99=11
+metric=horizontal n=220 p50=6.875 p95=8.667 p99=9.5
+metric=vertical n=220 p50=6.375 p95=8 p99=10.584
+metric=output n=220 p50=9.709 p95=13.583 p99=15.917
+metric=hud n=220 p50=37.5 p95=43.666 p99=46.375
+metric=debug n=220 p50=7.75 p95=10.458 p99=14.416
+metric=albedo n=220 p50=24.833 p95=41.541 p99=57.167
+metric=emission n=220 p50=1.334 p95=1.958 p99=2.375
+metric=light n=220 p50=7.75 p95=10.375 p99=12.166
+metric=scene_compose n=220 p50=7.916 p95=9.667 p99=10.625
+metric=particle_emission n=220 p50=17.125 p95=22.291 p99=26.625
+status=ok scene=particles frames=340 ticks=340 seed=71 script=demo capacity=4096 active=2395 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=76640 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/vortex.png ticks=520
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=400 clock=steady units=us
+metric=frame n=400 p50=188.875 p95=232.709 p99=252.625
+metric=fixed_update n=400 p50=22.708 p95=30.125 p99=32.709
+metric=prepare n=400 p50=14.083 p95=20.166 p99=22.209
+metric=light_extract n=400 p50=0 p95=0 p99=0
+metric=draw_calls n=400 p50=10 p95=10 p99=10
+metric=sprites n=400 p50=956 p95=972 p99=977
+metric=uploaded_bytes n=400 p50=213488 p95=215952 p99=216624
+metric=bright n=400 p50=7.084 p95=11.084 p99=14
+metric=horizontal n=400 p50=7.125 p95=11.125 p99=12.416
+metric=vertical n=400 p50=6.667 p95=10.583 p99=13.625
+metric=output n=400 p50=10.333 p95=15.625 p99=18.583
+metric=hud n=400 p50=38.25 p95=49.708 p99=57.75
+metric=debug n=400 p50=8.208 p95=12.375 p99=15.042
+metric=albedo n=400 p50=26.5 p95=48.042 p99=59.25
+metric=emission n=400 p50=1.417 p95=2.333 p99=5.083
+metric=light n=400 p50=8.375 p95=12.708 p99=16.084
+metric=scene_compose n=400 p50=8.375 p95=12.333 p99=15.584
+metric=particle_emission n=400 p50=18.75 p95=24.916 p99=30.334
+status=ok scene=particles frames=520 ticks=520 seed=71 script=demo capacity=4096 active=2408 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=77056 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/wind.png ticks=700
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=580 clock=steady units=us
+metric=frame n=580 p50=180.542 p95=213.208 p99=231.875
+metric=fixed_update n=580 p50=20.042 p95=27.334 p99=30.542
+metric=prepare n=580 p50=13.417 p95=19.458 p99=24.042
+metric=light_extract n=580 p50=0 p95=0 p99=0
+metric=draw_calls n=580 p50=10 p95=10 p99=10
+metric=sprites n=580 p50=947 p95=970 p99=977
+metric=uploaded_bytes n=580 p50=212496 p95=215776 p99=216464
+metric=bright n=580 p50=7.042 p95=10.75 p99=14.5
+metric=horizontal n=580 p50=6.917 p95=10.542 p99=14.125
+metric=vertical n=580 p50=6.625 p95=8.959 p99=13.917
+metric=output n=580 p50=10.042 p95=14.792 p99=19.125
+metric=hud n=580 p50=39.459 p95=52.583 p99=61.25
+metric=debug n=580 p50=7.458 p95=11.083 p99=14.042
+metric=albedo n=580 p50=23.792 p95=39.375 p99=51.375
+metric=emission n=580 p50=1.333 p95=2.042 p99=4.625
+metric=light n=580 p50=8 p95=12.5 p99=15.417
+metric=scene_compose n=580 p50=8.083 p95=12.458 p99=15.5
+metric=particle_emission n=580 p50=18.416 p95=25.541 p99=32.333
+status=ok scene=particles frames=700 ticks=700 seed=71 script=demo capacity=4096 active=2411 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=77152 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/bloom-on.png ticks=880 --bloom on
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=760 clock=steady units=us
+metric=frame n=760 p50=194.125 p95=236.542 p99=251.75
+metric=fixed_update n=760 p50=22.458 p95=48.125 p99=58.417
+metric=prepare n=760 p50=14.417 p95=22.458 p99=28.542
+metric=light_extract n=760 p50=0 p95=0 p99=0
+metric=draw_calls n=760 p50=10 p95=10 p99=10
+metric=sprites n=760 p50=954 p95=1105 p99=1111
+metric=uploaded_bytes n=760 p50=213328 p95=236240 p99=237440
+metric=bright n=760 p50=7.166 p95=11.333 p99=14.417
+metric=horizontal n=760 p50=7.208 p95=12.042 p99=14.625
+metric=vertical n=760 p50=6.875 p95=11.708 p99=14.083
+metric=output n=760 p50=10.417 p95=16.25 p99=20.167
+metric=hud n=760 p50=38.917 p95=53.625 p99=63.042
+metric=debug n=760 p50=8.333 p95=15.5 p99=19.75
+metric=albedo n=760 p50=24.666 p95=41.334 p99=54.125
+metric=emission n=760 p50=1.375 p95=2.166 p99=5.042
+metric=light n=760 p50=8.125 p95=13.458 p99=15.708
+metric=scene_compose n=760 p50=8.208 p95=13.333 p99=17.333
+metric=particle_emission n=760 p50=18.958 p95=27.375 p99=32.333
+status=ok scene=particles frames=880 ticks=880 seed=71 script=demo capacity=4096 active=2379 dropped=0 active_fields=4 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=76128 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/bloom-off.png ticks=880 --bloom off
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=760 clock=steady units=us
+metric=frame n=760 p50=161.792 p95=206.542 p99=223.958
+metric=fixed_update n=760 p50=20.834 p95=45.875 p99=53.208
+metric=prepare n=760 p50=13.375 p95=20.5 p99=25.583
+metric=light_extract n=760 p50=0 p95=0 p99=0
+metric=draw_calls n=760 p50=7 p95=7 p99=7
+metric=sprites n=760 p50=953 p95=1104 p99=1110
+metric=uploaded_bytes n=760 p50=213184 p95=236096 p99=237296
+metric=output n=760 p50=10.25 p95=15.25 p99=20
+metric=hud n=760 p50=40.417 p95=51.167 p99=55.125
+metric=debug n=760 p50=8.25 p95=16.416 p99=20.125
+metric=albedo n=760 p50=23.416 p95=37.666 p99=49.458
+metric=emission n=760 p50=1.334 p95=2.125 p99=4.916
+metric=light n=760 p50=7.959 p95=12.041 p99=14.833
+metric=scene_compose n=760 p50=8.083 p95=11.084 p99=13.959
+metric=particle_emission n=760 p50=18.541 p95=24.25 p99=32.5
+status=ok scene=particles frames=880 ticks=880 seed=71 script=demo capacity=4096 active=2379 dropped=0 active_fields=4 window=800x450 framebuffer=1600x900 particle_draws=1 draws=7 instance_upload_bytes=76128 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=docs/media/m81/inspector.png ticks=880 --inspector on --gpu-timing on --size 1120x630
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0 capacity=288
+warmup=120 samples=760 clock=steady units=us
+metric=frame n=760 p50=210.666 p95=288.917 p99=369.25
+metric=fixed_update n=760 p50=21.459 p95=49.083 p99=58.083
+metric=prepare n=760 p50=14.542 p95=21.416 p99=24.417
+metric=light_extract n=760 p50=0 p95=0 p99=0
+metric=draw_calls n=760 p50=12 p95=12 p99=12
+metric=sprites n=760 p50=954 p95=1105 p99=1111
+metric=uploaded_bytes n=760 p50=255380 p95=278292 p99=279492
+metric=bright n=760 p50=7.334 p95=11.416 p99=13.917
+metric=horizontal n=760 p50=7.334 p95=11.125 p99=13.292
+metric=vertical n=760 p50=6.875 p95=10.75 p99=12.625
+metric=output n=760 p50=10.333 p95=16.334 p99=22.25
+metric=hud n=760 p50=38.209 p95=48.584 p99=54.208
+metric=debug n=760 p50=8.208 p95=15.416 p99=18.667
+metric=gui n=760 p50=7.291 p95=15.959 p99=22.167
+metric=albedo n=760 p50=26.042 p95=49.834 p99=70.666
+metric=emission n=760 p50=1.375 p95=2.208 p99=5.417
+metric=light n=760 p50=8.209 p95=12.958 p99=15.542
+metric=scene_compose n=760 p50=8.333 p95=12.542 p99=15.833
+metric=particle_emission n=760 p50=18.917 p95=24.958 p99=31
+status=ok scene=particles frames=880 ticks=880 seed=71 script=demo capacity=4096 active=2379 dropped=0 active_fields=4 window=1120x630 framebuffer=2240x1260 particle_draws=1 draws=12 instance_upload_bytes=76128 timestamp_bits=0 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/003.png ticks=3 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=3 ticks=3 seed=71 script=none capacity=4096 active=36 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=1152 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/006.png ticks=6 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=6 ticks=6 seed=71 script=none capacity=4096 active=72 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=2304 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/009.png ticks=9 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=9 ticks=9 seed=71 script=none capacity=4096 active=108 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=3456 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/012.png ticks=12 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=12 ticks=12 seed=71 script=none capacity=4096 active=144 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=4608 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/015.png ticks=15 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=15 ticks=15 seed=71 script=none capacity=4096 active=180 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=5760 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/018.png ticks=18 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=18 ticks=18 seed=71 script=none capacity=4096 active=216 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=6912 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/021.png ticks=21 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=21 ticks=21 seed=71 script=none capacity=4096 active=252 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=8064 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/024.png ticks=24 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=24 ticks=24 seed=71 script=none capacity=4096 active=288 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=9216 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/027.png ticks=27 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=27 ticks=27 seed=71 script=none capacity=4096 active=324 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=10368 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/030.png ticks=30 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=30 ticks=30 seed=71 script=none capacity=4096 active=360 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=11520 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/033.png ticks=33 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=33 ticks=33 seed=71 script=none capacity=4096 active=396 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=12672 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/036.png ticks=36 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=36 ticks=36 seed=71 script=none capacity=4096 active=432 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=13824 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/039.png ticks=39 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=39 ticks=39 seed=71 script=none capacity=4096 active=468 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=14976 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/042.png ticks=42 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=42 ticks=42 seed=71 script=none capacity=4096 active=504 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=16128 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/045.png ticks=45 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=45 ticks=45 seed=71 script=none capacity=4096 active=540 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=17280 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/048.png ticks=48 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=48 ticks=48 seed=71 script=none capacity=4096 active=576 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=18432 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/051.png ticks=51 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=51 ticks=51 seed=71 script=none capacity=4096 active=612 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=19584 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/054.png ticks=54 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=54 ticks=54 seed=71 script=none capacity=4096 active=648 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=20736 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/057.png ticks=57 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=57 ticks=57 seed=71 script=none capacity=4096 active=684 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=21888 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/060.png ticks=60 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=60 ticks=60 seed=71 script=none capacity=4096 active=720 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=23040 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/063.png ticks=63 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=63 ticks=63 seed=71 script=none capacity=4096 active=756 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=24192 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/066.png ticks=66 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=66 ticks=66 seed=71 script=none capacity=4096 active=792 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=25344 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/069.png ticks=69 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=69 ticks=69 seed=71 script=none capacity=4096 active=828 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=26496 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/072.png ticks=72 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=72 ticks=72 seed=71 script=none capacity=4096 active=864 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=27648 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/075.png ticks=75 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=75 ticks=75 seed=71 script=none capacity=4096 active=900 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=28800 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/078.png ticks=78 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=78 ticks=78 seed=71 script=none capacity=4096 active=936 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=29952 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/081.png ticks=81 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=81 ticks=81 seed=71 script=none capacity=4096 active=972 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=31104 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/084.png ticks=84 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=84 ticks=84 seed=71 script=none capacity=4096 active=1008 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=32256 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/087.png ticks=87 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=87 ticks=87 seed=71 script=none capacity=4096 active=1044 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=33408 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/090.png ticks=90 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=90 ticks=90 seed=71 script=none capacity=4096 active=1080 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=34560 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/093.png ticks=93 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=93 ticks=93 seed=71 script=none capacity=4096 active=1116 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=35712 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/096.png ticks=96 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=96 ticks=96 seed=71 script=none capacity=4096 active=1152 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=36864 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/099.png ticks=99 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=99 ticks=99 seed=71 script=none capacity=4096 active=1188 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=38016 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/102.png ticks=102 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=102 ticks=102 seed=71 script=none capacity=4096 active=1224 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=39168 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/105.png ticks=105 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=105 ticks=105 seed=71 script=none capacity=4096 active=1260 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=40320 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/108.png ticks=108 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=108 ticks=108 seed=71 script=none capacity=4096 active=1296 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=41472 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/111.png ticks=111 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=111 ticks=111 seed=71 script=none capacity=4096 active=1332 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=42624 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/114.png ticks=114 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=114 ticks=114 seed=71 script=none capacity=4096 active=1368 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=43776 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/117.png ticks=117 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=117 ticks=117 seed=71 script=none capacity=4096 active=1404 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=44928 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+capture=build/m81-motion.Djs6rb/120.png ticks=120 --size 640x360 --particle-script none
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=120 ticks=120 seed=71 script=none capacity=4096 active=1440 dropped=0 active_fields=4 window=640x360 framebuffer=1280x720 particle_draws=1 draws=10 instance_upload_bytes=46080 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+output file: docs/media/m81/motion.webp     [40 frames, 734496 bytes].
+Canvas size: 1280 x 720
+Features present: animation transparency
+Background color : 0xFFFFFFFF  Loop Count : 0
+Number of frames: 40
+No.: width height alpha x_offset y_offset duration   dispose blend image_size  compression
+  1:  1280   720    no        0        0       50       none    no      20552       lossy
+  2:   582   352   yes       90      326       50       none   yes       2650       lossy
+  3:   588   358   yes       90      320       50       none   yes       3534       lossy
+  4:   594   368   yes       90      310       50       none   yes       4010       lossy
+  5:   590   376   yes      100      302       50       none   yes       4154       lossy
+  6:   597   386   yes      100      292       50       none   yes       4640       lossy
+  7:   614   396   yes       90      282       50       none   yes       5254       lossy
+  8:   613   408   yes      100      270       50       none   yes       5848       lossy
+  9:   620   420   yes      100      258       50       none   yes       6500       lossy
+ 10:   639   432   yes       90      246       50       none   yes       7238       lossy
+ 11:   638   444   yes      100      234       50       none   yes       7980       lossy
+ 12:   648   456   yes      100      222       50       none   yes       9018       lossy
+ 13:   659   468   yes      100      210       50       none   yes      10180       lossy
+ 14:   681   482   yes       90      196       50       none   yes      10890       lossy
+ 15:   683   494   yes      100      184       50       none   yes      11528       lossy
+ 16:   696   508   yes      100      170       50       none   yes      12772       lossy
+ 17:   721   522   yes       90      156       50       none   yes      14070       lossy
+ 18:   725   532   yes      100      146       50       none   yes      15396       lossy
+ 19:   740   548   yes      100      130       50       none   yes      16816       lossy
+ 20:   765   558   yes       90      120       50       none   yes      18078       lossy
+ 21:   769   572   yes      100      106       50       none   yes      19194       lossy
+ 22:   781   584   yes      100       94       50       none   yes      20072       lossy
+ 23:   793   590   yes      100       88       50       none   yes      21162       lossy
+ 24:   814   590   yes       90       88       50       none   yes      21520       lossy
+ 25:   814   588   yes      100       90       50       none   yes      22572       lossy
+ 26:   824   590   yes      100       88       50       none   yes      23228       lossy
+ 27:   842   592   yes       90       86       50       none   yes      24494       lossy
+ 28:   840   592   yes      100       86       50       none   yes      25570       lossy
+ 29:   847   592   yes      100       86       50       none   yes      26092       lossy
+ 30:   864   592   yes       90       86       50       none   yes      27074       lossy
+ 31:   859   592   yes      100       86       50       none   yes      27410       lossy
+ 32:   864   592   yes      100       86       50       none   yes      28412       lossy
+ 33:   869   592   yes      100       86       50       none   yes      29526       lossy
+ 34:   883   592   yes       90       86       50       none   yes      30708       lossy
+ 35:   867   592   yes      110       86       50       none   yes      30914       lossy
+ 36:   870   592   yes      110       86       50       none   yes      31396       lossy
+ 37:   883   592   yes      100       86       50       none   yes      32374       lossy
+ 38:   881   592   yes      110       86       50       none   yes      32910       lossy
+ 39:   885   592   yes      110       86       50       none   yes      33888       lossy
+ 40:   895   592   yes      100       86       50       none   yes      35050       lossy
+570b5d2978810ab38410762de1844350f4974c9d0fc227064bcfa9e8643e38cf  docs/media/m81/attractor.png
+67ade010a2f381cd2e4e8c193cbea4b9bc2a6ea4e30011a8c39b14b62b422862  docs/media/m81/bloom-off.png
+abad726f64908e717cc3a3f933030b24541f67beaea0625665b61e055afb62ab  docs/media/m81/bloom-on.png
+1ac4635d76ecaf14ed709769f56f6f354f09e1412cad4a40041a567bbc89b652  docs/media/m81/inspector.png
+e3465ca8a3b3dfbc71fda8271be41bf344a8d8e9af60da404df129b1302fbc39  docs/media/m81/repulsor.png
+99db0dfd0ebf9e048d3701e1819edce37508735cdda4a5bc80690142161dd970  docs/media/m81/vortex.png
+80a571fd35f8f8da8644315206bbedfc4fd08cc123bf70a166126dc55129f7ed  docs/media/m81/wind.png
+5ab3981a9502dc05c458afd31e7584aa2c93d0d9690c82fc446edd903018895b  docs/media/m81/motion.webp
