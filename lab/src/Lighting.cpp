@@ -11,9 +11,9 @@ bool inRange(float value,float low,float high) {
 }
 void Light2D::validate() const {
     if (!inRange(position.x,-1e6f,1e6f) || !inRange(position.y,-1e6f,1e6f) ||
-        !inRange(radius,1.f/1024,4096) || !inRange(intensity,0,32) ||
+        !inRange(radius,1.f/1024,4096) || !inRange(height,1.f/1024,4096) || !inRange(intensity,0,32) ||
         !inRange(color.r,0,1) || !inRange(color.g,0,1) || !inRange(color.b,0,1) || color.a!=1)
-        throw std::invalid_argument("invalid point light position, radius, linear color or intensity");
+        throw std::invalid_argument("invalid point light position, radius, height, linear color or intensity");
 }
 void LightList::add(const Light2D& light) {
     light.validate();
@@ -32,6 +32,17 @@ float attenuation(const Light2D& light,tiny2d::Vector2 p) {
     const double dy=(double(p.y)-light.position.y)/light.radius;
     const double weight=std::max(0.,1.-dx*dx-dy*dy);
     return float(weight*weight);
+}
+float directionalFactor(const Light2D& light,tiny2d::Vector2 p,WorldNormal n) {
+    light.validate();
+    if (!std::isfinite(p.x) || !std::isfinite(p.y))
+        throw std::invalid_argument("non-finite light sample position");
+    const double norm=std::hypot(double(n.x),double(n.y),double(n.z));
+    if (!std::isfinite(norm) || norm==0)
+        throw std::invalid_argument("normal must be finite and nonzero");
+    const double dx=double(light.position.x)-p.x, dy=double(light.position.y)-p.y;
+    const double dot=dx*n.x+dy*n.y+double(light.height)*n.z;
+    return static_cast<float>(std::clamp(dot/(norm*std::hypot(dx,dy,double(light.height))),0.,1.));
 }
 LightList extractLights(const Neon& n,const Display& d,std::uint64_t epoch) {
     d.validate();

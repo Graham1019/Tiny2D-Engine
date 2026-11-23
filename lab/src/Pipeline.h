@@ -21,14 +21,18 @@ public:
     Pipeline();
     ~Pipeline();
     // Called at a frame boundary, before borrowing any attachment. Zero suspends.
-    bool resize(tiny2d::Size,bool lighting=false);
+    bool resize(tiny2d::Size,bool lighting=false,bool normalMapping=false);
     tiny2d::Size lightSize() const; // Resident HDR extent, including retained same-size targets.
+    tiny2d::Size normalSize() const;
+    std::uint64_t materialBytes() const; // Immutable linear RGBA8 tile, independent of target size.
+    double normalPrepareUs() const;
     tiny2d::Size size() const;
     std::uint64_t storage() const;
     std::uint64_t generation() const { return generation_; }
     std::uint64_t previewBytes() const;
     std::array<PreviewView,4> previews();
     PreviewView lightPreview(); // Enabled frame only. Discard borrows before the next resize.
+    PreviewView normalPreview();
     void draw(const Picture&, const Display&, Stats& attempt,const DrawTools& tools={});
 private:
     friend struct PipelineProbe; // Driver-backed tests inspect attachment lifetimes at idle boundaries.
@@ -40,17 +44,25 @@ private:
         std::unique_ptr<tiny2d::RenderTarget2D> thumbnail;
         LightingTargets(int w,int h,const Checkpoint&);
     };
+    struct NormalTargets {
+        tiny2d::RenderTarget2D buffer;
+        std::unique_ptr<tiny2d::RenderTarget2D> thumbnail;
+        NormalTargets(int w,int h,const Checkpoint&);
+    };
+    struct NormalAssets; // Compiled programs and uploaded material shared across framebuffer sizes.
     struct Targets {
         tiny2d::RenderTarget2D scene, bright, ping, pong;
         std::unique_ptr<LightingTargets> lighting;
+        std::unique_ptr<NormalTargets> normal;
         std::unique_ptr<Thumbnails> thumbnails;
         void allocatePreviews(const Checkpoint&);
-        void allocateLightPreview(const Checkpoint&);
+        unsigned previewCount() const;
         Targets(int width,int height,const Checkpoint&);
     };
     std::unique_ptr<Targets> targets_;
+    std::unique_ptr<NormalAssets> normalAssets_;
     std::uint64_t generation_=0;
-    bool drawable_ = false, lightingEnabled_ = false;
+    bool drawable_ = false, lightingEnabled_ = false, normalEnabled_ = false;
     tiny2d::detail::GLObject triangle_{tiny2d::detail::ObjectKind::VertexArray};
     tiny2d::ShaderProgram bright_, blur_, display_, light_, compose_;
     tiny2d::Texture2D white_;

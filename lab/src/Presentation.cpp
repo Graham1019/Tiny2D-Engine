@@ -50,7 +50,7 @@ void arena(Quads& out,Quads& glow,bool lit) {
     const Color floorInk=lit ? Color{.14f,.16f,.19f,1} : Color{.005f,.012f,.022f,1};
     const Color gridInk=lit ? Color{.24f,.30f,.33f,1} : grid;
     const Color trim=lit ? Color{.34f,.42f,.48f,1} : line;
-    rect(out,-320,-144,640,288,floorInk);
+    rect(out,Picture::floorOrigin.x,Picture::floorOrigin.y,Picture::floorSize.x,Picture::floorSize.y,floorInk);
     for (int x=-320;x<=320;x+=16) rect(out,x,-144,.5f,288,gridInk);
     for (int y=-144;y<=144;y+=16) rect(out,-320,y,640,.5f,gridInk);
     for (int sign : {-1,1}) {
@@ -145,7 +145,7 @@ void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size lo
     rect(hud,0,0,logical.width,31*s,{.035f,.069f,.09f,1});
     rect(hud,x,y,2*s,13*s,{.22f,.93f,.84f,1});
     lettering(hud,"NEON",x+8*s,y,2*s,paper);
-    static const char* labels[]={"SCENE","BRIGHT","BLUR","FINAL","LIGHT"};
+    static const char* labels[]={"SCENE","BRIGHT","BLUR","FINAL","LIGHT","NORMAL"};
     const std::string gain=std::to_string(d.strength/10)+"."+std::to_string(d.strength%10);
     lettering(hud,labels[int(d.view)],x+78*s,y,s,{.35f,.92f,.85f,1});
     lettering(hud,std::string("BLOOM ")+(d.bloom?"ON ":"OFF ")+gain+"  THR 1",x+78*s,y+10*s,s,muted);

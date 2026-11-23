@@ -21,6 +21,9 @@ struct CpuSample {
     std::size_t activeLights=0,droppedLights=0;
     tiny2d::Size lightSize{};
     std::uint64_t hdrBytes=0,previewBytes=0;
+    tiny2d::Size normalSize{};
+    double normalPrepare=0; // CPU tile generation on the frame that first installs the material.
+    std::uint64_t materialBytes=0, materialUpload=0;
     tiny2d::QueryStatus status=tiny2d::QueryStatus::Off;
 };
 struct GpuSample {
