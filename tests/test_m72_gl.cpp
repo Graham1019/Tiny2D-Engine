@@ -101,16 +101,25 @@ void imageOrientation(Window& window) {
     detail::GLObject unpack(detail::ObjectKind::Buffer);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,unpack.id());
     glPixelStorei(GL_UNPACK_SKIP_ROWS,2); glPixelStorei(GL_UNPACK_SKIP_PIXELS,3);
-    for (int i=0;i<3;++i) {
+    for (int i=0;i<5;++i) {
+        if (i>=3) {
+            d.lighting=true;
+            d.ambient=.25f;
+            pipe.resize(pixels,true);
+            picture.lights.clear();
+            picture.lights.add({{20,i==3?13.f:67.f},15,{1,0,0,1},3,{}});
+        }
         bool srgb=i!=1;
         if (srgb) glEnable(GL_FRAMEBUFFER_SRGB); else glDisable(GL_FRAMEBUFFER_SRGB);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_F2,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_L,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_5,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_CharCallback(window.nativeHandle(),'R');
         ImGui_ImplGlfw_ScrollCallback(window.nativeHandle(),0,5);
         auto input=gui.build(tools,n,1,d,false,history,{},"off",true);
         check(tools.visible && tools.previews && !input.keys.any() && !input.commands.edges.any() && !input.click,
               "finite input isolation");
-        unsigned demand=gui.finish(tools,pipe,i+1,n.tick);
+        unsigned demand=gui.finish(tools,pipe,i+1,n.tick,d.lighting?&picture:nullptr);
         Stats stats;
         pipe.draw(picture,d,stats,{demand,nullptr,[&](Stats& s){gui.submit(s);}});
         GLint rows,skip,pbo;
@@ -118,19 +127,25 @@ void imageOrientation(Window& window) {
         glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING,&pbo);
         check(rows==2 && skip==3 && pbo==unpack.id() && glIsEnabled(GL_FRAMEBUFFER_SRGB)==srgb,"GUI unpack/sRGB state");
         if (!i) continue;
-        const auto scene=pipe.previews()[0];
+        const auto inspected=d.lighting?pipe.lightPreview():pipe.previews()[0];
         auto* data=ImGui::GetDrawData(); bool found=false;
         for (auto* list:data->CmdLists) for (auto& cmd:list->CmdBuffer) {
-            if (cmd.GetTexID()!=scene.texture) continue;
+            if (cmd.GetTexID()!=inspected.texture) continue;
             auto pos=[&](int j){return list->VtxBuffer[cmd.VtxOffset+list->IdxBuffer[cmd.IdxOffset+j]].pos;};
             auto tl=pos(0),br=pos(2);
             int x=int((tl.x+.17f*(br.x-tl.x))*data->FramebufferScale.x);
             int y=int((tl.y+.16f*(br.y-tl.y))*data->FramebufferScale.y);
             auto color=read(0,x,pixels.height-1-y);
-            check(std::abs(int(color[0])-231)<4 && std::abs(int(color[1])-213)<4,"displayed UV and single encoding");
+            if (d.lighting) {
+                int mirrored=int((tl.y+.84f*(br.y-tl.y))*data->FramebufferScale.y);
+                auto other=read(0,x,pixels.height-1-mirrored);
+                const auto lit=i==3?color:other, ambient=i==3?other:color;
+                check(std::abs(int(lit[0])-226)<4 && std::abs(int(lit[1])-124)<4 &&
+                      std::abs(int(ambient[0])-124)<4,"displayed Light UV, current source frame and single encoding");
+            } else check(std::abs(int(color[0])-231)<4 && std::abs(int(color[1])-213)<4,"displayed UV and single encoding");
             found=true;
         }
-        check(found && stats.previewMask==15,"visible four image commands");
+        check(found && stats.previewMask==(d.lighting?31u:15u),"all requested image commands visible");
     }
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);glDisable(GL_FRAMEBUFFER_SRGB);
@@ -157,12 +172,14 @@ void focusBatches(Window& window) {
     tick(); tick();
     // One GLFW poll can enqueue all these events before the next ImGui NewFrame.
     tap(GLFW_KEY_W); tap(GLFW_KEY_R); tap(GLFW_KEY_P); tap(GLFW_KEY_B); tap(GLFW_KEY_F2);
+    tap(GLFW_KEY_L); tap(GLFW_KEY_5);
     refocus();
     int resets=0, pausedFrames=0, bloomOffFrames=0, hiddenFrames=0, movement=0;
     for (int i=0;i<16;++i) {
         auto a=tick();
         resets+=a.reset; pausedFrames+=controls.paused; bloomOffFrames+=!display.bloom;
         hiddenFrames+=!tools.visible; movement+=std::abs(a.motion.y);
+        check(!display.lighting && display.view==View::Final,"old focus Lighting shortcuts discarded");
     }
     std::cout<<"pre-loss batch after restore: resets="<<resets<<" paused_frames="<<pausedFrames
              <<" bloom_off_frames="<<bloomOffFrames<<" hidden_frames="<<hiddenFrames
@@ -268,6 +285,7 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         routed=gui.build(tools,n,1,d,controls.paused,history,timer.counts,queries->reason,true);
         c.build=micros(building);
         action=controls.poll(routed.keys,true,1./60,d,routed.captureKeyboard,routed.commands,routed.freshFocus);
+        pipe.resize(window.framebufferSize(),d.lighting);
         Content rect{0,0,window.size()};
         if (tools.visible && routed.click) tools.selected=shown.pick(*routed.click,rect,d.view,pipe.generation(),n,1);
         auto updating=Clock::now();
@@ -276,9 +294,10 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         auto preparing=Clock::now();
         Picture p; p.prepare(n,d,controls.paused,rect.size,window.framebufferSize(),last);
         auto list=objects(n,1); if (tools.visible) p.bounds(list,tools.selected,tools.bounds,tools.outline);
+        if (tools.visible && d.lighting && tools.lightRadii) p.lightRadii(tools.selected);
         c.prepare=micros(preparing);
         building=Clock::now();
-        auto previews=gui.finish(tools,pipe,frame,n.tick);
+        auto previews=gui.finish(tools,pipe,frame,n.tick,d.lighting?&p:nullptr);
         c.build+=micros(building);
         FrameInfo f{frame,n.tick,1,pipe.generation(),window.framebufferSize(),rect.size,d,tools.visible,true,false,previews};
         DrawTools draw; draw.previews=previews;
@@ -316,11 +335,14 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
     check(!action.reset,"Return releases text focus without replaying held R");
     click(536,132);
     key(GLFW_KEY_W,true);key(GLFW_KEY_SPACE,true);key(GLFW_KEY_P,true);
+    key(GLFW_KEY_L,true);key(GLFW_KEY_5,true);
+    check(!d.lighting && d.view==View::Final,"text capture filters L and 5");
     check(!action.motion.y && !action.motion.fire && !controls.paused,"held text shortcuts");
     key(GLFW_KEY_F2,true);check(!tools.visible && !action.reset,"F2 during capture");step();
     check(!tools.visible && !action.motion.y && !action.motion.fire && !last.passDraws[Gui],"held keys gated after close");
+    check(!d.lighting && d.view==View::Final,"held light shortcuts gated after F2 hides inspector");
     key(GLFW_KEY_F2,false);key(GLFW_KEY_F2,true);check(tools.visible,"reopened panel");key(GLFW_KEY_F2,false);
-    for (int k:{GLFW_KEY_R,GLFW_KEY_W,GLFW_KEY_SPACE,GLFW_KEY_P}) key(k,false);
+    for (int k:{GLFW_KEY_R,GLFW_KEY_W,GLFW_KEY_SPACE,GLFW_KEY_P,GLFW_KEY_L,GLFW_KEY_5}) key(k,false);
     click(670,90);step("timing.png");
     key(GLFW_KEY_F2,true); check(!tools.visible,"global F2 edge");
     gui.suspend(); controls.poll({},false,0,d); step();
@@ -335,6 +357,17 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
     pipe.resize({0,0}); rejects([&]{gui.submit(last);}); pipe.resize(window.framebufferSize());
     step(); step();
     check(last.complete && last.previewMask==15,"discarded data and fresh GUI frame");
+    click(730,90); click(520,112);
+    check(d.lighting && last.previewMask==31,"Lighting tab enables GPU light and fifth preview");
+    auto priorTick=n.tick;
+    click(635,135);
+    check(n.tick>priorTick && d.ambient>1,"adjusting ambient keeps fixed ticks running");
+    click(520,204);
+    check(tools.lightRadii && last.passDraws[Debug],"post-process radius overlay");
+    click(665,204);
+    check(d.view==View::Light,"GUI shows Light buffer");
+    click(520,112);
+    check(!d.lighting && d.view==View::Final && last.previewMask==15,"off restores Final and four previews");
     Window other(32,32,"foreign");
     rejects([&]{gui.build(tools,n,1,d,false,history,timer.counts,queries->reason,true);});
     window.makeContextCurrent();

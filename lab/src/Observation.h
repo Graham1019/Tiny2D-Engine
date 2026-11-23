@@ -17,7 +17,9 @@ using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
 struct CpuSample {
     FrameInfo info;
     Stats stats;
-    double update=0,prepare=0,build=0,poll=0,total=0;
+    double update=0,prepare=0,lightExtract=0,build=0,poll=0,total=0;
+    std::size_t activeLights=0,droppedLights=0;
+    tiny2d::Size lightSize{};
     std::uint64_t hdrBytes=0,previewBytes=0;
     tiny2d::QueryStatus status=tiny2d::QueryStatus::Off;
 };

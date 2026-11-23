@@ -24,17 +24,18 @@ Metrics::Metrics(const std::string& path) {
     out_.exceptions(std::ios::badbit|std::ios::failbit);
     try { out_.open(path); }
     catch (const std::ios_base::failure& e) { throw std::runtime_error("open metrics "+path+": "+e.what()); }
-    out_<<std::setprecision(12)<<"record,frame,tick,epoch,generation,measurement,width,height,logical_w,logical_h,view,bloom,strength_tenths,hud,inspector,timing,preview_mask,pass_mask,timestamp_bits,query_status,received_frame,total_us";
+    out_<<std::setprecision(12)<<"record,frame,tick,epoch,generation,measurement,width,height,logical_w,logical_h,view,bloom,strength_tenths,hud,lighting,ambient,light_strength,radius_multiplier,inspector,timing,preview_mask,pass_mask,timestamp_bits,query_status,received_frame,total_us";
     for (auto label:passNames) out_<<','<<label<<"_us";
     out_<<",update_us,prepare_us,gui_build_us,query_poll_us,passes,draws,world_sprites,batch_vertex_bytes,gui_vertices,gui_indices,gui_vertex_bytes,gui_index_bytes,font_upload_bytes,hdr_bytes,preview_bytes,font_bytes";
     for (auto label:passNames) out_<<','<<label<<"_draws";
     for (auto label:passNames) out_<<','<<label<<"_batch_bytes";
-    out_<<'\n';
+    out_<<",light_extract_us,active_lights,dropped_lights,light_w,light_h,light_uniform_bytes\n";
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
         <<f.pixels.width<<','<<f.pixels.height<<','<<f.logical.width<<','<<f.logical.height<<','
         <<name(f.display.view)<<','<<f.display.bloom<<','<<f.display.strength<<','<<f.display.hud<<','
+        <<f.display.lighting<<','<<f.display.ambient<<','<<f.display.lightStrength<<','<<f.display.radiusMultiplier<<','
         <<f.inspector<<','<<f.timing<<','<<f.previews<<','<<f.mask<<',';
     if (f.timestampBits>=0) out_<<f.timestampBits;
     out_<<','<<(query==QueryStatus::Off ? (f.timing?"unavailable":"off") : status(query))<<',';
@@ -53,13 +54,17 @@ void Metrics::record(const CpuSample& c) {
         <<','<<c.hdrBytes<<','<<c.previewBytes<<','<<s.fontBytes;
     for (auto draws:s.passDraws) out_<<','<<draws;
     for (auto bytes:s.passBytes) out_<<','<<bytes;
-    out_<<'\n';
+    out_<<',';
+    if (c.info.display.lighting) out_<<c.lightExtract;
+    out_<<','<<c.activeLights<<','<<c.droppedLights<<','<<c.lightSize.width<<','<<c.lightSize.height
+        <<','<<s.lightUniformBytes<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
     if (!out_.is_open()) return;
     prefix(g.info,"gpu",g.status); out_<<g.received;
     for (auto us:g.us) {out_<<','; if (g.status==QueryStatus::Complete && us) out_<<*us;}
-    out_<<std::string(16+2*PassCount,',')<<'\n';
+    // CPU-only columns: 16 original fields, two per pass, six lighting fields.
+    out_<<std::string(16+2*PassCount+6,',')<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
 void Metrics::flushRetired() {
@@ -88,9 +93,13 @@ void report(const std::vector<CpuSample>& samples) {
     metric("frame",[](const auto& c){ return std::optional<double>(c.total); });
     metric("fixed_update",[](const auto& c){return std::optional<double>(c.update);});
     metric("prepare",[](const auto& c){return std::optional<double>(c.prepare);});
+    metric("light_extract",[](const auto& c)->std::optional<double>{
+        if (c.info.display.lighting) return c.lightExtract;
+        return {};
+    });
     metric("draw_calls",[](const auto& c){return std::optional<double>(c.stats.draws);});
     metric("sprites",[](const auto& c){return std::optional<double>(c.stats.sprites);});
-    metric("uploaded_bytes",[](const auto& c){return std::optional<double>(c.stats.bytes+c.stats.vertexBytes+c.stats.indexBytes+c.stats.fontUpload);});
+    metric("uploaded_bytes",[](const auto& c){return std::optional<double>(c.stats.bytes+c.stats.vertexBytes+c.stats.indexBytes+c.stats.fontUpload+c.stats.lightUniformBytes);});
     for (unsigned i=0;i<PassCount;++i) metric(passNames[i],[&](const auto& c)->std::optional<double>{
         if (c.stats.mask&(1u<<i)) return c.stats.cpuUs[i]; return {};
     });

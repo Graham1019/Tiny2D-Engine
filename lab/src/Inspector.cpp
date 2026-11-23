@@ -14,7 +14,7 @@ using namespace ImGui;
 using U64=unsigned long long;
 constexpr ImGuiKey keys[]={ImGuiKey_A,ImGuiKey_D,ImGuiKey_W,ImGuiKey_S,ImGuiKey_Space,ImGuiKey_B,
     ImGuiKey_1,ImGuiKey_2,ImGuiKey_3,ImGuiKey_4,ImGuiKey_LeftBracket,ImGuiKey_RightBracket,
-    ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape};
+    ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape,ImGuiKey_L,ImGuiKey_5};
 static_assert(std::size(keys)==KeyCount);
 void cancelPendingInput(ImGuiIO& io) {
     // A button normally fires on release. Cancel a pressed widget before
@@ -36,7 +36,8 @@ void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
         cmd.strength=strength;
     int view=int(d.view);
     SetNextItemWidth(-74);
-    if (Combo("View",&view,"Scene\0Bright\0Blur\0Final\0")) cmd.view=static_cast<View>(view);
+    if (Combo("View",&view,d.lighting?"Scene\0Bright\0Blur\0Final\0Light\0":"Scene\0Bright\0Blur\0Final\0"))
+        cmd.view=static_cast<View>(view);
     if (Button(paused?"Resume":"Pause")) cmd.edges.set(Pause);
     SameLine(); BeginDisabled(!paused);
     if (Button("Step 1 tick")) cmd.edges.set(Step);
@@ -45,6 +46,50 @@ void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
     Checkbox("PickBounds",&tools.bounds); SameLine(); Checkbox("Outline",&tools.outline);
     Checkbox("Buffers",&tools.previews); SameLine(); Checkbox("GPU timing",&tools.timing);
     TextDisabled("Threshold 1   Gaussian r8 / 3.2");
+}
+void lightingControls(const Display& display,Commands& commands,ToolState& tools) {
+    bool enabled=display.lighting;
+    if (Checkbox("Enabled (L)",&enabled)) commands.edges.set(ToggleLighting);
+    if (!enabled) { TextWrapped("Enable Lighting to inspect the Light buffer (5)."); return; }
+    auto slider=[](const char* label,float value,float low,float high,std::optional<float>& change) {
+        SetNextItemWidth(-105);
+        if (SliderFloat(label,&value,low,high,"%.2f",ImGuiSliderFlags_AlwaysClamp|ImGuiSliderFlags_NoInput))
+            change=value;
+    };
+    slider("Ambient",display.ambient,0,Display::maxAmbient,commands.ambient);
+    slider("Light strength",display.lightStrength,0,Display::maxLightStrength,commands.lightStrength);
+    slider("Radius scale",display.radiusMultiplier,Display::minRadiusMultiplier,
+           Display::maxRadiusMultiplier,commands.radiusMultiplier);
+    Checkbox("Light radii",&tools.lightRadii); SameLine();
+    if (Button(display.view==View::Light?"Show Final (4)":"Show Light (5)"))
+        commands.view=display.view==View::Light?View::Final:View::Light;
+}
+void lightDetails(ToolState& tools,const LightList& lights,std::uint64_t tick) {
+    Text("Tick %llu   Active %zu / %zu   Dropped %zu",U64(tick),std::size_t(lights.size()),
+         std::size_t(LightList::capacity),std::size_t(lights.dropped()));
+    const Light2D* selected=tools.selected?lights.find(*tools.selected):nullptr;
+    // With no scene selection the Inspector follows the player without
+    // changing the picked object or its post-process outline.
+    if (!tools.selected) {
+        for (const auto& light:lights)
+            if (light.source.kind==ObjectKind::Player) { selected=&light; break; }
+    }
+    char label[64]="Select a source";
+    if (selected) std::snprintf(label,sizeof(label),"%s %u",name(selected->source.kind),selected->source.slot);
+    SetNextItemWidth(-64);
+    if (BeginCombo("Source",label)) {
+        for (const auto& light:lights) {
+            std::snprintf(label,sizeof(label),"%s %u",name(light.source.kind),light.source.slot);
+            if (Selectable(label,&light==selected)) { tools.selected=light.source; selected=&light; }
+        }
+        EndCombo();
+    }
+    if (!selected) return;
+    Text("World position   %.1f, %.1f",selected->position.x,selected->position.y);
+    const auto c=selected->color;
+    Text("Linear RGB       %.2f  %.2f  %.2f",c.r,c.g,c.b);
+    Text("Radius %.1f   Intensity %.2f",selected->radius,selected->intensity);
+    TextWrapped("Light shows linear illumination mapped for display.");
 }
 void objectList(const Neon& n,std::uint64_t epoch,ToolState& tools,char (&filter)[64]) {
     const auto list=objects(n,epoch);
@@ -115,6 +160,7 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
         });
     };
     measured("GUI build",&CpuSample::build); measured("query poll",&CpuSample::poll);
+    measured("light data",&CpuSample::lightExtract);
     for (unsigned i=0;i<PassCount;++i) {
         char label[40]; std::snprintf(label,sizeof(label),"%s[%u]",passNames[i],s.passDraws[i]);
         row(label,history.cpu,[&](const auto& v)->std::optional<double>{
@@ -241,12 +287,14 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     f2Down_=f2;
     bool transition=toggle || first_ || focusGate_;
     bool gateKeyboard=toggle || first_ || (focusGate_ && !input.freshFocus);
+    const bool startOnLighting=first_ && display.lighting;
+    lightingTab_=false;
     first_=false; focusGate_=!focused;
     if (tools.visible) {
         const float w=std::min(292.f,std::max(1.f,io.DisplaySize.x-8));
         const float top=std::min(55.f,io.DisplaySize.y*.12f);
         SetNextWindowPos({std::max(0.f,io.DisplaySize.x-w-6),top},ImGuiCond_FirstUseEver);
-        SetNextWindowSize({w,std::max(48.f,io.DisplaySize.y-top-(tools.previews?150.f:56.f))},ImGuiCond_FirstUseEver);
+        SetNextWindowSize({w,std::max(48.f,io.DisplaySize.y-top-(tools.previews && !display.lighting?150.f:56.f))},ImGuiCond_FirstUseEver);
         SetNextWindowSizeConstraints({std::min(180.f,w),40},{io.DisplaySize.x,std::max(40.f,io.DisplaySize.y)});
         if (Begin("Neon Inspector",nullptr,finite_?ImGuiWindowFlags_NoInputs:0)) {
             if (BeginTabBar("panels")) {
@@ -255,10 +303,16 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
                 }
                 if (BeginTabItem("Objects")) { objectList(n,epoch,tools,filter_); EndTabItem(); }
                 if (BeginTabItem("Timing")) { performance(hist,counts,tools.timing?reason:"off",renderer_,version_); EndTabItem(); }
+                if (BeginTabItem("Lighting",nullptr,startOnLighting?ImGuiTabItemFlags_SetSelected:0)) {
+                    lightingTab_=true;
+                    lightingControls(display,input.commands,tools);
+                    EndTabItem();
+                }
                 EndTabBar();
             }
-            if (display.view==View::Bright || display.view==View::Blur) TextWrapped("Use the object list in this buffer view.");
-            if (!hist.cpu.empty()) {
+            if (!lightingTab_ && display.view!=View::Final && display.view!=View::Scene)
+                TextWrapped("Use the object list in this buffer view.");
+            if (!lightingTab_ && !hist.cpu.empty()) {
                 auto& c=hist.cpu.back();
                 TextDisabled("CPU #%llu  %.0f us  %llu draws",U64(c.info.id),c.total,U64(c.stats.draws));
                 if (!tools.timing) TextDisabled("GPU timing off");
@@ -278,9 +332,16 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         input.click=tiny2d::Vector2{io.MouseClickedPos[0].x,io.MouseClickedPos[0].y};
     return input;
 }
-unsigned Inspector::finish(const ToolState& tools,Pipeline& pipe,std::uint64_t frame,std::uint64_t tick) {
+unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,std::uint64_t tick,const Picture* litPicture) {
     requireOwner();
     unsigned mask=0;
+    if (lightingTab_ && litPicture) {
+        // Finish after fixed updates. Details and texture views describe the
+        // exact light payload submitted in this frame.
+        if (Begin("Neon Inspector",nullptr,finite_?ImGuiWindowFlags_NoInputs:0))
+            lightDetails(tools,litPicture->lights,tick);
+        End();
+    }
     if (tools.visible && tools.previews) {
         auto size=GetIO().DisplaySize;
         const float width=std::clamp(size.x-310.f,std::min(260.f,std::max(1.f,size.x-12)),720.f);
@@ -288,19 +349,30 @@ unsigned Inspector::finish(const ToolState& tools,Pipeline& pipe,std::uint64_t f
         SetNextWindowPos({6,std::max(0.f,size.y-45.f-height)},ImGuiCond_FirstUseEver);
         SetNextWindowSize({width,height},ImGuiCond_Always);
         if (Begin("Buffers",nullptr,(finite_?ImGuiWindowFlags_NoInputs:0))) {
-            TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB  |  Final: scene composite",U64(frame),U64(tick));
-            std::array<PreviewView,4> views;
-            try { views=pipe.previews(); }
-            catch (...) { End(); discard(); throw; }
-            const float cell=std::max(1.f,(GetContentRegionAvail().x-3*GetStyle().ItemSpacing.x)/4);
-            for (unsigned i=0;i<4;++i) {
+            if (litPicture) TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB",U64(frame),U64(tick));
+            else TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB  |  Final: scene composite",U64(frame),U64(tick));
+            std::array<PreviewView,5> views;
+            const unsigned count=litPicture?5:4;
+            try {
+                const auto legacy=pipe.previews();
+                std::copy(legacy.begin(),legacy.end(),views.begin());
+                if (litPicture) views[4]=pipe.lightPreview();
+            }
+            catch (const std::exception& error) {
+                End(); discard(); throw PreviewAllocationError(error.what());
+            } catch (...) { End(); discard(); throw; }
+            const float cell=std::max(2.f,(GetContentRegionAvail().x-(count-1)*GetStyle().ItemSpacing.x)/count);
+            for (unsigned i=0;i<count;++i) {
                 const auto& v=views[i]; if (i) SameLine();
                 BeginGroup();
-                Text("%s %dx%d",name(static_cast<View>(i)),v.source.width,v.source.height);
+                if (litPicture) TextUnformatted(name(static_cast<View>(i)));
+                else Text("%s %dx%d",name(static_cast<View>(i)),v.source.width,v.source.height);
                 const float scale=std::min((cell-1)/v.thumbnail.width,56.f/v.thumbnail.height);
                 Image(ImTextureRef(ImTextureID(v.texture)),{v.thumbnail.width*scale,v.thumbnail.height*scale},{0,1},{1,0});
                 if (IsItemVisible()) mask |= 1u<<i;
-                TextDisabled("RGBA8 %dx%d",v.thumbnail.width,v.thumbnail.height);
+                if (!litPicture) TextDisabled("RGBA8 %dx%d",v.thumbnail.width,v.thumbnail.height);
+                else if (IsItemHovered())
+                    SetTooltip("Source %dx%d; RGBA8 preview %dx%d",v.source.width,v.source.height,v.thumbnail.width,v.thumbnail.height);
                 EndGroup();
             }
         }

@@ -15,6 +15,15 @@ std::uint32_t number(std::string_view value, std::string_view option) {
         throw std::invalid_argument(std::string(option) + " expects an unsigned 32-bit decimal integer");
     return result;
 }
+float ambientValue(std::string_view value) {
+    double result=0;
+    const auto end=value.data()+value.size();
+    const auto parsed=std::from_chars(value.data(),end,result);
+    if (parsed.ec!=std::errc{} || parsed.ptr!=end || !std::isfinite(result) ||
+        std::signbit(result) || result>Display::maxAmbient)
+        throw std::invalid_argument("--ambient expects a finite number in [0,2]");
+    return static_cast<float>(result);
+}
 }
 const char* name(View v) {
     switch (v) {
@@ -22,12 +31,17 @@ const char* name(View v) {
     case View::Bright: return "bright";
     case View::Blur: return "blur";
     case View::Final: return "final";
+    case View::Light: return "light";
     }
     throw std::invalid_argument("invalid view");
 }
 void Display::validate() const {
     (void)name(view);
     if (strength < 0 || strength > 30) throw std::invalid_argument("strength outside 0..30 tenths");
+    if (!(ambient>=0 && ambient<=maxAmbient && lightStrength>=0 && lightStrength<=maxLightStrength &&
+          radiusMultiplier>=minRadiusMultiplier && radiusMultiplier<=maxRadiusMultiplier))
+        throw std::invalid_argument("lighting parameters outside supported ranges");
+    if (view==View::Light && !lighting) throw std::invalid_argument("Light view requires lighting on");
 }
 Options parse(int argc, const char* const* argv) {
     Options o;
@@ -46,8 +60,11 @@ Options parse(int argc, const char* const* argv) {
             else if (value == "bright") o.display.view = View::Bright;
             else if (value == "blur") o.display.view = View::Blur;
             else if (value == "final") o.display.view = View::Final;
+            else if (value == "light") o.display.view = View::Light;
             else throw std::invalid_argument("unknown --view");
-        } else if (key == "--bloom" && (value == "on" || value == "off")) o.display.bloom = value == "on";
+        } else if (key == "--lighting" && (value == "on" || value == "off")) o.display.lighting=value=="on";
+        else if (key == "--ambient") o.display.ambient=ambientValue(value);
+        else if (key == "--bloom" && (value == "on" || value == "off")) o.display.bloom = value == "on";
         else if ((key=="--inspector" || key=="--gpu-timing") && (value=="on" || value=="off")) {
             (key=="--inspector" ? inspector : timing) = value=="on";
         } else if (key=="--previews" && (value=="off" || value=="all")) o.previews=value=="all";
@@ -65,6 +82,7 @@ Options parse(int argc, const char* const* argv) {
     o.inspector=inspector.value_or(!o.frames);
     o.timing=timing.value_or(!o.frames);
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
+    o.display.validate();
     return o;
 }
 
@@ -91,11 +109,17 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
     a.exit = pressed[Escape];
     if (pressed[Bloom]) d.bloom = !d.bloom;
     if (pressed[Hud]) d.hud = !d.hud;
+    if (pressed[ToggleLighting]) d.lighting = !d.lighting;
     for (int k=Scene; k<=Final; ++k)
         if (pressed[k]) d.view = static_cast<View>(k-Scene);
     d.strength = std::clamp(d.strength + pressed[Stronger] - pressed[Weaker],0,30);
     if (ui.strength) d.strength = std::clamp(*ui.strength,0,30);
     if (ui.view) d.view = *ui.view;
+    if (pressed[ShowLight] && d.lighting) d.view=View::Light;
+    if (!d.lighting && d.view==View::Light) d.view=View::Final;
+    if (ui.ambient) d.ambient=*ui.ambient;
+    if (ui.lightStrength) d.lightStrength=*ui.lightStrength;
+    if (ui.radiusMultiplier) d.radiusMultiplier=*ui.radiusMultiplier;
     a.motion = {keys[Right]-keys[Left],keys[Down]-keys[Up],keys[Fire]};
     if (pressed[Reset]) {
         a.reset = true;
