@@ -24,6 +24,7 @@ public:
     Window(Window&&) = delete;
     Window& operator=(Window&&) = delete;
 
+    bool iconified() const;
     bool shouldClose() const;
     void requestClose();
     void pollEvents();

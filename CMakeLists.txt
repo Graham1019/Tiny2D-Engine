@@ -318,3 +318,36 @@ add_dependencies(Tiny2DSurvivor tiny2d_app_resources)
 add_custom_target(package_macos
     COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
     DEPENDS Tiny2DSurvivor VERBATIM)
+
+# Lab has its own executable-adjacent asset tree and reuses the macOS locator.
+add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Presentation.cpp
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
+target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
+target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui PRIVATE glfw OpenGL::GL)
+add_executable(tiny2d_lab lab/src/main.cpp)
+target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
+target_link_libraries(tiny2d_lab PRIVATE tiny2d_lab_core glfw OpenGL::GL PNG::PNG)
+set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+add_custom_target(tiny2d_lab_assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/lab/assets"
+        "$<TARGET_FILE_DIR:tiny2d_lab>/assets"
+    VERBATIM)
+add_dependencies(tiny2d_lab tiny2d_lab_assets)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m71_cpu tests/test_m71_cpu.cpp)
+    target_link_libraries(tiny2d_m71_cpu PRIVATE tiny2d_lab_core)
+    add_test(NAME M71CPU COMMAND tiny2d_m71_cpu)
+    set_tests_properties(M71CPU PROPERTIES LABELS "cpu")
+    if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m71_gpu tests/test_m71_gpu.cpp)
+        target_include_directories(tiny2d_m71_gpu PRIVATE engine/src/Renderer)
+        target_link_libraries(tiny2d_m71_gpu PRIVATE tiny2d_lab_core glfw OpenGL::GL)
+        set_target_properties(tiny2d_m71_gpu PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+        add_dependencies(tiny2d_m71_gpu tiny2d_lab_assets)
+        add_test(NAME M71GPU COMMAND tiny2d_m71_gpu)
+        add_test(NAME M71RelocatedCLI COMMAND ${CMAKE_COMMAND}
+            "-DEXE=$<TARGET_FILE:tiny2d_lab>" "-DSTAGE=${CMAKE_BINARY_DIR}/m71 relocation"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/m71_relocated.cmake")
+        set_tests_properties(M71GPU M71RelocatedCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    endif()
+endif()

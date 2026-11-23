@@ -1,0 +1,127 @@
+#include "Neon.h"
+#include <algorithm>
+#include <charconv>
+#include <cmath>
+#include <stdexcept>
+#include <string_view>
+
+namespace lab {
+namespace {
+std::uint32_t number(std::string_view value, std::string_view option) {
+    std::uint32_t result = 0;
+    const auto end = value.data() + value.size();
+    const auto parsed = std::from_chars(value.data(),end,result);
+    if (parsed.ec != std::errc{} || parsed.ptr != end)
+        throw std::invalid_argument(std::string(option) + " expects an unsigned 32-bit decimal integer");
+    return result;
+}
+}
+const char* name(View v) {
+    switch (v) {
+    case View::Scene: return "scene";
+    case View::Bright: return "bright";
+    case View::Blur: return "blur";
+    case View::Final: return "final";
+    }
+    throw std::invalid_argument("invalid view");
+}
+void Display::validate() const {
+    (void)name(view);
+    if (strength < 0 || strength > 30) throw std::invalid_argument("strength outside 0..30 tenths");
+}
+Options parse(int argc, const char* const* argv) {
+    Options o;
+    for (int i=1; i<argc; ++i) {
+        std::string_view key = argv[i];
+        if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
+        std::string_view value = argv[i];
+        if (key == "--scene" && value == "neon") continue;
+        if (key == "--seed") o.seed = number(value,key);
+        else if (key == "--frames") {
+            o.frames = number(value,key);
+            if (!*o.frames) throw std::invalid_argument("--frames must be positive");
+        } else if (key == "--view") {
+            if (value == "scene") o.display.view = View::Scene;
+            else if (value == "bright") o.display.view = View::Bright;
+            else if (value == "blur") o.display.view = View::Blur;
+            else if (value == "final") o.display.view = View::Final;
+            else throw std::invalid_argument("unknown --view");
+        } else if (key == "--bloom" && (value == "on" || value == "off")) o.display.bloom = value == "on";
+        else if (key == "--size") {
+            const auto split = value.find('x');
+            if (split == value.npos) throw std::invalid_argument("--size expects WIDTHxHEIGHT");
+            const auto w = number(value.substr(0,split),key), h = number(value.substr(split+1),key);
+            if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
+            o.width = int(w); o.height = int(h);
+        } else if (key == "--capture" && !value.empty()) o.capture = value;
+        else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
+    }
+    if (!o.capture.empty() && !o.frames) throw std::invalid_argument("--capture requires --frames");
+    return o;
+}
+
+Action Controls::poll(Keys keys, bool active, double dt, Display& d) {
+    Action a;
+    if (!active) {
+        suspended_ = true;
+        previous_.reset();
+        clock_.reset();
+        return a;
+    }
+    if (suspended_) {
+        blocked_ = keys;
+        suspended_ = false;
+        dt = 0;
+    }
+    blocked_ &= keys;
+    keys &= ~blocked_;
+    const Keys pressed = keys & ~previous_;
+    previous_ = keys;
+    a.exit = pressed[Escape];
+    if (pressed[Bloom]) d.bloom = !d.bloom;
+    if (pressed[Hud]) d.hud = !d.hud;
+    for (int k=Scene; k<=Final; ++k)
+        if (pressed[k]) d.view = static_cast<View>(k-Scene);
+    d.strength = std::clamp(d.strength + pressed[Stronger] - pressed[Weaker],0,30);
+    a.motion = {keys[Right]-keys[Left],keys[Down]-keys[Up],keys[Fire]};
+    if (pressed[Reset]) {
+        a.reset = true;
+        clock_.reset();
+    } else if (pressed[Pause]) {
+        paused = !paused;
+        clock_.reset();
+    } else if (paused) a.steps = pressed[Step] ? 1 : 0;
+    else a.steps = clock_.advance(dt);
+    return a;
+}
+
+const std::array<tiny2d::Vector2,4> Neon::relays{{{150,-61},{235,72},{-174,94},{-232,-65}}};
+Neon::Neon(std::uint32_t seed) : rng_(seed) {
+    fire();
+    bolts[0].age = 20;
+    burst(relays[3]);
+    bursts[0].age = 7;
+}
+void Neon::burst(tiny2d::Vector2 p) {
+    rng_ = 1664525u * rng_ + 1013904223u;
+    bursts[nextBurst_] = {p,0,float(rng_ >> 8) * (6.2831853f / 16777216.f)};
+    nextBurst_ = (nextBurst_+1) % bursts.size();
+}
+void Neon::fire() {
+    bolts[nextBolt_] = {player,relays[nextRelay_],0};
+    nextBolt_ = (nextBolt_+1) % bolts.size();
+    nextRelay_ = (nextRelay_+1) % relays.size();
+}
+void Neon::update(Motion input) {
+    ++tick;
+    const float speed = input.x && input.y ? 2.4f * 0.70710678f : 2.4f;
+    player.x = std::clamp(player.x+speed*input.x,-286.f,286.f);
+    player.y = std::clamp(player.y+speed*input.y,-118.f,118.f);
+    for (auto& b : bursts) if (b.age >= 0 && ++b.age >= flash) b.age = -1;
+    for (auto& b : bolts) if (b.age >= 0 && ++b.age >= flight) {
+        burst(b.end);
+        b.age = -1;
+    }
+    if (tick % 32 == 0 || (input.fire && tick % 6 == 0)) fire();
+}
+}

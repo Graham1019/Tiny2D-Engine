@@ -80,6 +80,7 @@ void Window::framebufferResized(GLFWwindow* window, int width, int height) {
     glfwMakeContextCurrent(previous);
 }
 
+bool Window::iconified() const { return glfwGetWindowAttrib(handle_.get(), GLFW_ICONIFIED) == GLFW_TRUE; }
 bool Window::shouldClose() const { return glfwWindowShouldClose(handle_.get()); }
 void Window::requestClose() { glfwSetWindowShouldClose(handle_.get(), GLFW_TRUE); }
 void Window::pollEvents() { glfwPollEvents(); }
