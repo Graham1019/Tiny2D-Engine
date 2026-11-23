@@ -2,6 +2,7 @@
 #include "ui/BitmapFont.h"
 #include <algorithm>
 #include <chrono>
+#include <cctype>
 #include <cmath>
 #include <string>
 
@@ -71,6 +72,17 @@ void arena(Quads& out,Quads& glow,bool lit) {
     }
 }
 std::string dims(tiny2d::Size s) { return std::to_string(s.width)+"X"+std::to_string(s.height); }
+void demoWalls(Quads& surface,const OccluderList& occluders) {
+    const Color top{.65f,.72f,.77f,1};
+    for (const auto& wall:occluders) {
+        const auto& e=occluders.edge(wall.firstEdge);
+        // The solid in the demo layout is an axis-aligned rectangle. The other wall is a segment.
+        if (wall.solid()) {
+            const auto opposite=occluders.edge(wall.firstEdge+1).b;
+            rect(surface,e.a.x,e.a.y,opposite.x-e.a.x,opposite.y-e.a.y,top);
+        } else segment(surface,e.a,e.b,1.6f,top);
+    }
+}
 }
 void Picture::debugLines(const std::vector<tiny2d::DebugLine>& lines,Color c) {
     for (const auto& l:lines) segment(debug,l.from,l.to,1.4f/worldCamera.zoom(),c);
@@ -96,11 +108,42 @@ void Picture::lightRadii(std::optional<LabHandle> selected) {
         rect(debug,p.x-pixel,p.y-3*pixel,2*pixel,6*pixel,ink);
     }
 }
+void Picture::shadowDebug(const Light2D* source,bool showEdges,bool showGeometry) {
+    const float pixel=1.f/worldCamera.zoom();
+    if (showGeometry && source) {
+        const auto mesh=projectShadow(*source,occluders);
+        for (unsigned i=0;i<mesh.count;i+=3)
+            for (unsigned j=0;j<3;++j)
+                segment(debug,mesh.vertices[i+j],mesh.vertices[i+(j+1)%3],pixel,{.85f,.46f,.86f,1});
+    }
+    if (showEdges) {
+        for (unsigned i=0;i<occluders.edgeCount();++i) {
+            const auto& e=occluders.edge(i);
+            segment(debug,e.a,e.b,2*pixel,{.98f,.75f,.19f,1});
+        }
+    }
+}
+void Picture::shadowCaption(std::optional<LabHandle> source,std::uint64_t frame,std::uint64_t tick,
+                            std::uint64_t epoch,std::uint64_t generation) {
+    std::string label="N/A";
+    if (source) {
+        label=name(source->kind);
+        for (char& c:label) c=static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+        label+=" "+std::to_string(source->slot)+" GEN "+std::to_string(source->generation);
+    }
+    const std::string first="SHADOW SOURCE "+label;
+    const std::string second="FRAME "+std::to_string(frame)+"  TICK "+std::to_string(tick)+
+                             "  EPOCH "+std::to_string(epoch)+"  FB GEN "+std::to_string(generation);
+    rect(hud,8,66,12+6*std::max(first.size(),second.size()),26,{.035f,.069f,.09f,1});
+    lettering(hud,first,14,70,1,paper);
+    lettering(hud,second,14,81,1,muted);
+}
 void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size logical,
                       tiny2d::Size pixels,const Stats& last,std::uint64_t epoch) {
     d.validate();
     world.clear(); albedo.clear(); emission.clear(); hud.clear(); debug.clear();
     lights.clear();
+    occluders.clear();
     lightExtractUs=0;
     if (d.lighting) {
         const auto start=std::chrono::steady_clock::now();
@@ -114,6 +157,10 @@ void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size lo
     Quads& surface=d.lighting ? albedo : world;
     Quads& glow=d.lighting ? emission : world;
     arena(surface,glow,d.lighting);
+    if (d.shadows && d.demoOccluders) {
+        occluders=demoOccluders();
+        demoWalls(surface,occluders);
+    }
     for (const auto& b : n.bolts) if (b.age>=0) {
         const float t=float(b.age)/Neon::flight;
 
@@ -145,7 +192,7 @@ void Picture::prepare(const Neon& n,const Display& d,bool paused,tiny2d::Size lo
     rect(hud,0,0,logical.width,31*s,{.035f,.069f,.09f,1});
     rect(hud,x,y,2*s,13*s,{.22f,.93f,.84f,1});
     lettering(hud,"NEON",x+8*s,y,2*s,paper);
-    static const char* labels[]={"SCENE","BRIGHT","BLUR","FINAL","LIGHT","NORMAL"};
+    static const char* labels[]={"SCENE","BRIGHT","BLUR","FINAL","LIGHT","NORMAL","SHADOW"};
     const std::string gain=std::to_string(d.strength/10)+"."+std::to_string(d.strength%10);
     lettering(hud,labels[int(d.view)],x+78*s,y,s,{.35f,.92f,.85f,1});
     lettering(hud,std::string("BLOOM ")+(d.bloom?"ON ":"OFF ")+gain+"  THR 1",x+78*s,y+10*s,s,muted);

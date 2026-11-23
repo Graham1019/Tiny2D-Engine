@@ -11,10 +11,14 @@ class FrameState {
         GL_CULL_FACE, GL_FRAMEBUFFER_SRGB, GL_RASTERIZER_DISCARD, GL_COLOR_LOGIC_OP,
         GL_SAMPLE_ALPHA_TO_COVERAGE, GL_SAMPLE_COVERAGE, GL_SAMPLE_MASK, GL_PRIMITIVE_RESTART, GL_DITHER};
     std::array<GLboolean,sizeof(flags)/sizeof(*flags)> enabled_{};
-    GLint draw_, read_, viewport_[4], program_, vao_, active_, textures_[3], samplers_[3];
+    GLint draw_, read_, viewport_[4], program_, vao_, arrayBuffer_, active_, textures_[3], samplers_[3];
     GLint polygon_[2], backBuffer_;
     GLboolean depth_;
-    struct BufferState { GLboolean blend, color[4]; };
+    struct BufferState {
+        GLboolean blend, color[4];
+        GLint eqRGB,eqAlpha,srcRGB,dstRGB,srcAlpha,dstAlpha;
+    };
+    bool indexedBlend_;
     std::vector<BufferState> buffers_;
 public:
     FrameState();

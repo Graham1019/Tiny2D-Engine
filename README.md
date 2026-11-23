@@ -91,19 +91,26 @@ floor panel to see its opposing bevels respond to the same light. **6** shows th
 signed normal buffer encoded as RGB. In **Lighting**, switch between flat and beveled
 tiles or adjust **Normal strength** from 0 to 2. Normal mapping defaults to off.
 
+With lighting on, **O** enables two visual-only walls and per-light hard shadows.
+Hold **A** to move the cyan Player past the short wall. Amber light from the nearby
+relay can still reach the floor in the player's shadow. **7** displays the selected
+light's visibility mask. In **Shadows**, choose a caster, change the budget from
+1 to 8, or display wall edges and projected triangles. The default budget is 4.
+
 **1–4** select Scene, Bright, Blur and Final. **B** toggles Bloom, **[ / ]** adjust
 strength by 0.1, **P** pauses, **.** advances one paused tick, **R** resets the seed
 and **F1** toggles the HUD. Escape exits when the scene owns keyboard input.
 
 ```sh
-cmake -S . -B build/m74a-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m74a-release --parallel
-./build/m74a-release/lab/tiny2d_lab --scene neon --lighting on --normal-mapping on --view final
-./build/m74a-release/lab/tiny2d_lab --seed 71 --frames 4 --lighting on --normal-mapping on --view normal --capture /tmp/neon-normal.png
+cmake -S . -B build/m74b-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m74b-release --parallel
+./build/m74b-release/lab/tiny2d_lab --scene neon --lighting on --normal-mapping on --shadows on --view final
+./build/m74b-release/lab/tiny2d_lab --seed 71 --frames 4 --lighting on --normal-mapping on --view normal --capture /tmp/neon-normal.png
 ```
 
-![Neon Lighting Inspector with beveled floor controls and six live buffer previews](docs/media/m74a/inspector.png)
+![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
 
+[M7.4b shadow geometry, HDR pixel tests and measurements](docs/milestone-07-4b.md) ·
 [M7.4a normal materials, framebuffer readbacks and measurements](docs/milestone-07-4a.md) ·
 [M7.3 dynamic lighting, tests and measurements](docs/milestone-07-3.md) ·
 [M7.2 controls, measurements and verification](docs/milestone-07-2.md) ·
@@ -129,6 +136,8 @@ excludes swap/poll and explicit `glFinish`; completion wait is not pure GPU time
 retain regressions and tail-latency limitations. No new performance claim is made for packaging.
 
 ## Testing
+
+M7.4b passed **52/52 Debug**, **52/52 Release** and **29/29** with OpenGL tests disabled on Apple M5 Pro. The new fixtures compare GPU shadows with CPU ray intersections, verify HDR red/blue contributions and exercise attachment rollback. [Shadow tests and native evidence](docs/milestone-07-4b.md)
 
 M7.4a passed **50/50 Debug**, **50/50 Release** and **28/28** with OpenGL tests disabled on Apple M5 Pro. The GL suites include signed normal readback, equal-distance lighting from opposite sides, preview orientation and the original radial lighting fixtures. [Test logs and pixel evidence](docs/milestone-07-4a.md)
 

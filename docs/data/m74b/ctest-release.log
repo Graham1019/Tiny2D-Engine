@@ -1,0 +1,114 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m74b-release
+      Start  1: M3CPUTests
+ 1/52 Test  #1: M3CPUTests .......................   Passed    0.98 sec
+      Start  2: Vector2Tests
+ 2/52 Test  #2: Vector2Tests .....................   Passed    0.72 sec
+      Start  3: RenderFailureTests
+ 3/52 Test  #3: RenderFailureTests ...............   Passed    0.82 sec
+      Start  4: M3GPUTests
+ 4/52 Test  #4: M3GPUTests .......................   Passed    1.20 sec
+      Start  5: TriangleRegression
+ 5/52 Test  #5: TriangleRegression ...............   Passed    0.20 sec
+      Start  6: OpenGLResourceTests
+ 6/52 Test  #6: OpenGLResourceTests ..............   Passed    0.93 sec
+      Start  7: SandboxSmokeRoot
+ 7/52 Test  #7: SandboxSmokeRoot .................   Passed    0.20 sec
+      Start  8: SandboxSmokeBuild
+ 8/52 Test  #8: SandboxSmokeBuild ................   Passed    0.18 sec
+      Start  9: M4GPUTests
+ 9/52 Test  #9: M4GPUTests .......................   Passed    0.74 sec
+      Start 10: M41GPUTests
+10/52 Test #10: M41GPUTests ......................   Passed    0.76 sec
+      Start 11: M5_scene
+11/52 Test #11: M5_scene .........................   Passed    0.53 sec
+      Start 12: M5_collision
+12/52 Test #12: M5_collision .....................   Passed    0.47 sec
+      Start 13: M5_fixed_step
+13/52 Test #13: M5_fixed_step ....................   Passed    0.49 sec
+      Start 14: M5GPU
+14/52 Test #14: M5GPU ............................   Passed    0.96 sec
+      Start 15: M5Arena
+15/52 Test #15: M5Arena ..........................   Passed    1.18 sec
+      Start 16: M51GPU
+16/52 Test #16: M51GPU ...........................   Passed    0.96 sec
+      Start 17: M61_combat
+17/52 Test #17: M61_combat .......................   Passed    0.62 sec
+      Start 18: M61_projectiles
+18/52 Test #18: M61_projectiles ..................   Passed    0.80 sec
+      Start 19: M61_spawning
+19/52 Test #19: M61_spawning .....................   Passed    0.58 sec
+      Start 20: M61GPU
+20/52 Test #20: M61GPU ...........................   Passed    1.58 sec
+      Start 21: M61Survivor
+21/52 Test #21: M61Survivor ......................   Passed    5.15 sec
+      Start 22: M62_game_phase
+22/52 Test #22: M62_game_phase ...................   Passed    1.35 sec
+      Start 23: M62_restart
+23/52 Test #23: M62_restart ......................   Passed    0.47 sec
+      Start 24: M62_hud
+24/52 Test #24: M62_hud ..........................   Passed    0.58 sec
+      Start 25: M62GPU
+25/52 Test #25: M62GPU ...........................   Passed    0.77 sec
+      Start 26: M63a_difficulty
+26/52 Test #26: M63a_difficulty ..................   Passed    0.55 sec
+      Start 27: M63a_flow
+27/52 Test #27: M63a_flow ........................   Passed    0.51 sec
+      Start 28: M63a_pacing
+28/52 Test #28: M63a_pacing ......................   Passed    0.50 sec
+      Start 29: M63aGPU
+29/52 Test #29: M63aGPU ..........................   Passed    0.84 sec
+      Start 30: M63a_invalid_difficulty_0
+30/52 Test #30: M63a_invalid_difficulty_0 ........   Passed    0.00 sec
+      Start 31: M63a_invalid_difficulty_6
+31/52 Test #31: M63a_invalid_difficulty_6 ........   Passed    0.01 sec
+      Start 32: M63a_invalid_difficulty_-1
+32/52 Test #32: M63a_invalid_difficulty_-1 .......   Passed    0.00 sec
+      Start 33: M63a_invalid_difficulty_abc
+33/52 Test #33: M63a_invalid_difficulty_abc ......   Passed    0.01 sec
+      Start 34: M63aSurvivorExtreme
+34/52 Test #34: M63aSurvivorExtreme ..............   Passed    5.19 sec
+      Start 35: M63b_events
+35/52 Test #35: M63b_events ......................   Passed    0.75 sec
+      Start 36: M63b_vfx
+36/52 Test #36: M63b_vfx .........................   Passed    0.71 sec
+      Start 37: M63b_fps
+37/52 Test #37: M63b_fps .........................   Passed    0.63 sec
+      Start 38: M63bGPU
+38/52 Test #38: M63bGPU ..........................   Passed    1.66 sec
+      Start 39: M63b_priority
+39/52 Test #39: M63b_priority ....................   Passed    0.76 sec
+      Start 40: M63b_render_recovery
+40/52 Test #40: M63b_render_recovery .............   Passed    0.81 sec
+      Start 41: M71CPU
+41/52 Test #41: M71CPU ...........................   Passed    0.71 sec
+      Start 42: M71GPU
+42/52 Test #42: M71GPU ...........................   Passed    0.92 sec
+      Start 43: M71RelocatedCLI
+43/52 Test #43: M71RelocatedCLI ..................   Passed    1.97 sec
+      Start 44: M72CPU
+44/52 Test #44: M72CPU ...........................   Passed    0.79 sec
+      Start 45: M72InspectorGL
+45/52 Test #45: M72InspectorGL ...................   Passed    2.27 sec
+      Start 46: M73_cpu
+46/52 Test #46: M73_cpu ..........................   Passed    0.76 sec
+      Start 47: M73_controls
+47/52 Test #47: M73_controls .....................   Passed    0.77 sec
+      Start 48: M73_LightingGL
+48/52 Test #48: M73_LightingGL ...................   Passed    0.87 sec
+      Start 49: M74a_NormalMaterialsCPU
+49/52 Test #49: M74a_NormalMaterialsCPU ..........   Passed    0.52 sec
+      Start 50: M74a_NormalLightingGL
+50/52 Test #50: M74a_NormalLightingGL ............   Passed    0.82 sec
+      Start 51: M74b_OcclusionCPU
+51/52 Test #51: M74b_OcclusionCPU ................   Passed    0.49 sec
+      Start 52: M74b_OcclusionGL
+52/52 Test #52: M74b_OcclusionGL .................   Passed    0.79 sec
+
+100% tests passed out of 52
+
+Label Time Summary:
+cpu       =   7.53 sec*proc (12 tests)
+gui       =  30.95 sec*proc (23 tests)
+opengl    =  30.95 sec*proc (23 tests)
+
+Total Test time (real) =  47.84 sec

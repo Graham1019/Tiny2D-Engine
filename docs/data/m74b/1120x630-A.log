@@ -1,0 +1,24 @@
+build/m74b-release/lab/tiny2d_lab --seed 71 --size 1120x630 --frames 1320 --view final --lighting on --normal-mapping on --normal-material tile --shadows off --occluders none --shadow-lights 4 --bloom on --inspector off --previews off --gpu-timing on --metrics docs/data/m74b/1120x630-A.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=272
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=151.958 p95=231.75 p99=303.167
+metric=fixed_update n=1200 p50=0.084 p95=0.583 p99=1.125
+metric=prepare n=1200 p50=8.875 p95=15.625 p99=19.25
+metric=light_extract n=1200 p50=0.25 p95=1.625 p99=3.125
+metric=draw_calls n=1200 p50=10 p95=10 p99=10
+metric=sprites n=1200 p50=1056 p95=1067 p99=1071
+metric=uploaded_bytes n=1200 p50=152288 p95=153872 p99=154448
+metric=bright n=1200 p50=6.708 p95=10.916 p99=12.5
+metric=horizontal n=1200 p50=6.583 p95=10.5 p99=12.375
+metric=vertical n=1200 p50=5.916 p95=8.667 p99=11.083
+metric=output n=1200 p50=9.791 p95=17.167 p99=23.25
+metric=hud n=1200 p50=34.292 p95=41.875 p99=45.542
+metric=albedo n=1200 p50=35.959 p95=70.875 p99=106.458
+metric=emission n=1200 p50=12.792 p95=18.625 p99=22.209
+metric=light n=1200 p50=8.167 p95=13.25 p99=16.083
+metric=scene_compose n=1200 p50=7.209 p95=11.958 p99=14.083
+metric=normal n=1200 p50=8.166 p95=14.375 p99=17.25
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=1120x630 framebuffer=2240x1260 view=final bloom=on strength=1.2 last_passes=10 fullscreen=6 draws=10 sprites=1044 upload_bytes=150560 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=150336 rgba16f_attachment_bytes=129830400 attempt_passes=10 attempt_draws=10 attempt_complete=1

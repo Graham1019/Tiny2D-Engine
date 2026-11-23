@@ -15,7 +15,7 @@ void run(Options o) {
     Controls controls;
     Picture picture;
     Stats last, attempt;
-    std::uint64_t frames=0, storage=0, materialUpload=0;
+    std::uint64_t frames=0, storage=0, shadowStorage=0, materialUpload=0;
     tiny2d::Size logical{}, pixels{};
     // Keep the Context alive while reporting and retiring queries on every exit path.
     std::optional<tiny2d::Window> owner;
@@ -35,10 +35,13 @@ void run(Options o) {
                  <<" view="<<name(o.display.view)<<" bloom="<<(o.display.bloom?"on":"off")
                  <<" strength="<<o.display.strength/10.f<<" last_passes="<<last.passes
                  <<" fullscreen="<<last.fullscreen<<" draws="<<last.draws<<" sprites="<<last.sprites
-                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload+last.lightUniformBytes+materialUpload)
+                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload+last.lightUniformBytes+materialUpload+last.shadowVertexBytes)
                  <<" lighting="<<(o.display.lighting?"on":"off")<<" active_lights="<<picture.lights.size()
                  <<" light_uniform_bytes="<<last.lightUniformBytes
                  <<" normals="<<(o.display.normalMapping?"on":"off")<<" material_upload_bytes="<<materialUpload
+                 <<" shadows="<<(o.display.shadows?"on":"off")<<" shadow_bytes="<<shadowStorage
+                 <<" shadow_casters="<<last.activeCasters<<" shadow_skipped="<<last.skippedCasters
+                 <<" shadow_vertex_bytes="<<last.shadowVertexBytes
                  <<" batch_vertex_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
                  <<" attempt_passes="<<attempt.passes<<" attempt_draws="<<attempt.draws
                  <<" attempt_complete="<<attempt.complete<<'\n';
@@ -87,7 +90,7 @@ void run(Options o) {
             bool drawable=false;
             if (logical.width>0 && logical.height>0 && !window.iconified()) {
                 try {
-                    drawable=renderer.resize(pixels,o.display.lighting,o.display.normalMapping);
+                    drawable=renderer.resize(pixels,o.display.lighting,o.display.normalMapping,o.display.shadows);
                     resizeError.clear();
                 } catch (const std::exception& e) {
                     if (o.frames) throw;
@@ -139,19 +142,21 @@ void run(Options o) {
             const auto oldView=o.display.view;
             const bool wasLit=o.display.lighting;
             const bool hadNormals=o.display.normalMapping;
+            const bool hadShadows=o.display.shadows;
             Action action;
             if (o.frames) action.steps=1;
             else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands,routed.freshFocus);
             if (action.exit) break;
-            if (wasLit!=o.display.lighting || hadNormals!=o.display.normalMapping) {
+            if (wasLit!=o.display.lighting || hadNormals!=o.display.normalMapping || hadShadows!=o.display.shadows) {
                 // Resolve a same-frame GUI/key toggle before borrowing any attachment.
-                try { renderer.resize(pixels,o.display.lighting,o.display.normalMapping); }
+                try { renderer.resize(pixels,o.display.lighting,o.display.normalMapping,o.display.shadows); }
                 catch (const std::exception& e) {
                     std::cerr<<"Lighting change failed: "<<e.what()<<'\n';
                     o.display.lighting=wasLit;
                     o.display.normalMapping=hadNormals;
+                    o.display.shadows=hadShadows;
                     o.display.view=oldView;
-                    renderer.resize(pixels,wasLit,hadNormals);
+                    renderer.resize(pixels,wasLit,hadNormals,hadShadows);
                 }
                 info.generation=renderer.generation();
             }
@@ -168,6 +173,11 @@ void run(Options o) {
             info.inspector=tools.visible; info.timing=tools.timing;
             const auto prepareStart=Clock::now();
             picture.prepare(neon,o.display,controls.paused,logical,pixels,last,epoch);
+            ShadowCasters casters{};
+            if (o.display.shadows) {
+                casters=selectShadowCasters(picture.lights,o.display.shadowLights);
+                if (!gui) tools.resolveShadow(picture.lights,casters,epoch);
+            }
             Presented next;
             if (tools.visible) {
                 next={objects(neon,epoch),picture.worldCamera,content,o.display.view,info.generation,info.id,neon.tick};
@@ -190,12 +200,13 @@ void run(Options o) {
                 cpu.materialUpload=cpu.materialBytes;
             }
             storage=renderer.storage();
+            shadowStorage=renderer.shadowBytes();
+            cpu.shadowBytes=shadowStorage;
             DrawTools draw;
             if (gui) {
                 const auto build=Clock::now();
                 try {
-                    draw.previews=gui->finish(tools,renderer,info.id,info.tick,o.display.lighting?&picture:nullptr,
-                                              o.display.normalMapping);
+                    draw.previews=gui->finish(tools,renderer,info,picture,casters);
                     if (tools.visible) draw.gui=[&](Stats& s){gui->submit(s);};
                 } catch (const PreviewAllocationError& e) {
                     if (o.frames) throw;
@@ -203,6 +214,19 @@ void run(Options o) {
                     tools.previews=false;
                 }
                 cpu.build+=micros(build);
+            }
+            if (o.display.shadows) {
+                const auto debugStart=Clock::now();
+                draw.shadowSource=tools.shadowSource;
+                draw.frame=info.id; draw.tick=info.tick; draw.epoch=info.epoch;
+                if (o.display.view==View::Shadow)
+                    picture.shadowCaption(draw.shadowSource,info.id,info.tick,info.epoch,info.generation);
+                if (tools.visible && (tools.occluderEdges || tools.shadowGeometry) &&
+                    (o.display.view==View::Final || o.display.view==View::Scene || o.display.view==View::Light)) {
+                    const auto* source=draw.shadowSource ? picture.lights.find(*draw.shadowSource) : nullptr;
+                    picture.shadowDebug(source,tools.occluderEdges,tools.shadowGeometry);
+                }
+                cpu.prepare+=micros(debugStart);
             }
             info.previews=draw.previews;
             if (tools.timing) {
@@ -261,9 +285,10 @@ void run(Options o) {
 }
 int main(int argc,char** argv) {
     if (argc==2 && std::string_view(argv[1])=="--help") {
-        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal] "
+        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal|shadow] "
                  <<"[--lighting on|off] [--ambient 0..2] "
                  <<"[--normal-mapping on|off] [--normal-material flat|tile] [--normal-strength 0..2] "
+                 <<"[--shadows on|off] [--shadow-lights 1..8] [--occluders none|demo] "
                  <<"[--bloom on|off] [--capture PNG] [--inspector on|off] [--gpu-timing on|off] "
                  <<"[--previews off|all] [--metrics CSV]\nInteractive: Inspector and GPU timing on. Finite frames: both off. Previews default off.\n";
         return 0;

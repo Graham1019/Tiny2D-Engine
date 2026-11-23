@@ -33,6 +33,7 @@ const char* name(View v) {
     case View::Final: return "final";
     case View::Light: return "light";
     case View::Normal: return "normal";
+    case View::Shadow: return "shadow";
     }
     throw std::invalid_argument("invalid view");
 }
@@ -46,6 +47,10 @@ void Display::validate() const {
     normalMaterial.validate();
     if (normalMapping && !lighting) throw std::invalid_argument("normal mapping requires lighting on");
     if (view==View::Normal && !normalMapping) throw std::invalid_argument("Normal view requires normal mapping on");
+    if (!shadowLights || shadowLights>maxShadowLights)
+        throw std::invalid_argument("--shadow-lights expects 1..8");
+    if (shadows && !lighting) throw std::invalid_argument("shadows require lighting on");
+    if (view==View::Shadow && !shadows) throw std::invalid_argument("Shadow view requires shadows on");
 }
 Options parse(int argc, const char* const* argv) {
     Options o;
@@ -66,10 +71,14 @@ Options parse(int argc, const char* const* argv) {
             else if (value == "final") o.display.view = View::Final;
             else if (value == "light") o.display.view = View::Light;
             else if (value == "normal") o.display.view = View::Normal;
+            else if (value == "shadow") o.display.view = View::Shadow;
             else throw std::invalid_argument("unknown --view");
         } else if (key == "--lighting" && (value == "on" || value == "off")) o.display.lighting=value=="on";
         else if (key == "--ambient") o.display.ambient=displayValue(value,key,Display::maxAmbient);
         else if (key == "--normal-mapping" && (value=="on" || value=="off")) o.display.normalMapping=value=="on";
+        else if (key=="--shadows" && (value=="on" || value=="off")) o.display.shadows=value=="on";
+        else if (key=="--shadow-lights") o.display.shadowLights=number(value,key);
+        else if (key=="--occluders" && (value=="none" || value=="demo")) o.display.demoOccluders=value=="demo";
         else if (key == "--normal-strength") o.display.normalMaterial.strength=displayValue(value,key,NormalMaterial2D::maxStrength);
         else if (key == "--normal-material") {
             if (value=="flat") o.display.normalMaterial.kind=NormalMaterialKind::Flat;
@@ -122,8 +131,13 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
     if (pressed[Bloom]) d.bloom = !d.bloom;
     if (pressed[Hud]) d.hud = !d.hud;
     if (pressed[ToggleLighting]) d.lighting = !d.lighting;
-    if (!d.lighting) d.normalMapping=false;
-    else if (pressed[ToggleNormal]) d.normalMapping=!d.normalMapping;
+    if (!d.lighting) {
+        d.normalMapping=false;
+        d.shadows=false;
+    } else {
+        if (pressed[ToggleNormal]) d.normalMapping=!d.normalMapping;
+        if (pressed[ToggleShadows]) d.shadows=!d.shadows;
+    }
     for (int k=Scene; k<=Final; ++k)
         if (pressed[k]) d.view = static_cast<View>(k-Scene);
     d.strength = std::clamp(d.strength + pressed[Stronger] - pressed[Weaker],0,30);
@@ -131,8 +145,11 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
     if (ui.view) d.view = *ui.view;
     if (pressed[ShowLight] && d.lighting) d.view=View::Light;
     if (pressed[ShowNormal] && d.normalMapping) d.view=View::Normal;
+    if (pressed[ShowShadow] && d.shadows) d.view=View::Shadow;
     if (!d.lighting && d.view==View::Light) d.view=View::Final;
     if (!d.normalMapping && d.view==View::Normal) d.view=View::Final;
+    if (!d.shadows && d.view==View::Shadow) d.view=View::Final;
+    if (ui.shadowLights) d.shadowLights=std::clamp(*ui.shadowLights,1u,Display::maxShadowLights);
     if (ui.ambient) d.ambient=*ui.ambient;
     if (ui.lightStrength) d.lightStrength=*ui.lightStrength;
     if (ui.radiusMultiplier) d.radiusMultiplier=*ui.radiusMultiplier;

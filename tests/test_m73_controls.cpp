@@ -40,6 +40,26 @@ void arguments() {
     invalid.radiusMultiplier=0;
     rejects([&]{invalid.validate();});
 }
+void shadowArguments() {
+    const Display defaults=options({"lab"}).display;
+    check(!defaults.shadows && defaults.shadowLights==4 && defaults.demoOccluders,"shadow defaults");
+    for (const char* count:{"1","8"}) {
+        auto d=options({"lab","--view","shadow","--shadow-lights",count,"--occluders","none",
+                        "--shadows","on","--lighting","on"}).display;
+        check(d.view==View::Shadow && d.shadows && !d.normalMapping && !d.demoOccluders &&
+              d.shadowLights==unsigned(*count-'0'),"radial shadow view and limits");
+    }
+    for (auto invalid:{"-1","0","9","2.0","1x","4294967296",""," 4"})
+        rejects([&]{options({"lab","--shadow-lights",invalid});});
+    for (auto missing:{"--shadow-lights","--shadows","--occluders"})
+        rejects([&]{options({"lab",missing});});
+    rejects([]{options({"lab","--shadows","on"});});
+    rejects([]{options({"lab","--lighting","on","--view","shadow"});});
+    rejects([]{options({"lab","--shadows","yes"});});
+    rejects([]{options({"lab","--occluders","on"});});
+    check(options({"lab","--occluders","demo","--shadows","off"}).display.demoOccluders,
+          "demo layout configured while disabled");
+}
 void routing() {
     Controls controls;
     Display d;
@@ -82,6 +102,6 @@ void routing() {
 }
 }
 int main() {
-    try { arguments(); routing(); }
+    try { arguments(); shadowArguments(); routing(); }
     catch (const std::exception& e) { std::cerr<<e.what()<<'\n'; return 1; }
 }
