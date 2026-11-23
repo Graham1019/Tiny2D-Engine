@@ -15,7 +15,7 @@ using U64=unsigned long long;
 constexpr ImGuiKey keys[]={ImGuiKey_A,ImGuiKey_D,ImGuiKey_W,ImGuiKey_S,ImGuiKey_Space,ImGuiKey_B,
     ImGuiKey_1,ImGuiKey_2,ImGuiKey_3,ImGuiKey_4,ImGuiKey_LeftBracket,ImGuiKey_RightBracket,
     ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape,ImGuiKey_L,ImGuiKey_5,
-    ImGuiKey_N,ImGuiKey_6};
+    ImGuiKey_N,ImGuiKey_6,ImGuiKey_O,ImGuiKey_7};
 static_assert(std::size(keys)==KeyCount);
 void cancelPendingInput(ImGuiIO& io) {
     // A button normally fires on release. Cancel a pressed widget before
@@ -26,6 +26,10 @@ void cancelPendingInput(ImGuiIO& io) {
     io.ClearInputMouse();
 }
 bool rawDown(ImGuiKey k) { return GetIO().KeysData[k-ImGuiKey_NamedKey_BEGIN].Down; }
+void shadowEnable(const Display& display,Commands& commands) {
+    bool enabled=display.shadows;
+    if (Checkbox("Shadows (O)",&enabled)) commands.edges.set(ToggleShadows);
+}
 void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
     bool bloom=d.bloom,hud=d.hud;
     if (Checkbox("Bloom",&bloom)) cmd.edges.set(Bloom);
@@ -35,12 +39,16 @@ void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
     SetNextItemWidth(-74);
     if (SliderInt("Strength",&strength,0,30,gain,ImGuiSliderFlags_AlwaysClamp|ImGuiSliderFlags_NoInput))
         cmd.strength=strength;
-    int view=int(d.view);
     SetNextItemWidth(-74);
-    const char* views[]={"Scene","Bright","Blur","Final","Light","Normal"};
-    const int count=d.lighting ? (d.normalMapping?6:5) : 4;
-    if (Combo("View",&view,views,count))
-        cmd.view=static_cast<View>(view);
+    const char* views[]={"Scene","Bright","Blur","Final","Light","Normal","Shadow"};
+    if (BeginCombo("View",views[int(d.view)])) {
+        for (auto view:{View::Scene,View::Bright,View::Blur,View::Final,View::Light,View::Normal,View::Shadow}) {
+            if ((view==View::Light && !d.lighting) || (view==View::Normal && !d.normalMapping) ||
+                (view==View::Shadow && !d.shadows)) continue;
+            if (Selectable(views[int(view)],view==d.view)) cmd.view=view;
+        }
+        EndCombo();
+    }
     if (Button(paused?"Resume":"Pause")) cmd.edges.set(Pause);
     SameLine(); BeginDisabled(!paused);
     if (Button("Step 1 tick")) cmd.edges.set(Step);
@@ -49,6 +57,7 @@ void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
     Checkbox("PickBounds",&tools.bounds); SameLine(); Checkbox("Outline",&tools.outline);
     Checkbox("Buffers",&tools.previews); SameLine(); Checkbox("GPU timing",&tools.timing);
     TextDisabled("Threshold 1   Gaussian r8 / 3.2");
+    if (d.lighting) shadowEnable(d,cmd);
 }
 void lightingControls(const Display& display,Commands& commands,ToolState& tools) {
     bool enabled=display.lighting;
@@ -104,6 +113,57 @@ void lightDetails(ToolState& tools,const LightList& lights,std::uint64_t tick) {
     Text("Linear RGB       %.2f  %.2f  %.2f",c.r,c.g,c.b);
     Text("Radius %.1f   Intensity %.2f",selected->radius,selected->intensity);
     TextWrapped("Light shows linear illumination mapped for display.");
+}
+void shadowControls(const Display& d,Commands& cmd,ToolState& tools,const History& history,
+                    const std::string& reason) {
+    shadowEnable(d,cmd);
+    SameLine();
+    if (Button(d.view==View::Shadow ? "Final (4)" : "ShadowMask (7)"))
+        cmd.view=d.view==View::Shadow ? View::Final : View::Shadow;
+    int budget=int(d.shadowLights);
+    SetNextItemWidth(-105);
+    if (SliderInt("Caster budget",&budget,1,int(Display::maxShadowLights),"%d",ImGuiSliderFlags_AlwaysClamp))
+        cmd.shadowLights=unsigned(budget);
+    Checkbox("Occluder edges",&tools.occluderEdges); SameLine();
+    Checkbox("Shadow geometry",&tools.shadowGeometry);
+    Checkbox("Buffer previews",&tools.previews);
+    if (!history.cpu.empty() && history.cpu.back().info.display.shadows) {
+        const auto& sample=history.cpu.back();
+        const auto& stats=sample.stats;
+        Text("CPU frame #%llu   us",U64(sample.info.id));
+        Text("Batch %.1f   inspect %.1f",stats.cpuUs[ShadowBatch],stats.cpuUs[ShadowInspect]);
+        Text("Mask draws %u   light %u   inspect %u",stats.maskDraws,stats.lightDraws,stats.inspectDraws);
+    }
+    if (tools.timing && !history.gpu.empty() && history.gpu.back().us[1+ShadowBatch]) {
+        const auto& sample=history.gpu.back();
+        Text("GPU #%llu   batch %.1f us",U64(sample.info.id),*sample.us[1+ShadowBatch]);
+    } else TextWrapped("GPU shadow timing N/A (%s)",tools.timing ? reason.c_str() : "off");
+}
+void shadowDetails(ToolState& tools,const Picture& picture,const ShadowCasters& casters,
+                   const FrameInfo& frame) {
+    Text("Casters %u   skipped %u",casters.count,casters.skipped);
+    Text("Visual-only walls %u   edges %u",picture.occluders.size(),picture.occluders.edgeCount());
+    auto label=[](LabHandle id,char (&out)[64]) {
+        std::snprintf(out,sizeof(out),"%s %u / gen %llu",name(id.kind),id.slot,U64(id.generation));
+    };
+    char selected[64]="N/A";
+    if (tools.shadowSource) label(*tools.shadowSource,selected);
+    SetNextItemWidth(-65);
+    if (BeginCombo("Caster",tools.followPlayer && tools.shadowSource ? "Player (default)" : selected)) {
+        for (unsigned i=0;i<casters.count;++i) {
+            const auto& id=picture.lights.begin()[casters.indices[i]].source;
+            char item[64];
+            label(id,item);
+            if (Selectable(item,tools.shadowSource && *tools.shadowSource==id)) {
+                tools.followPlayer=id.kind==ObjectKind::Player;
+                tools.shadowSource=id;
+            }
+        }
+        EndCombo();
+    }
+    Text("Frame %llu  Tick %llu",U64(frame.id),U64(frame.tick));
+    Text("Epoch %llu  FB generation %llu",U64(frame.epoch),U64(frame.generation));
+    TextDisabled("ShadowMask: white visible, black blocked");
 }
 void objectList(const Neon& n,std::uint64_t epoch,ToolState& tools,char (&filter)[64]) {
     const auto list=objects(n,epoch);
@@ -162,7 +222,8 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
     Text("Batch payload %llu B",U64(s.bytes));
     Text("GUI V/I %llu / %llu B",U64(s.vertexBytes),U64(s.indexBytes));
     Text("Font upload %llu B",U64(s.fontUpload));
-    TextWrapped("Attachment bytes: HDR %llu, thumbnails %llu, font %llu",U64(c.hdrBytes),U64(c.previewBytes),U64(s.fontBytes));
+    TextWrapped("Attachment bytes: HDR %llu, mask %llu, thumbnails %llu, font %llu",
+                U64(c.hdrBytes),U64(c.shadowBytes),U64(c.previewBytes),U64(s.fontBytes));
     if (c.materialBytes) Text("Normal tile %llu B",U64(c.materialBytes));
     SeparatorText("CPU submission / us");
     TextDisabled("stage       p50  p95  p99   n");
@@ -191,6 +252,10 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
             row(i?passNames[i-1]:"render",history.gpu,[&](const auto& v){return v.us[i];});
     } else TextDisabled("No completed samples");
 }
+}
+void ToolState::resolveShadow(const LightList& lights,const ShadowCasters& casters,std::uint64_t epoch) {
+    if (followPlayer) shadowSource=LabHandle{epoch,ObjectKind::Player,0,1};
+    if (shadowSource && !casters.find(lights,*shadowSource)) shadowSource.reset();
 }
 Inspector::Inspector(tiny2d::Window& w,bool finite):window_(w.nativeHandle()),finite_(finite) {
     requireOwner();
@@ -303,8 +368,9 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     f2Down_=f2;
     bool transition=toggle || first_ || focusGate_;
     bool gateKeyboard=toggle || first_ || (focusGate_ && !input.freshFocus);
-    const bool startOnLighting=first_ && display.lighting;
-    lightingTab_=false;
+    const bool startOnLighting=first_ && display.lighting && !display.shadows;
+    const bool startOnShadows=first_ && display.shadows;
+    lightingTab_=shadowTab_=false;
     first_=false; focusGate_=!focused;
     if (tools.visible) {
         const float w=std::min(292.f,std::max(1.f,io.DisplaySize.x-8));
@@ -324,11 +390,16 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
                     lightingControls(display,input.commands,tools);
                     EndTabItem();
                 }
+                if (display.shadows && BeginTabItem("Shadows",nullptr,startOnShadows?ImGuiTabItemFlags_SetSelected:0)) {
+                    shadowTab_=true;
+                    shadowControls(display,input.commands,tools,hist,reason);
+                    EndTabItem();
+                }
                 EndTabBar();
             }
-            if (!lightingTab_ && display.view!=View::Final && display.view!=View::Scene)
+            if (!lightingTab_ && !shadowTab_ && display.view!=View::Final && display.view!=View::Scene)
                 TextWrapped("Use the object list in this buffer view.");
-            if (!lightingTab_ && !hist.cpu.empty()) {
+            if (!lightingTab_ && !shadowTab_ && !hist.cpu.empty()) {
                 auto& c=hist.cpu.back();
                 TextDisabled("CPU #%llu  %.0f us  %llu draws",U64(c.info.id),c.total,U64(c.stats.draws));
                 if (!tools.timing) TextDisabled("GPU timing off");
@@ -348,19 +419,25 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         input.click=tiny2d::Vector2{io.MouseClickedPos[0].x,io.MouseClickedPos[0].y};
     return input;
 }
-unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,std::uint64_t tick,
-                           const Picture* litPicture,bool normals) {
+unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,const FrameInfo& info,
+                           const Picture& picture,const ShadowCasters& casters) {
     requireOwner();
     unsigned mask=0;
-    if (lightingTab_ && litPicture) {
+    const auto frame=info.id,tick=info.tick;
+    const bool lit=info.display.lighting,normals=info.display.normalMapping;
+    if (info.display.shadows) tools.resolveShadow(picture.lights,casters,info.epoch);
+    if ((lightingTab_ && lit) || (shadowTab_ && info.display.shadows)) {
         // Finish after fixed updates. Details and texture views describe the
         // exact light payload submitted in this frame.
         if (Begin("Neon Inspector",nullptr,finite_?ImGuiWindowFlags_NoInputs:0)) {
-            if (normals) {
-                const auto size=pipe.normalSize();
-                Text("Normal XYZ   RGBA16F %dx%d",size.width,size.height);
+            if (shadowTab_) shadowDetails(tools,picture,casters,info);
+            else {
+                if (normals) {
+                    const auto size=pipe.normalSize();
+                    Text("Normal XYZ   RGBA16F %dx%d",size.width,size.height);
+                }
+                lightDetails(tools,picture.lights,tick);
             }
-            lightDetails(tools,litPicture->lights,tick);
         }
         End();
     }
@@ -371,30 +448,42 @@ unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,s
         SetNextWindowPos({6,std::max(0.f,size.y-45.f-height)},ImGuiCond_FirstUseEver);
         SetNextWindowSize({width,height},ImGuiCond_Always);
         if (Begin("Buffers",nullptr,(finite_?ImGuiWindowFlags_NoInputs:0))) {
-            if (normals) TextDisabled("Frame %llu  Tick %llu  |  Normal XYZ: (n+1)/2",U64(frame),U64(tick));
-            else if (litPicture) TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB",U64(frame),U64(tick));
+            const bool shadow=info.display.shadows && tools.shadowSource.has_value();
+            if (info.display.shadows) {
+                TextDisabled("Frame %llu  Tick %llu  Epoch %llu  FB gen %llu",U64(frame),U64(tick),U64(info.epoch),U64(info.generation));
+                if (shadow) {
+                    const auto id=*tools.shadowSource;
+                    TextDisabled("Mask: %s %u gen %llu%s",name(id.kind),id.slot,U64(id.generation),
+                                 tools.followPlayer ? " (default)" : "");
+                } else TextDisabled("ShadowMask N/A: select an active caster");
+            }
+            else if (normals) TextDisabled("Frame %llu  Tick %llu  |  Normal XYZ: (n+1)/2",U64(frame),U64(tick));
+            else if (lit) TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB",U64(frame),U64(tick));
             else TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB  |  Final: scene composite",U64(frame),U64(tick));
-            std::array<PreviewView,6> views;
-            const unsigned count=normals?6:(litPicture?5:4);
+            std::array<PreviewView,7> views{};
+            const unsigned count=4+unsigned(lit)+unsigned(normals)+unsigned(shadow);
             try {
                 const auto legacy=pipe.previews();
                 std::copy(legacy.begin(),legacy.end(),views.begin());
-                if (litPicture) views[4]=pipe.lightPreview();
+                if (lit) views[4]=pipe.lightPreview();
                 if (normals) views[5]=pipe.normalPreview();
+                if (shadow) views[6]=pipe.shadowPreview();
             }
             catch (const std::exception& error) {
                 End(); discard(); throw PreviewAllocationError(error.what());
             } catch (...) { End(); discard(); throw; }
             const float cell=std::max(2.f,(GetContentRegionAvail().x-(count-1)*GetStyle().ItemSpacing.x)/count);
-            for (unsigned i=0;i<count;++i) {
-                const auto& v=views[i]; if (i) SameLine();
+            for (unsigned i=0;i<views.size();++i) {
+                const auto& v=views[i];
+                if (!v.texture) continue;
+                if (i) SameLine();
                 BeginGroup();
-                if (litPicture) TextUnformatted(name(static_cast<View>(i)));
+                if (lit) TextUnformatted(name(static_cast<View>(i)));
                 else Text("%s %dx%d",name(static_cast<View>(i)),v.source.width,v.source.height);
                 const float scale=std::min((cell-1)/v.thumbnail.width,56.f/v.thumbnail.height);
                 Image(ImTextureRef(ImTextureID(v.texture)),{v.thumbnail.width*scale,v.thumbnail.height*scale},{0,1},{1,0});
                 if (IsItemVisible()) mask |= 1u<<i;
-                if (!litPicture) TextDisabled("RGBA8 %dx%d",v.thumbnail.width,v.thumbnail.height);
+                if (!lit) TextDisabled("RGBA8 %dx%d",v.thumbnail.width,v.thumbnail.height);
                 else if (IsItemHovered())
                     SetTooltip("Source %dx%d; RGBA8 preview %dx%d",v.source.width,v.source.height,v.thumbnail.width,v.thumbnail.height);
                 EndGroup();

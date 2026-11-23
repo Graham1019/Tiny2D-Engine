@@ -9,7 +9,7 @@
 #include <string>
 
 namespace lab {
-enum class View { Scene, Bright, Blur, Final, Light, Normal };
+enum class View { Scene, Bright, Blur, Final, Light, Normal, Shadow };
 const char* name(View);
 struct Display {
     View view = View::Final;
@@ -21,6 +21,9 @@ struct Display {
     static constexpr float minRadiusMultiplier = .25f, maxRadiusMultiplier = 3.f;
     bool normalMapping = false;
     NormalMaterial2D normalMaterial;
+    static constexpr unsigned maxShadowLights = 8;
+    bool shadows = false, demoOccluders = true;
+    unsigned shadowLights = 4;
     void validate() const;
 };
 struct Options {
@@ -35,7 +38,7 @@ Options parse(int argc, const char* const* argv);
 
 enum Key { Left, Right, Up, Down, Fire, Bloom, Scene, Bright, Blur, Final,
            Weaker, Stronger, Pause, Step, Reset, Hud, Escape, ToggleLighting, ShowLight,
-           ToggleNormal, ShowNormal, KeyCount };
+           ToggleNormal, ShowNormal, ToggleShadows, ShowShadow, KeyCount };
 using Keys = std::bitset<KeyCount>;
 struct Motion { int x = 0, y = 0; bool fire = false; };
 struct Action { unsigned steps = 0; Motion motion; bool reset = false, exit = false; };
@@ -46,6 +49,7 @@ struct Commands {
     std::optional<float> ambient, lightStrength, radiusMultiplier;
     std::optional<float> normalStrength;
     std::optional<NormalMaterialKind> normalMaterial;
+    std::optional<unsigned> shadowLights;
 };
 class Controls {
 public:

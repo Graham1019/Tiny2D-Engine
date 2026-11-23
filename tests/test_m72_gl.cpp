@@ -102,16 +102,30 @@ void imageOrientation(Window& window) {
     detail::GLObject unpack(detail::ObjectKind::Buffer);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,unpack.id());
     glPixelStorei(GL_UNPACK_SKIP_ROWS,2); glPixelStorei(GL_UNPACK_SKIP_PIXELS,3);
-    for (int i=0;i<7;++i) {
+    unsigned shadowImage=0;
+    const LabHandle player{1,ObjectKind::Player,0,1}, relay{1,ObjectKind::Relay,0,1};
+    for (int i=0;i<10;++i) {
+        const auto extent=i==9 ? Size{pixels.width-3,pixels.height-3} : pixels;
         if (i>=3) {
             d.lighting=true;
             d.ambient=.25f;
             d.normalMapping=i>=5;
-            pipe.resize(pixels,true,d.normalMapping);
+            d.shadows=i>=7;
+            pipe.resize(extent,true,d.normalMapping,d.shadows);
             picture.lights.clear();
             picture.lights.add({{20,i==3?13.f:67.f},15,{1,0,0,1},3,{}});
         }
-        if (d.normalMapping) {
+        if (d.shadows) {
+            picture.worldCamera.setViewportSize(120,80);
+            picture.worldCamera.setPosition(60,40);
+            picture.occluders.clear();
+            picture.occluders.addSegment(1,{10,28},{30,28});
+            picture.lights.clear();
+            picture.lights.add({{20,40},90,{1,0,0,1},2,player});
+            picture.lights.add({{20,3},90,{0,0,1,1},2,relay});
+            tools.followPlayer=i==7;
+            tools.shadowSource=i==9 ? LabHandle{1,ObjectKind::Relay,0,2} : relay;
+        } else if (d.normalMapping) {
             // Put the groove and the bevel in different halves of the real
             // thumbnail. The second frame flattens both without reallocating it.
             picture.worldCamera.setViewportSize(18,18);
@@ -125,20 +139,36 @@ void imageOrientation(Window& window) {
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_5,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_6,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_N,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_O,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_7,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_CharCallback(window.nativeHandle(),'R');
         ImGui_ImplGlfw_ScrollCallback(window.nativeHandle(),0,5);
         auto input=gui.build(tools,n,1,d,false,history,{},"off",true);
         check(tools.visible && tools.previews && !input.keys.any() && !input.commands.edges.any() && !input.click,
               "finite input isolation");
-        unsigned demand=gui.finish(tools,pipe,i+1,n.tick,d.lighting?&picture:nullptr,d.normalMapping);
+        FrameInfo info{unsigned(i+1),unsigned(i+21),1,pipe.generation(),extent,window.size(),d};
+        ShadowCasters casters{};
+        if (d.shadows) casters=selectShadowCasters(picture.lights,d.shadowLights);
+        unsigned demand=gui.finish(tools,pipe,info,picture,casters);
         Stats stats;
-        pipe.draw(picture,d,stats,{demand,nullptr,[&](Stats& s){gui.submit(s);}});
+        DrawTools draw{demand,nullptr,[&](Stats& s){gui.submit(s);}};
+        draw.shadowSource=tools.shadowSource; draw.frame=info.id; draw.tick=info.tick; draw.epoch=info.epoch;
+        pipe.draw(picture,d,stats,draw);
         GLint rows,skip,pbo;
         glGetIntegerv(GL_UNPACK_SKIP_ROWS,&rows); glGetIntegerv(GL_UNPACK_SKIP_PIXELS,&skip);
         glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING,&pbo);
         check(rows==2 && skip==3 && pbo==unpack.id() && glIsEnabled(GL_FRAMEBUFFER_SRGB)==srgb,"GUI unpack/sRGB state");
         if (!i) continue;
-        const auto inspected=d.normalMapping?pipe.normalPreview():d.lighting?pipe.lightPreview():pipe.previews()[0];
+        if (i==9) {
+            check(!tools.shadowSource && stats.previewMask==63 && !stats.inspectRebuilds && !glIsTexture(shadowImage),
+                  "resize plus expired caster suppresses old mask");
+            for (auto* list:ImGui::GetDrawData()->CmdLists) for (auto& cmd:list->CmdBuffer)
+                check(cmd.GetTexID()!=shadowImage,"stale mask thumbnail submitted to ImGui");
+            continue;
+        }
+        const auto inspected=d.shadows?pipe.shadowPreview():d.normalMapping?pipe.normalPreview():
+                             d.lighting?pipe.lightPreview():pipe.previews()[0];
+        if (d.shadows) shadowImage=inspected.texture;
         auto* data=ImGui::GetDrawData(); bool found=false;
         for (auto* list:data->CmdLists) for (auto& cmd:list->CmdBuffer) {
             if (cmd.GetTexID()!=inspected.texture) continue;
@@ -147,7 +177,16 @@ void imageOrientation(Window& window) {
             int x=int((tl.x+.17f*(br.x-tl.x))*data->FramebufferScale.x);
             int y=int((tl.y+.16f*(br.y-tl.y))*data->FramebufferScale.y);
             auto color=read(0,x,pixels.height-1-y);
-            if (d.normalMapping) {
+            if (d.shadows) {
+                int mirrored=int((tl.y+.84f*(br.y-tl.y))*data->FramebufferScale.y);
+                auto other=read(0,x,pixels.height-1-mirrored);
+                check((i==7 ? color[0]==0 && other[0]==255 : color[0]==255 && other[0]==0) &&
+                      stats.inspectRebuilds==1,"selected caster and asymmetric ShadowMask displayed by ImGui");
+                check(stats.shadowMask && stats.shadowMask->source==(i==7?player:relay) &&
+                      stats.shadowMask->frame==info.id && stats.shadowMask->tick==info.tick &&
+                      stats.shadowMask->epoch==info.epoch && stats.shadowMask->generation==info.generation,
+                      "thumbnail identity and framebuffer stamp match the displayed frame");
+            } else if (d.normalMapping) {
                 int mirrored=int((tl.y+.84f*(br.y-tl.y))*data->FramebufferScale.y);
                 auto other=read(0,x,pixels.height-1-mirrored);
                 if (i==5) check(color[1]>185 && other[1]<85,"asymmetric world +Y groove above -Y bevel in ImGui image");
@@ -162,7 +201,7 @@ void imageOrientation(Window& window) {
             } else check(std::abs(int(color[0])-231)<4 && std::abs(int(color[1])-213)<4,"displayed UV and single encoding");
             found=true;
         }
-        check(found && stats.previewMask==(d.normalMapping?63u:d.lighting?31u:15u),"all requested image commands visible");
+        check(found && stats.previewMask==(d.shadows?127u:d.normalMapping?63u:d.lighting?31u:15u),"all requested image commands visible");
     }
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);glDisable(GL_FRAMEBUFFER_SRGB);
@@ -205,11 +244,19 @@ void focusBatches(Window& window) {
           "commands from the previous focus cycle were replayed");
 
     display.lighting=true;
-    tap(GLFW_KEY_N); tap(GLFW_KEY_6); refocus();
+    tap(GLFW_KEY_N); tap(GLFW_KEY_6); tap(GLFW_KEY_O); tap(GLFW_KEY_7); refocus();
     for (int i=0;i<6;++i) {
         tick();
         check(!display.normalMapping && display.view==View::Final,"pre-loss normal toggle and view discarded");
+        check(!display.shadows && display.view==View::Final,"pre-loss shadow toggle and view discarded");
     }
+    display.shadows=true;
+    tap(GLFW_KEY_7); refocus();
+    for (int i=0;i<4;++i) {
+        tick();
+        check(display.view==View::Final,"queued 7 cannot select an available mask after focus loss");
+    }
+    display.shadows=false;
     display.lighting=false;
 
     key(GLFW_KEY_W,GLFW_PRESS); check(tick().motion.y==-1,"W moves before focus loss");
@@ -330,7 +377,7 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         routed=gui.build(tools,n,1,d,controls.paused,history,timer.counts,queries->reason,true);
         c.build=micros(building);
         action=controls.poll(routed.keys,true,1./60,d,routed.captureKeyboard,routed.commands,routed.freshFocus);
-        pipe.resize(window.framebufferSize(),d.lighting,d.normalMapping);
+        pipe.resize(window.framebufferSize(),d.lighting,d.normalMapping,d.shadows);
         Content rect{0,0,window.size()};
         if (tools.visible && routed.click) tools.selected=shown.pick(*routed.click,rect,d.view,pipe.generation(),n,1);
         auto updating=Clock::now();
@@ -342,10 +389,13 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         if (tools.visible && d.lighting && tools.lightRadii) p.lightRadii(tools.selected);
         c.prepare=micros(preparing);
         building=Clock::now();
-        auto previews=gui.finish(tools,pipe,frame,n.tick,d.lighting?&p:nullptr,d.normalMapping);
+        FrameInfo f{frame,n.tick,1,pipe.generation(),window.framebufferSize(),rect.size,d,tools.visible,true,false};
+        ShadowCasters casters{};
+        if (d.shadows) casters=selectShadowCasters(p.lights,d.shadowLights);
+        f.previews=gui.finish(tools,pipe,f,p,casters);
         c.build+=micros(building);
-        FrameInfo f{frame,n.tick,1,pipe.generation(),window.framebufferSize(),rect.size,d,tools.visible,true,false,previews};
-        DrawTools draw; draw.previews=previews;
+        DrawTools draw; draw.previews=f.previews; draw.shadowSource=tools.shadowSource;
+        draw.frame=f.id; draw.tick=f.tick; draw.epoch=f.epoch;
         if (tools.visible) draw.gui=[&](Stats& s){gui.submit(s);};
         if (timer.begin(f)==QueryStatus::Pending) { draw.timer=&timer; timer.mark(0,false); }
         pipe.draw(p,d,last,draw);
@@ -398,7 +448,9 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
     if (queries->bits) check(timer.counts.completed>0,"hardware completed timestamp pairs");
     else check(!queries->reason.empty() && !timer.counts.requested,"explicit hardware downgrade");
     gui.build(tools,n,1,d,false,history,timer.counts,queries->reason,true);
-    tools.previews=true;gui.finish(tools,pipe,frame,n.tick);gui.discard();
+    tools.previews=true;
+    gui.finish(tools,pipe,{frame,n.tick,1,pipe.generation(),window.framebufferSize(),window.size(),d},Picture{});
+    gui.discard();
     pipe.resize({0,0}); rejects([&]{gui.submit(last);}); pipe.resize(window.framebufferSize());
     step(); step();
     check(last.complete && last.previewMask==15,"discarded data and fresh GUI frame");
@@ -420,13 +472,23 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
     click(605,90); click(536,132); // Objects tab text filter.
     ImGui_ImplGlfw_CharCallback(w,'6'); key(GLFW_KEY_6,true); key(GLFW_KEY_N,true);
     check(routed.captureKeyboard && d.normalMapping && d.view==View::Final,"typing 6, N in focused filter");
+    d.shadows=true; // Both O and 7 would change the display if text capture leaked.
+    ImGui_ImplGlfw_CharCallback(w,'7'); key(GLFW_KEY_7,true); key(GLFW_KEY_O,true);
+    check(routed.captureKeyboard && d.shadows && d.view==View::Final,"typing 7, O in focused filter");
     key(GLFW_KEY_F2,true); step();
     check(!tools.visible && d.normalMapping && d.view==View::Final,"held normal shortcuts gated when F2 hides Inspector");
+    check(d.shadows && d.view==View::Final,"held shadow shortcuts gated when F2 hides Inspector");
+    key(GLFW_KEY_O,false); key(GLFW_KEY_7,false);
     key(GLFW_KEY_N,false); key(GLFW_KEY_6,false); key(GLFW_KEY_F2,false);
     key(GLFW_KEY_6,true); key(GLFW_KEY_6,false);
     check(d.view==View::Normal,"re-pressed 6 selects Normal");
     key(GLFW_KEY_N,true); key(GLFW_KEY_N,false);
     check(!d.normalMapping && d.view==View::Final && !last.passDraws[Normal],"disabling normals restores Final");
+    key(GLFW_KEY_O,true); key(GLFW_KEY_O,false);
+    key(GLFW_KEY_O,true); key(GLFW_KEY_O,false); key(GLFW_KEY_7,true); key(GLFW_KEY_7,false);
+    check(d.shadows && d.view==View::Shadow && last.inspectRebuilds==1,"fresh O and 7 enable radial shadows and mask");
+    key(GLFW_KEY_O,true); key(GLFW_KEY_O,false);
+    check(!d.shadows && d.view==View::Final,"disabling shadows restores Final");
     rejects([&]{pipe.normalPreview();});
     Window other(32,32,"foreign");
     rejects([&]{gui.build(tools,n,1,d,false,history,timer.counts,queries->reason,true);});
