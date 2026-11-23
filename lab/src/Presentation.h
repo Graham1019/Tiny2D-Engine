@@ -8,9 +8,11 @@
 
 namespace lab {
 enum Pass { World, Extract, Horizontal, Vertical, Output, Overlay, Debug, Preview, Gui,
-            Albedo, Emission, Light, SceneCompose, Normal, ShadowBatch, ShadowInspect, ParticleEmission, PassCount };
+            Albedo, Emission, Light, SceneCompose, Normal, ShadowBatch, ShadowInspect, ParticleEmission,
+            ShaderGalleryPass, PassCount };
 inline constexpr const char* passNames[]={"world","bright","horizontal","vertical","output","hud","debug","preview","gui",
-                                         "albedo","emission","light","scene_compose","normal","shadow_batch","shadow_inspect","particle_emission"};
+                                         "albedo","emission","light","scene_compose","normal","shadow_batch","shadow_inspect","particle_emission",
+                                         "shader_gallery"};
 static_assert(sizeof(passNames)/sizeof(*passNames)==PassCount);
 struct ShadowMaskStamp {
     LabHandle source;

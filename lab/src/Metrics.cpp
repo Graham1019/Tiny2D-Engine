@@ -33,11 +33,17 @@ std::string blanks(std::string_view header) {
     return std::string(std::count(header.begin(),header.end(),','),',');
 }
 void runConfig(std::ostream& out,const FrameInfo& f) {
-    out<<','<<f.seed<<','<<(f.particles?"particles":"neon")<<',';
+    out<<','<<f.seed<<','<<(f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
     if (f.particles) {
         out<<(f.demoScript?"demo":"none")<<','<<f.particleCapacity<<','<<f.particleRate<<',';
         if (f.particleSteady) out<<*f.particleSteady;
     } else out<<",,,";
+}
+void galleryConfig(std::ostream& out,const FrameInfo& f) {
+    out<<',';
+    if (f.galleryEffect) out<<galleryName(*f.galleryEffect);
+    out<<',';
+    if (f.galleryEffect) out<<f.shaderVersion;
 }
 const char* status(QueryStatus s) {
     switch(s) {
@@ -60,7 +66,7 @@ Metrics::Metrics(const std::string& path) {
     for (unsigned i=0;i<=ShadowInspect;++i) out_<<','<<passNames[i]<<"_us";
     out_<<legacyCpuColumns()
         <<",particle_emission_us,seed,scene,particle_script,particle_capacity,particle_rate,particle_steady"
-        <<particleCounters<<'\n';
+        <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version\n";
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
@@ -106,7 +112,10 @@ void Metrics::record(const CpuSample& c) {
     } else {
         out_<<",,,,,,,,,";
     }
-    out_<<','<<c.validGpuSamples<<'\n';
+    out_<<','<<c.validGpuSamples<<',';
+    if (s.mask&(1u<<ShaderGalleryPass)) out_<<s.cpuUs[ShaderGalleryPass];
+    galleryConfig(out_,c.info);
+    out_<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
     if (!out_.is_open()) return;
@@ -121,7 +130,10 @@ void Metrics::write(const GpuSample& g) {
     out_<<emptyLegacy;
     duration(ParticleEmission+1);
     runConfig(out_,g.info);
-    out_<<emptyParticle<<'\n';
+    out_<<emptyParticle;
+    duration(ShaderGalleryPass+1);
+    galleryConfig(out_,g.info);
+    out_<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
 void Metrics::flushRetired() {

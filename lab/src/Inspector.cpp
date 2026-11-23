@@ -16,7 +16,7 @@ constexpr ImGuiKey keys[]={ImGuiKey_A,ImGuiKey_D,ImGuiKey_W,ImGuiKey_S,ImGuiKey_
     ImGuiKey_1,ImGuiKey_2,ImGuiKey_3,ImGuiKey_4,ImGuiKey_LeftBracket,ImGuiKey_RightBracket,
     ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape,ImGuiKey_L,ImGuiKey_5,
     ImGuiKey_N,ImGuiKey_6,ImGuiKey_O,ImGuiKey_7};
-static_assert(std::size(keys)==KeyCount);
+static_assert(std::size(keys)==ReloadShader);
 void cancelPendingInput(ImGuiIO& io) {
     // A button normally fires on release. Cancel a pressed widget before
     // clearing MouseDown, even if the stationary cursor will still hover it.
@@ -357,7 +357,7 @@ Inspector::InputGates Inspector::beginInput(ToolState& tools,bool focused,Routed
     if (finite_) ImGui::GetIO().DeltaTime=1.f/60;
     ImGui::NewFrame(); active_=true;
     auto& io=ImGui::GetIO();
-    for (unsigned i=0;i<KeyCount;++i) input.keys[i]=rawDown(keys[i]);
+    for (unsigned i=0;i<std::size(keys);++i) input.keys[i]=rawDown(keys[i]);
     bool f2=rawDown(ImGuiKey_F2);
     input.freshFocus=focused && freshFocus_;
     freshFocus_=false;
@@ -420,9 +420,11 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     routeInput(tools,focused,gates,input);
     return input;
 }
-RoutedInput Inspector::buildPanel(ToolState& tools,bool focused,const std::function<void(Commands&)>& panel) {
+RoutedInput Inspector::buildPanel(ToolState& tools,bool focused,const std::function<void(Commands&)>& panel,
+                                  bool galleryKeys) {
     RoutedInput input;
     auto gates=beginInput(tools,focused,input);
+    if (galleryKeys) input.keys[ReloadShader]=rawDown(ImGuiKey_F5);
     if (tools.visible) panel(input.commands);
     routeInput(tools,focused,gates,input);
     return input;

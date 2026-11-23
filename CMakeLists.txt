@@ -339,7 +339,7 @@ endif()
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
     lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp
-    lab/src/ShaderReloadManager.cpp sandbox/src/ShaderAssets.cpp)
+    lab/src/ShaderReloadManager.cpp lab/src/ShaderGallery.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
@@ -350,11 +350,11 @@ target_include_directories(tiny2d_lab_imgui PUBLIC third_party/imgui third_party
 target_compile_definitions(tiny2d_lab_imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM GLFW_INCLUDE_NONE)
 target_compile_features(tiny2d_lab_imgui PRIVATE cxx_std_17)
 target_link_libraries(tiny2d_lab_imgui PRIVATE glfw OpenGL::GL)
-add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp
+add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp lab/src/ShaderPanel.cpp
     lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
-add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/Metrics.cpp)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")

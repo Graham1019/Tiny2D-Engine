@@ -1,4 +1,5 @@
 #pragma once
+#include "GalleryEffect.h"
 #include "NormalMaterial.h"
 #include "tiny2d/FixedTimestep.h"
 #include "tiny2d/Vector2.h"
@@ -26,9 +27,10 @@ struct Display {
     unsigned shadowLights = 4;
     void validate() const;
 };
-enum class LabScene { Neon, Particles };
+enum class LabScene { Neon, Particles, Shaders };
 struct Options {
     LabScene scene = LabScene::Neon;
+    GalleryEffect effect = GalleryEffect::Aurora;
     unsigned particleCapacity = 4096, particleRate = 720;
     std::optional<unsigned> particleSteady;
     bool particleDemo = false;
@@ -43,7 +45,7 @@ Options parse(int argc, const char* const* argv);
 
 enum Key { Left, Right, Up, Down, Fire, Bloom, Scene, Bright, Blur, Final,
            Weaker, Stronger, Pause, Step, Reset, Hud, Escape, ToggleLighting, ShowLight,
-           ToggleNormal, ShowNormal, ToggleShadows, ShowShadow, KeyCount };
+           ToggleNormal, ShowNormal, ToggleShadows, ShowShadow, ReloadShader, KeyCount };
 using Keys = std::bitset<KeyCount>;
 struct Motion { int x = 0, y = 0; bool fire = false; };
 struct Action { unsigned steps = 0; Motion motion; bool reset = false, exit = false; Keys pressed; };

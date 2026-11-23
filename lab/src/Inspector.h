@@ -36,7 +36,8 @@ public:
     RoutedInput build(ToolState&,const Neon&,std::uint64_t epoch,const Display&,bool paused,
                       const History&,const tiny2d::QueryCounts&,const std::string& capability,bool focused);
     // Uses the same ImGui frame, focus callbacks and release gates as the Neon panels.
-    RoutedInput buildPanel(ToolState&,bool focused,const std::function<void(Commands&)>& panel);
+    RoutedInput buildPanel(ToolState&,bool focused,const std::function<void(Commands&)>& panel,
+                           bool galleryKeys=false);
     unsigned finish(ToolState&,Pipeline&,const FrameInfo&,const Picture&,const ShadowCasters& = {});
     void submit(Stats&);
     std::uint64_t atlasBytes() const { return atlasBytes_; }
