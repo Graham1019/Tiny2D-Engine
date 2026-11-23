@@ -1,0 +1,18 @@
+./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --size 800x450 --frames 1320 --view final --bloom on --inspector off --previews off --gpu-timing off --metrics docs/data/m72/800x450-1.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=109.208 p95=130.875 p99=158.542
+metric=fixed_update n=1200 p50=0.042 p95=0.167 p99=0.5
+metric=prepare n=1200 p50=7.792 p95=12.083 p99=14.625
+metric=draw_calls n=1200 p50=6 p95=6 p99=6
+metric=sprites n=1200 p50=987 p95=997 p99=1001
+metric=uploaded_bytes n=1200 p50=142128 p95=143568 p99=144144
+metric=world n=1200 p50=30.208 p95=40.792 p99=59.125
+metric=bright n=1200 p50=7.75 p95=12.25 p99=14.458
+metric=horizontal n=1200 p50=6.917 p95=11.375 p99=13.708
+metric=vertical n=1200 p50=6.417 p95=11.125 p99=13.75
+metric=output n=1200 p50=9.333 p95=14.416 p99=17.125
+metric=hud n=1200 p50=35.375 p95=44.25 p99=47.708
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=985 upload_bytes=141840 batch_vertex_bytes=141840 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1

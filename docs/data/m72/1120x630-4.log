@@ -1,0 +1,21 @@
+./build/m72-release/lab/tiny2d_lab --scene neon --seed 71 --size 1120x630 --frames 1320 --view final --bloom on --inspector on --previews all --gpu-timing on --metrics docs/data/m72/1120x630-4.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=160
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=175.542 p95=256.625 p99=302.583
+metric=fixed_update n=1200 p50=0.042 p95=0.375 p99=1.125
+metric=prepare n=1200 p50=8.167 p95=13.417 p99=18.958
+metric=draw_calls n=1200 p50=22 p95=22 p99=22
+metric=sprites n=1200 p50=997 p95=1007 p99=1011
+metric=uploaded_bytes n=1200 p50=187686 p95=189402 p99=189978
+metric=world n=1200 p50=34.208 p95=57.334 p99=74.541
+metric=bright n=1200 p50=8.458 p95=12.917 p99=15.959
+metric=horizontal n=1200 p50=7.75 p95=12.292 p99=15
+metric=vertical n=1200 p50=7.166 p95=10.625 p99=13.791
+metric=output n=1200 p50=10.042 p95=15.125 p99=18.666
+metric=hud n=1200 p50=35.5 p95=46.167 p99=50.958
+metric=preview n=1200 p50=29.041 p95=36.916 p99=45.625
+metric=gui n=1200 p50=16.458 p95=27.875 p99=34.416
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=1120x630 framebuffer=2240x1260 view=final bloom=on strength=1.2 last_passes=11 fullscreen=8 draws=22 sprites=995 upload_bytes=187674 batch_vertex_bytes=143280 rgba16f_attachment_bytes=39513600 attempt_passes=11 attempt_draws=22 attempt_complete=1

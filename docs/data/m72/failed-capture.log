@@ -1,0 +1,6 @@
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=160
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=error frames=0 ticks=1 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=0 fullscreen=0 draws=0 sprites=0 upload_bytes=0 batch_vertex_bytes=0 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+Tiny2D Lab: PNG capture /dev/null/m72.png: Not a directory

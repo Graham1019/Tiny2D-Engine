@@ -76,23 +76,28 @@ No arguments still select the original immediate sprite demo.
 
 ## Tiny2D Lab · Neon
 
-Move the cyan emitter with WASD and hold Space to fire orange bolts. Inspect the
-linear HDR scene, extracted highlights, separable blur and final composite with
-**1–4**. **B** toggles Bloom, **[ / ]** adjust its strength, **P** pauses,
-**.** advances one paused tick, **R** resets, **F1** toggles the HUD and **Escape** exits.
+Move the cyan Player with WASD and hold Space to fire. **F2** toggles the Inspector.
+Click a Player, Relay, Bolt or Burst in Scene or Final, or use the **Objects** tab in
+any view. Enable **Buffers** for four display-mapped thumbnails. **Timing** shows
+CPU submission and the latest available GPU timestamp measurements with their frame IDs.
+
+**1–4** select Scene, Bright, Blur and Final. **B** toggles Bloom, **[ / ]** adjust
+strength by 0.1, **P** pauses, **.** advances one paused tick, **R** resets the seed
+and **F1** toggles the HUD. Escape exits when the scene owns keyboard input.
 
 ```sh
 cd /Users/grahm/Desktop/Tiny2D-Engine
-cmake -S . -B build/m71-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m71-release --target tiny2d_lab --parallel
-./build/m71-release/lab/tiny2d_lab --scene neon
-# Deterministic run, with the final displayed frame saved before swap.
-./build/m71-release/lab/tiny2d_lab --seed 71 --frames 4 --bloom on --view final --capture /tmp/neon.png
+cmake -S . -B build/m72-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/m72-release --parallel
+./build/m72-release/lab/tiny2d_lab --scene neon
+./build/m72-release/lab/tiny2d_lab --seed 71 --frames 4 --view final --capture /tmp/neon.png
+./build/m72-release/lab/tiny2d_lab --seed 71 --frames 4 --inspector on --previews all --gpu-timing on --capture /tmp/neon-tools.png
 ```
 
-![Neon at tick 4 with Bloom enabled](docs/media/m71-final.png)
+![Lab Inspector with four display-mapped buffers](docs/data/m72/buffers.png)
 
-[Four views, controls, measurements and verification](docs/milestone-07-1.md) · [Lab roadmap](docs/lab-roadmap.md)
+[M7.2 controls, measurements and verification](docs/milestone-07-2.md) ·
+[M7.1 rendering pipeline](docs/milestone-07-1.md) · [Lab roadmap](docs/lab-roadmap.md)
 
 ## Architecture
 
@@ -141,7 +146,7 @@ No hosted CI execution is claimed.
 [M0–M6.3b historical README](docs/development-history.md) preserves the earlier narrative.
 [M6.3a](docs/milestone-06-3a.md) adds difficulty; [M6.3b](docs/milestone-06-3b.md)
 adds presentation; [M6.3b.1](docs/m63b1-review-fixes.md) fixes priority/recovery;
-[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab.
+[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab and [M7.2](docs/milestone-07-2.md) adds its Inspector.
 
 ## Known Limitations
 
@@ -159,3 +164,5 @@ GLFW (zlib/libpng license) and libpng (PNG Reference Library License version 2)
 notices are preserved in [third-party credits](docs/third-party/README.md) and the App.
 Original procedural texture CC0 notices remain in [assets](sandbox/assets/textures/LICENSE.txt)
 and [M4 assets](sandbox/assets/textures/M4-LICENSE.txt).
+
+The Lab tools vendor [Dear ImGui v1.93.0 and its MIT license](third_party/imgui/LICENSE.txt).

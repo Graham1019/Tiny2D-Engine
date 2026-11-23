@@ -1,0 +1,14 @@
+Observed on-screen process window: ["./build/m72-release/lab/tiny2d_lab", "--scene", "neon"], geometry {
+    Height = 474;
+    Width = 784;
+    X = 364;
+    Y = 141;
+}
+Ended smoke-owned process after window check.
+Observed on-screen process window: ["./build/m72-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor"], geometry {
+    Height = 622;
+    Width = 788;
+    X = 362;
+    Y = 105;
+}
+Ended smoke-owned process after window check.
