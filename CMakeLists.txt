@@ -25,6 +25,7 @@ add_library(tiny2d_engine STATIC
     engine/src/Math/Vector2.cpp
     engine/src/Math/Mat4.cpp
     engine/src/Renderer/Camera2D.cpp
+    engine/src/Renderer/RenderTarget2D.cpp
     engine/src/Renderer/Texture2D.cpp
     engine/src/Renderer/BatchRenderer.cpp
     engine/src/Renderer/SpriteRenderer.cpp
@@ -105,6 +106,7 @@ if(BUILD_TESTING)
         engine/src/Renderer/Camera2D.cpp
         engine/src/Math/Mat4.cpp
         engine/src/Math/Vector2.cpp
+        engine/src/Renderer/RenderTarget2D.cpp
         engine/src/Renderer/Texture2D.cpp
         engine/src/Renderer/GLObject.cpp
         engine/src/Renderer/ShaderProgram.cpp

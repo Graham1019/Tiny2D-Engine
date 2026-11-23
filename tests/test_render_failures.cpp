@@ -5,6 +5,7 @@
 #include "tiny2d/SceneRenderer.h"
 #include "../sandbox/src/RenderPass.h"
 #include "tiny2d/Texture2D.h"
+#include "tiny2d/RenderTarget2D.h"
 #include "tiny2d/VertexArray.h"
 #include "tiny2d/VertexBuffer.h"
 #include "../engine/src/Renderer/OpenGL.h"
@@ -26,7 +27,7 @@ GLuint currentProgram = 0;
 unsigned actualDraws=0;
 std::map<GLenum,GLint> unpack{{GL_UNPACK_ALIGNMENT,8},{GL_UNPACK_ROW_LENGTH,3},{GL_UNPACK_SKIP_ROWS,1},{GL_UNPACK_SKIP_PIXELS,2}};
 GLenum pendingError = GL_NO_ERROR;
-enum class Fault { None, Texture, TextureUpload, Program, VertexShader, FragmentShader, Buffer, Array, Upload, Layout, Compile, Link };
+enum class Fault { None, Incomplete, Framebuffer, Texture, TextureUpload, Program, VertexShader, FragmentShader, Buffer, Array, Upload, Layout, Compile, Link };
 Fault fault = Fault::None;
 bool returnHandleOnFailure = false;
 GLuint create(Fault point) {
@@ -85,6 +86,12 @@ void glAttachShader(GLuint program, GLuint shader) { live.at(program).shaders.in
 void glDetachShader(GLuint program, GLuint shader) { live.at(program).shaders.erase(shader); collectShaders(); }
 void glLinkProgram(GLuint) {}
 GLint glGetUniformLocation(GLuint, const GLchar*) { return 0; }
+void glBindFramebuffer(GLenum,GLuint) {}
+void glFramebufferTexture2D(GLenum,GLenum,GLenum,GLuint,GLint) {}
+GLenum glCheckFramebufferStatus(GLenum) { return fault==Fault::Incomplete ? GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT : GL_FRAMEBUFFER_COMPLETE; }
+void glViewport(GLint,GLint,GLsizei,GLsizei) {}
+void glGenFramebuffers(GLsizei, GLuint* id) { *id=create(Fault::Framebuffer); }
+void glDeleteFramebuffers(GLsizei,const GLuint* id) { live.erase(*id); }
 void glGenTextures(GLsizei, GLuint* id) { *id=create(Fault::Texture); }
 void glDeleteTextures(GLsizei,const GLuint* id) { live.erase(*id); }
 void glBindTexture(GLenum,GLuint) {}
@@ -123,6 +130,10 @@ int main() {
     static_assert(std::is_nothrow_move_assignable_v<tiny2d::VertexBuffer>);
     static_assert(std::is_nothrow_move_constructible_v<tiny2d::VertexArray>);
     try {
+        for (auto failure : {Fault::Framebuffer,Fault::Texture,Fault::TextureUpload,Fault::Incomplete}) {
+            fault=failure;
+            fails([]{tiny2d::RenderTarget2D target("HDR failure fixture",4,4);});
+        }
         for(auto failure:{Fault::Program,Fault::VertexShader,Fault::FragmentShader,Fault::Compile,Fault::Link,Fault::Buffer,Fault::Array,Fault::Upload,Fault::Layout}) {
             fault=failure;
             fails([]{tiny2d::BatchRenderer batch;});
