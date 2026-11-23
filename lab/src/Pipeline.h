@@ -6,6 +6,8 @@
 #include <chrono>
 
 namespace lab {
+class ParticleRenderer;
+struct ParticleRenderSnapshot;
 using Clock = std::chrono::steady_clock;
 inline double micros(Clock::time_point start) {
     return std::chrono::duration<double,std::micro>(Clock::now()-start).count();
@@ -17,6 +19,7 @@ struct DrawTools {
     std::function<void(Stats&)> gui;
     std::optional<LabHandle> shadowSource;
     std::uint64_t frame=0, tick=0, epoch=0;
+    const ParticleRenderSnapshot* particles=nullptr; // Borrowed only for this synchronous draw.
 };
 class Pipeline {
 public:
@@ -75,6 +78,8 @@ private:
     std::unique_ptr<Targets> targets_;
     std::unique_ptr<NormalAssets> normalAssets_;
     std::unique_ptr<ShadowAssets> shadowAssets_;
+    std::unique_ptr<ParticleRenderer> particleRenderer_;
+    std::function<std::unique_ptr<ParticleRenderer>()> createParticleRenderer_; // Driver failure fixture.
     std::uint64_t generation_=0;
     bool drawable_ = false, lightingEnabled_ = false, normalEnabled_ = false, shadowEnabled_ = false;
     tiny2d::detail::GLObject triangle_{tiny2d::detail::ObjectKind::VertexArray};

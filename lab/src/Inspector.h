@@ -25,6 +25,7 @@ struct RoutedInput {
     bool captureKeyboard=false;
     bool freshFocus=false; // Keyboard snapshot contains only events received after GLFW focus gain.
     std::optional<tiny2d::Vector2> click;
+    std::optional<tiny2d::Vector2> heldCursor; // Logical points during an uncaptured left press only.
 };
 class Inspector {
 public:
@@ -34,6 +35,8 @@ public:
     Inspector& operator=(const Inspector&)=delete;
     RoutedInput build(ToolState&,const Neon&,std::uint64_t epoch,const Display&,bool paused,
                       const History&,const tiny2d::QueryCounts&,const std::string& capability,bool focused);
+    // Uses the same ImGui frame, focus callbacks and release gates as the Neon panels.
+    RoutedInput buildPanel(ToolState&,bool focused,const std::function<void(Commands&)>& panel);
     unsigned finish(ToolState&,Pipeline&,const FrameInfo&,const Picture&,const ShadowCasters& = {});
     void submit(Stats&);
     std::uint64_t atlasBytes() const { return atlasBytes_; }
@@ -49,6 +52,9 @@ private:
     static void focusChanged(GLFWwindow*,int);
     static void keyAfterFocus(GLFWwindow*,int key,int scancode,int action,int mods);
     char filter_[64]{};
+    struct InputGates { bool mouse, keyboard; };
+    InputGates beginInput(ToolState&,bool focused,RoutedInput&);
+    void routeInput(ToolState&,bool focused,InputGates,RoutedInput&);
     void requireOwner() const;
     std::string renderer_,version_;
 };

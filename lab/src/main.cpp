@@ -1,4 +1,5 @@
 #include "Inspector.h"
+#include "ParticleApp.h"
 #include "Metrics.h"
 #include "OpenGL.h"
 #include "tiny2d/Input.h"
@@ -114,7 +115,7 @@ void run(Options o) {
             }
             CpuSample cpu;
             auto& info=cpu.info;
-            info.id=frames+1; info.generation=renderer.generation(); info.logical=logical; info.pixels=pixels;
+            info.seed=o.seed; info.id=frames+1; info.generation=renderer.generation(); info.logical=logical; info.pixels=pixels;
             info.measurement=info.id>120 && info.id<=1320;
             if (timer && timer->hasOutstanding()) {
                 const auto polling=Clock::now();
@@ -248,6 +249,7 @@ void run(Options o) {
                 if (gui) attempt.fontBytes=gui->atlasBytes();
                 cpu.stats=attempt; cpu.hdrBytes=storage; cpu.previewBytes=renderer.previewBytes();
                 cpu.total=micros(start);
+                cpu.validGpuSamples=timer ? timer->counts.completed : 0;
                 if (o.frames && frames+1==*o.frames && !o.capture.empty()) capture(o.capture,pixels);
                 window.swapBuffers();
                 const char* error=nullptr;
@@ -285,7 +287,7 @@ void run(Options o) {
 }
 int main(int argc,char** argv) {
     if (argc==2 && std::string_view(argv[1])=="--help") {
-        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal|shadow] "
+        std::cout<<"tiny2d_lab [--scene neon|particles] [--particle-capacity 1..8192] [--particle-rate 0..60000] [--particle-steady N] [--particle-script none|demo] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal|shadow] "
                  <<"[--lighting on|off] [--ambient 0..2] "
                  <<"[--normal-mapping on|off] [--normal-material flat|tile] [--normal-strength 0..2] "
                  <<"[--shadows on|off] [--shadow-lights 1..8] [--occluders none|demo] "
@@ -293,6 +295,10 @@ int main(int argc,char** argv) {
                  <<"[--previews off|all] [--metrics CSV]\nInteractive: Inspector and GPU timing on. Finite frames: both off. Previews default off.\n";
         return 0;
     }
-    try { lab::run(lab::parse(argc,argv)); }
+    try {
+        auto options=lab::parse(argc,argv);
+        if (options.scene==lab::LabScene::Particles) lab::runParticles(options);
+        else lab::run(options);
+    }
     catch (const std::exception& e) { std::cerr<<"Tiny2D Lab: "<<e.what()<<'\n'; return 1; }
 }

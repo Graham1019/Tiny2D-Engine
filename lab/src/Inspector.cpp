@@ -238,7 +238,7 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
     measured("GUI build",&CpuSample::build); measured("query poll",&CpuSample::poll);
     measured("light data",&CpuSample::lightExtract);
     measured("tile build",&CpuSample::normalPrepare);
-    for (unsigned i=0;i<PassCount;++i) {
+    for (unsigned i=0;i<=ShadowInspect;++i) {
         char label[40]; std::snprintf(label,sizeof(label),"%s[%u]",passNames[i],s.passDraws[i]);
         row(label,history.cpu,[&](const auto& v)->std::optional<double>{
             if (v.stats.mask & (1u<<i)) return v.stats.cpuUs[i]; return {};
@@ -248,7 +248,7 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
     if (!history.gpu.empty()) {
         const auto& g=history.gpu.back();
         Text("GPU #%llu  +%llu frames",U64(g.info.id),U64(g.received-g.info.id));
-        for (unsigned i=0;i<=PassCount;++i)
+        for (unsigned i=0;i<=1+ShadowInspect;++i)
             row(i?passNames[i-1]:"render",history.gpu,[&](const auto& v){return v.us[i];});
     } else TextDisabled("No completed samples");
 }
@@ -344,8 +344,7 @@ void Inspector::suspend() {
     cancelPendingInput(ImGui::GetIO());
     focusGate_=true; freshFocus_=false; mouseBlocked_=true; restoreCursor_=true;
 }
-RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,const Display& display,
-        bool paused,const History& hist,const tiny2d::QueryCounts& counts,const std::string& reason,bool focused) {
+Inspector::InputGates Inspector::beginInput(ToolState& tools,bool focused,RoutedInput& input) {
     requireOwner(); discard();
     if (restoreCursor_ && focused && !finite_) {
         restoreCursor_=false;
@@ -358,7 +357,6 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     if (finite_) ImGui::GetIO().DeltaTime=1.f/60;
     ImGui::NewFrame(); active_=true;
     auto& io=ImGui::GetIO();
-    RoutedInput input;
     for (unsigned i=0;i<KeyCount;++i) input.keys[i]=rawDown(keys[i]);
     bool f2=rawDown(ImGuiKey_F2);
     input.freshFocus=focused && freshFocus_;
@@ -368,10 +366,18 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     f2Down_=f2;
     bool transition=toggle || first_ || focusGate_;
     bool gateKeyboard=toggle || first_ || (focusGate_ && !input.freshFocus);
-    const bool startOnLighting=first_ && display.lighting && !display.shadows;
-    const bool startOnShadows=first_ && display.shadows;
-    lightingTab_=shadowTab_=false;
     first_=false; focusGate_=!focused;
+    lightingTab_=shadowTab_=false;
+    return {transition,gateKeyboard};
+}
+RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,const Display& display,
+        bool paused,const History& hist,const tiny2d::QueryCounts& counts,const std::string& reason,bool focused) {
+    RoutedInput input;
+    const bool first=first_;
+    auto gates=beginInput(tools,focused,input);
+    auto& io=ImGui::GetIO();
+    const bool startOnLighting=first && display.lighting && !display.shadows;
+    const bool startOnShadows=first && display.shadows;
     if (tools.visible) {
         const float w=std::min(292.f,std::max(1.f,io.DisplaySize.x-8));
         const float top=std::min(55.f,io.DisplaySize.y*.12f);
@@ -411,13 +417,26 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         }
         End();
     }
-    input.captureKeyboard=gateKeyboard || (tools.visible && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
-    const bool captured=transition || !focused || (tools.visible && (io.WantCaptureMouse || IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopup)));
+    routeInput(tools,focused,gates,input);
+    return input;
+}
+RoutedInput Inspector::buildPanel(ToolState& tools,bool focused,const std::function<void(Commands&)>& panel) {
+    RoutedInput input;
+    auto gates=beginInput(tools,focused,input);
+    if (tools.visible) panel(input.commands);
+    routeInput(tools,focused,gates,input);
+    return input;
+}
+void Inspector::routeInput(ToolState& tools,bool focused,InputGates gates,RoutedInput& input) {
+    auto& io=ImGui::GetIO();
+    input.captureKeyboard=gates.keyboard || (tools.visible && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
+    const bool captured=gates.mouse || !focused || (tools.visible && (io.WantCaptureMouse || IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopup)));
     if (!io.MouseDown[0]) mouseBlocked_=false;
     if (captured && io.MouseDown[0]) mouseBlocked_=true;
     if (!finite_ && !captured && !mouseBlocked_ && io.MouseClicked[0])
         input.click=tiny2d::Vector2{io.MouseClickedPos[0].x,io.MouseClickedPos[0].y};
-    return input;
+    if (!finite_ && !captured && !mouseBlocked_ && io.MouseDown[0] && IsMousePosValid())
+        input.heldCursor=tiny2d::Vector2{io.MousePos.x,io.MousePos.y};
 }
 unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,const FrameInfo& info,
                            const Picture& picture,const ShadowCasters& casters) {

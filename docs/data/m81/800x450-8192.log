@@ -1,0 +1,23 @@
+build/m81-release/lab/tiny2d_lab --scene particles --seed 71 --particle-script none --particle-capacity 8192 --particle-steady 8192 --size 800x450 --frames 1320 --view final --lighting on --bloom on --inspector off --gpu-timing on --metrics docs/data/m81/800x450-8192.csv
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0 capacity=288
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=290.875 p95=331.167 p99=365.792
+metric=fixed_update n=1200 p50=101.583 p95=126.042 p99=141.792
+metric=prepare n=1200 p50=23.834 p95=30.792 p99=36.416
+metric=light_extract n=1200 p50=0 p95=0 p99=0
+metric=draw_calls n=1200 p50=10 p95=10 p99=10
+metric=sprites n=1200 p50=1191 p95=1201 p99=1205
+metric=uploaded_bytes n=1200 p50=433648 p95=435088 p99=435664
+metric=bright n=1200 p50=6.208 p95=9.666 p99=12.542
+metric=horizontal n=1200 p50=6.292 p95=9.625 p99=11.917
+metric=vertical n=1200 p50=6.125 p95=10.125 p99=12.208
+metric=output n=1200 p50=9.5 p95=14.041 p99=16.959
+metric=hud n=1200 p50=44.667 p95=58.333 p99=59.958
+metric=debug n=1200 p50=13.334 p95=18.875 p99=22.208
+metric=albedo n=1200 p50=18.916 p95=31.625 p99=39.792
+metric=emission n=1200 p50=1.125 p95=1.708 p99=2.125
+metric=light n=1200 p50=6.833 p95=10.5 p99=13.25
+metric=scene_compose n=1200 p50=6.917 p95=10.708 p99=12.834
+metric=particle_emission n=1200 p50=35 p95=45.584 p99=50.75
+status=ok scene=particles frames=1320 ticks=1320 seed=71 script=none capacity=8192 active=8192 dropped=0 active_fields=4 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=262144 timestamp_bits=0 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0

@@ -1,4 +1,4 @@
-#include "Presentation.h"
+#include "QuadDrawing.h"
 #include "ui/BitmapFont.h"
 #include <algorithm>
 #include <chrono>
@@ -7,15 +7,11 @@
 #include <string>
 
 namespace lab {
-namespace {
+namespace quad {
 using tiny2d::Color;
 using tiny2d::Vector2;
-using Quads = std::vector<Quad>;
 constexpr float pi = 3.14159265f;
-constexpr Color grid{.012f,.029f,.044f,1}, line{.035f,.096f,.12f,1};
-constexpr Color teal{.045f,2.3f,2.9f,1}, amber{5.8f,1.4f,.15f,1};
-constexpr Color paper{.8f,.89f,.92f,1}, muted{.49f,.63f,.69f,1};
-void rect(Quads& out,float x,float y,float w,float h,Color c,float angle=0) {
+void rect(Quads& out,float x,float y,float w,float h,Color c,float angle) {
     out.push_back({{x,y},{w,h},angle,c});
 }
 void segment(Quads& out,Vector2 a,Vector2 b,float width,Color c) {
@@ -46,6 +42,12 @@ void lettering(Quads& out,const std::string& text,float x,float y,float scale,Co
         x+=6*scale;
     }
 }
+}
+namespace {
+using namespace quad;
+constexpr Color grid{.012f,.029f,.044f,1}, line{.035f,.096f,.12f,1};
+constexpr Color teal{.045f,2.3f,2.9f,1}, amber{5.8f,1.4f,.15f,1};
+constexpr Color paper{.8f,.89f,.92f,1}, muted{.49f,.63f,.69f,1};
 // Legacy drawing aliases both streams to world, preserving the original painter order.
 void arena(Quads& out,Quads& glow,bool lit) {
     const Color floorInk=lit ? Color{.14f,.16f,.19f,1} : Color{.005f,.012f,.022f,1};

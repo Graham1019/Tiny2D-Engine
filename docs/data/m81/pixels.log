@@ -1,0 +1,6 @@
+HDR one=4,3,2 two=8 alpha=0.375 bright=6.72266 bloom_off=0.00784314 bloom_on=0.619608 lighting_off_hdr=8
+particles=0 instance_draws=0 instance_bytes=0 batch_draws=0 batch_bytes=0
+particles=1024 instance_draws=1 instance_bytes=32768 batch_draws=1 batch_bytes=147456
+particles=4096 instance_draws=1 instance_bytes=131072 batch_draws=2 batch_bytes=589824
+particles=8192 instance_draws=1 instance_bytes=262144 batch_draws=4 batch_bytes=1179648
+particles=0 instance_draws=0 instance_bytes=0 batch_draws=0 batch_bytes=0

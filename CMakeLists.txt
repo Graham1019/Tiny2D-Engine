@@ -323,11 +323,24 @@ add_custom_target(package_macos
     COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
     DEPENDS Tiny2DSurvivor VERBATIM)
 
+# Particle simulation and its tests have no platform, renderer or ImGui link dependencies.
+add_library(tiny2d_particles STATIC lab/src/ParticleSimulation.cpp engine/src/Math/Vector2.cpp)
+target_include_directories(tiny2d_particles PUBLIC lab/src engine/include)
+target_compile_features(tiny2d_particles PUBLIC cxx_std_17)
+set_target_properties(tiny2d_particles PROPERTIES CXX_EXTENSIONS OFF)
+if(BUILD_TESTING)
+    # Exercise the production pause/step clock alongside the simulation.
+    add_executable(tiny2d_m81_cpu tests/test_m81_cpu.cpp lab/src/Neon.cpp lab/src/NormalMaterial.cpp)
+    target_link_libraries(tiny2d_m81_cpu PRIVATE tiny2d_particles)
+    add_test(NAME M81_ParticleSimulationCPU COMMAND tiny2d_m81_cpu)
+    set_tests_properties(M81_ParticleSimulationCPU PROPERTIES LABELS "cpu")
+endif()
+
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
-    lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
-target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui PRIVATE glfw OpenGL::GL)
+target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
     third_party/imgui/imgui.cpp third_party/imgui/imgui_draw.cpp
     third_party/imgui/imgui_widgets.cpp third_party/imgui/imgui_tables.cpp
@@ -336,10 +349,11 @@ target_include_directories(tiny2d_lab_imgui PUBLIC third_party/imgui third_party
 target_compile_definitions(tiny2d_lab_imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUSTOM GLFW_INCLUDE_NONE)
 target_compile_features(tiny2d_lab_imgui PRIVATE cxx_std_17)
 target_link_libraries(tiny2d_lab_imgui PRIVATE glfw OpenGL::GL)
-add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
+add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp
+    lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
-add_executable(tiny2d_lab lab/src/main.cpp lab/src/Metrics.cpp)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
@@ -431,4 +445,23 @@ if(BUILD_TESTING)
         add_test(NAME M74b_OcclusionGL COMMAND tiny2d_m74b_gl)
         set_tests_properties(M74b_OcclusionGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
     endif()
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m81_gl tests/test_m81_gl.cpp)
+    target_include_directories(tiny2d_m81_gl PRIVATE engine/src/Renderer)
+    target_link_libraries(tiny2d_m81_gl PRIVATE tiny2d_lab_core glfw OpenGL::GL)
+    set_target_properties(tiny2d_m81_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m81_gl tiny2d_lab_assets)
+    add_test(NAME M81_ParticleInstancingGL COMMAND tiny2d_m81_gl)
+    add_executable(tiny2d_m81_app tests/test_m81_app.cpp)
+    target_include_directories(tiny2d_m81_app PRIVATE engine/src/Renderer)
+    target_link_libraries(tiny2d_m81_app PRIVATE tiny2d_inspector glfw OpenGL::GL)
+    set_target_properties(tiny2d_m81_app PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m81_app tiny2d_lab_assets)
+    add_test(NAME M81_ParticleInspectorGL COMMAND tiny2d_m81_app)
+    add_test(NAME M81_ParticleFiniteCLI COMMAND ${CMAKE_COMMAND}
+        "-DEXE=$<TARGET_FILE:tiny2d_lab>" "-DSTAGE=${CMAKE_BINARY_DIR}/m81-finite"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/tests/m81_finite.cmake")
+    set_tests_properties(M81_ParticleInstancingGL M81_ParticleInspectorGL M81_ParticleFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
 endif()

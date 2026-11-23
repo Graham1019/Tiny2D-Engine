@@ -124,6 +124,64 @@ void retirementCSV() {
     check(cpu.find(",pending,,")!=cpu.npos && gpu.find("gpu,121,81,7,") == 0 &&
           gpu.find(",completed,123,2.5,")!=gpu.npos,"delayed CSV retains frame and empty unmeasured intervals");
 }
+void particleTimestampCSV() {
+    static_assert(ShadowInspect==15 && ParticleEmission==16);
+    FakeQueries queries;
+    queries.bits=32;
+    Timer ring(queries);
+    CpuSample cpu;
+    auto& info=cpu.info;
+    info.timing=info.particles=info.demoScript=true;
+    info.seed=83;
+    info.particleSteady=0;
+    info.particleCapacity=8192;
+    info.particleRate=720;
+    cpu.status=ring.begin(info);
+    ring.mark(0,false);
+    ring.mark(ParticleEmission+1,false);
+    ring.mark(ParticleEmission+1,true);
+    ring.mark(0,true);
+    ring.finish(info,true);
+    queries.ready.fill(true);
+    queries.values[1]=5000;
+    queries.values[(ParticleEmission+1)*2]=100;
+    queries.values[(ParticleEmission+1)*2+1]=2100;
+    TempCSV file;
+    Metrics csv(file.path.string());
+    cpu.stats.mask=1u<<ParticleEmission;
+    cpu.stats.cpuUs[ParticleEmission]=3.5;
+    csv.record(cpu);
+    ring.poll([&](auto frame,auto status,const auto& durations) {
+        check(status==tiny2d::QueryStatus::Complete && durations[ParticleEmission+1]==2.,
+              "appended particle interval retired in microseconds");
+        csv.retired({frame,2,status,durations});
+    });
+    csv.close();
+    std::ifstream stream(file.path);
+    auto row=[&] {
+        std::string line;
+        check(bool(std::getline(stream,line)),"missing CSV record");
+        std::vector<std::string> fields;
+        std::istringstream in(line+",end"); // Preserve trailing empty fields.
+        for (std::string field;std::getline(in,field,',');) fields.push_back(field);
+        fields.pop_back();
+        return fields;
+    };
+    auto header=row(), submitted=row(), retired=row();
+    check(header.size()==submitted.size() && header.size()==retired.size(),"particle CSV widths");
+    auto col=[&](const char* name) {
+        auto it=std::find(header.begin(),header.end(),name);
+        check(it!=header.end(),"missing CSV column");
+        return std::size_t(it-header.begin());
+    };
+    check(col("update_us")==42 && col("world_draws")==58 && col("fullscreen")==121 &&
+          col("particle_emission_us")==122,"M7 schema indices retained");
+    check(submitted[col("particle_emission_us")]=="3.5" && retired[col("particle_emission_us")]=="2" &&
+          retired[col("scene")]=="particles" && retired[col("seed")]=="83" &&
+          retired[col("particle_steady")]=="0" && retired[col("particle_script")]=="demo" &&
+          retired[col("instance_upload_us")].empty() && retired[col("shadow_inspect_us")].empty(),
+          "particle stats, config and unmeasured columns aligned");
+}
 void orderedGpuHistory() {
     using S=tiny2d::QueryStatus;
     using Ring=tiny2d::TimestampRing<FrameInfo,PassCount+1,2>;
@@ -243,5 +301,5 @@ void queries() {
           c.requested==c.completed+c.invalid+c.pending+c.skipped,"partition and wrap rejection");
 }
 }
-int main() { try {cli(); ownership(); selection(); queries(); retirementCSV(); orderedGpuHistory();}
+int main() { try {cli(); ownership(); selection(); queries(); retirementCSV(); particleTimestampCSV(); orderedGpuHistory();}
 catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;} }

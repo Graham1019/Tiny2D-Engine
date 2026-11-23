@@ -12,6 +12,9 @@ struct FrameInfo {
     bool inspector=false,timing=false,measurement=false;
     unsigned previews=0,mask=0;
     int timestampBits=-1;
+    bool particles=false, demoScript=false;
+    std::uint32_t seed=71, particleCapacity=0, particleRate=0;
+    std::optional<std::uint32_t> particleSteady;
 };
 using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
 struct CpuSample {
@@ -24,6 +27,9 @@ struct CpuSample {
     tiny2d::Size normalSize{};
     double normalPrepare=0; // CPU tile generation on the frame that first installs the material.
     std::uint64_t materialBytes=0, materialUpload=0;
+    unsigned activeParticles=0, activeFields=0;
+    std::uint64_t droppedParticles=0, validGpuSamples=0;
+    double forceUpdateUs=0, snapshotPrepareUs=0;
     tiny2d::QueryStatus status=tiny2d::QueryStatus::Off;
 };
 struct GpuSample {

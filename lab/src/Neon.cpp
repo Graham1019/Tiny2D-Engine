@@ -1,4 +1,5 @@
 #include "Neon.h"
+#include "ParticleSimulation.h"
 #include <algorithm>
 #include <charconv>
 #include <cmath>
@@ -54,13 +55,27 @@ void Display::validate() const {
 }
 Options parse(int argc, const char* const* argv) {
     Options o;
-    std::optional<bool> inspector, timing;
+    std::optional<bool> inspector, timing, lighting;
+    bool particleOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
         std::string_view value = argv[i];
-        if (key == "--scene" && value == "neon") continue;
-        if (key == "--seed") o.seed = number(value,key);
+        if (key == "--scene") {
+            if (value=="neon") o.scene=LabScene::Neon;
+            else if (value=="particles") o.scene=LabScene::Particles;
+            else throw std::invalid_argument("--scene expects neon or particles");
+        } else if (key=="--particle-capacity" || key=="--particle-steady" || key=="--particle-rate") {
+            particleOption=true;
+            const auto n=number(value,key);
+            if (key=="--particle-capacity") o.particleCapacity=n;
+            else if (key=="--particle-steady") o.particleSteady=n;
+            else o.particleRate=n;
+        } else if (key=="--particle-script") {
+            particleOption=true;
+            if (value!="none" && value!="demo") throw std::invalid_argument("--particle-script expects none or demo");
+            o.particleDemo=value=="demo";
+        } else if (key == "--seed") o.seed = number(value,key);
         else if (key == "--frames") {
             o.frames = number(value,key);
             if (!*o.frames) throw std::invalid_argument("--frames must be positive");
@@ -73,7 +88,7 @@ Options parse(int argc, const char* const* argv) {
             else if (value == "normal") o.display.view = View::Normal;
             else if (value == "shadow") o.display.view = View::Shadow;
             else throw std::invalid_argument("unknown --view");
-        } else if (key == "--lighting" && (value == "on" || value == "off")) o.display.lighting=value=="on";
+        } else if (key == "--lighting" && (value == "on" || value == "off")) lighting=value=="on";
         else if (key == "--ambient") o.display.ambient=displayValue(value,key,Display::maxAmbient);
         else if (key == "--normal-mapping" && (value=="on" || value=="off")) o.display.normalMapping=value=="on";
         else if (key=="--shadows" && (value=="on" || value=="off")) o.display.shadows=value=="on";
@@ -103,6 +118,17 @@ Options parse(int argc, const char* const* argv) {
     o.inspector=inspector.value_or(!o.frames);
     o.timing=timing.value_or(!o.frames);
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
+    const bool particles=o.scene==LabScene::Particles;
+    o.display.lighting=lighting.value_or(particles);
+    if (particleOption && !particles) throw std::invalid_argument("particle options require --scene particles");
+    if (!o.particleCapacity || o.particleCapacity>ParticleSimulation::maxCapacity ||
+        o.particleSteady.value_or(0)>o.particleCapacity || o.particleRate>ParticleSimulation::maxRate)
+        throw std::invalid_argument("particle capacity must be 1..8192, steady <= capacity, rate 0..60000");
+    if (particles) {
+        o.display.demoOccluders=false;
+        if (o.display.normalMapping || o.display.shadows || o.display.view==View::Normal || o.display.view==View::Shadow)
+            throw std::invalid_argument("particle scene has no normal material or shadow casters (views 6/7 unavailable)");
+    }
     o.display.validate();
     return o;
 }
@@ -127,6 +153,7 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
     keys &= ~blocked_;
     const Keys pressed = (keys & ~previous_) | ui.edges;
     previous_ = keys;
+    a.pressed=pressed;
     a.exit = pressed[Escape];
     if (pressed[Bloom]) d.bloom = !d.bloom;
     if (pressed[Hud]) d.hud = !d.hud;
