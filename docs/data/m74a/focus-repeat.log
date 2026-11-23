@@ -1,0 +1,112 @@
+Start testing: Nov 23 15:47 CST
+----------------------------------------------------------
+45/50 Testing: M72InspectorGL
+45/50 Test: M72InspectorGL
+Command: "/Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev/lab/tiny2d_m72_gl"
+Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev
+"M72InspectorGL" start time: Nov 23 15:47 CST
+Output:
+----------------------------------------------------------
+pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+Cocoa auto-repeat with cleared GLFW key cache: reset=0
+held Bloom checkbox on refocus: bloom=1
+refocus pointer: hovered=1 native=(522,112) ImGui=(522,112)
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
+<end of output>
+Test time =   3.63 sec
+----------------------------------------------------------
+Test Passed.
+"M72InspectorGL" end time: Nov 23 15:47 CST
+"M72InspectorGL" time elapsed: 00:00:03
+----------------------------------------------------------
+
+45/50 Testing: M72InspectorGL
+45/50 Test: M72InspectorGL
+Command: "/Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev/lab/tiny2d_m72_gl"
+Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev
+"M72InspectorGL" start time: Nov 23 15:47 CST
+Output:
+----------------------------------------------------------
+pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+Cocoa auto-repeat with cleared GLFW key cache: reset=0
+held Bloom checkbox on refocus: bloom=1
+refocus pointer: hovered=1 native=(522,112) ImGui=(522,112)
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
+<end of output>
+Test time =   1.33 sec
+----------------------------------------------------------
+Test Passed.
+"M72InspectorGL" end time: Nov 23 15:47 CST
+"M72InspectorGL" time elapsed: 00:00:01
+----------------------------------------------------------
+
+45/50 Testing: M72InspectorGL
+45/50 Test: M72InspectorGL
+Command: "/Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev/lab/tiny2d_m72_gl"
+Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev
+"M72InspectorGL" start time: Nov 23 15:47 CST
+Output:
+----------------------------------------------------------
+pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+Cocoa auto-repeat with cleared GLFW key cache: reset=0
+held Bloom checkbox on refocus: bloom=1
+refocus pointer: hovered=1 native=(522,112) ImGui=(522,112)
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
+<end of output>
+Test time =   1.32 sec
+----------------------------------------------------------
+Test Passed.
+"M72InspectorGL" end time: Nov 23 15:47 CST
+"M72InspectorGL" time elapsed: 00:00:01
+----------------------------------------------------------
+
+45/50 Testing: M72InspectorGL
+45/50 Test: M72InspectorGL
+Command: "/Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev/lab/tiny2d_m72_gl"
+Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev
+"M72InspectorGL" start time: Nov 23 15:47 CST
+Output:
+----------------------------------------------------------
+pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+Cocoa auto-repeat with cleared GLFW key cache: reset=0
+held Bloom checkbox on refocus: bloom=1
+refocus pointer: hovered=1 native=(522,112) ImGui=(522,112)
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
+<end of output>
+Test time =   1.32 sec
+----------------------------------------------------------
+Test Passed.
+"M72InspectorGL" end time: Nov 23 15:47 CST
+"M72InspectorGL" time elapsed: 00:00:01
+----------------------------------------------------------
+
+45/50 Testing: M72InspectorGL
+45/50 Test: M72InspectorGL
+Command: "/Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev/lab/tiny2d_m72_gl"
+Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m74a-testdev
+"M72InspectorGL" start time: Nov 23 15:47 CST
+Output:
+----------------------------------------------------------
+pre-loss batch after restore: resets=0 paused_frames=0 bloom_off_frames=0 hidden_frames=0 movement=0
+fresh same-poll R=1, held W/R/F2 repeats filtered, release/re-press accepted
+Cocoa auto-repeat with cleared GLFW key cache: reset=0
+held Bloom checkbox on refocus: bloom=1
+refocus pointer: hovered=1 native=(522,112) ImGui=(522,112)
+real timestamp: N/A: GL_TIMESTAMP counter bits = 0
+<end of output>
+Test time =   1.35 sec
+----------------------------------------------------------
+Test Passed.
+"M72InspectorGL" end time: Nov 23 15:47 CST
+"M72InspectorGL" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Nov 23 15:47 CST
+
+gui =   1.35 sec*proc
+
+opengl =   1.35 sec*proc

@@ -1,0 +1,5 @@
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=-12 height=5 factor=0.956055 light_red=6.92188 expected_red=6.92226 scene_red=6.46094
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=12 height=5 factor=0 light_red=0.199951 expected_red=0.2 scene_red=3.09961
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=12 height=32 factor=0.326721 light_red=2.49609 expected_red=2.49726 scene_red=4.24609
+neon_same_floor side=left tick=16 player=(-100.4,12) pixel=(800,450) N=(-0.769043,5.96046e-08,0.638672) scene_blue=0.49292
+neon_same_floor side=right tick=16 player=(-23.6,12) pixel=(800,450) N=(-0.769043,5.96046e-08,0.638672) scene_blue=0.06073

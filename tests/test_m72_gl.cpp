@@ -3,6 +3,7 @@
 #include "Capture.h"
 #include "OpenGL.h"
 #include "imgui_impl_glfw.h"
+#include <chrono>
 #include <cmath>
 #include <filesystem>
 #include <iostream>
@@ -101,25 +102,35 @@ void imageOrientation(Window& window) {
     detail::GLObject unpack(detail::ObjectKind::Buffer);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,unpack.id());
     glPixelStorei(GL_UNPACK_SKIP_ROWS,2); glPixelStorei(GL_UNPACK_SKIP_PIXELS,3);
-    for (int i=0;i<5;++i) {
+    for (int i=0;i<7;++i) {
         if (i>=3) {
             d.lighting=true;
             d.ambient=.25f;
-            pipe.resize(pixels,true);
+            d.normalMapping=i>=5;
+            pipe.resize(pixels,true,d.normalMapping);
             picture.lights.clear();
             picture.lights.add({{20,i==3?13.f:67.f},15,{1,0,0,1},3,{}});
+        }
+        if (d.normalMapping) {
+            // Put the groove and the bevel in different halves of the real
+            // thumbnail. The second frame flattens both without reallocating it.
+            picture.worldCamera.setViewportSize(18,18);
+            picture.worldCamera.setPosition(12.25f+(.5f-.17f)*18,22.25f+(.5f-.16f)*18);
+            d.normalMaterial.strength=i==5?1.f:0.f;
         }
         bool srgb=i!=1;
         if (srgb) glEnable(GL_FRAMEBUFFER_SRGB); else glDisable(GL_FRAMEBUFFER_SRGB);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_F2,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_L,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_5,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_6,0,GLFW_PRESS,0);
+        ImGui_ImplGlfw_KeyCallback(window.nativeHandle(),GLFW_KEY_N,0,GLFW_PRESS,0);
         ImGui_ImplGlfw_CharCallback(window.nativeHandle(),'R');
         ImGui_ImplGlfw_ScrollCallback(window.nativeHandle(),0,5);
         auto input=gui.build(tools,n,1,d,false,history,{},"off",true);
         check(tools.visible && tools.previews && !input.keys.any() && !input.commands.edges.any() && !input.click,
               "finite input isolation");
-        unsigned demand=gui.finish(tools,pipe,i+1,n.tick,d.lighting?&picture:nullptr);
+        unsigned demand=gui.finish(tools,pipe,i+1,n.tick,d.lighting?&picture:nullptr,d.normalMapping);
         Stats stats;
         pipe.draw(picture,d,stats,{demand,nullptr,[&](Stats& s){gui.submit(s);}});
         GLint rows,skip,pbo;
@@ -127,7 +138,7 @@ void imageOrientation(Window& window) {
         glGetIntegerv(GL_PIXEL_UNPACK_BUFFER_BINDING,&pbo);
         check(rows==2 && skip==3 && pbo==unpack.id() && glIsEnabled(GL_FRAMEBUFFER_SRGB)==srgb,"GUI unpack/sRGB state");
         if (!i) continue;
-        const auto inspected=d.lighting?pipe.lightPreview():pipe.previews()[0];
+        const auto inspected=d.normalMapping?pipe.normalPreview():d.lighting?pipe.lightPreview():pipe.previews()[0];
         auto* data=ImGui::GetDrawData(); bool found=false;
         for (auto* list:data->CmdLists) for (auto& cmd:list->CmdBuffer) {
             if (cmd.GetTexID()!=inspected.texture) continue;
@@ -136,7 +147,13 @@ void imageOrientation(Window& window) {
             int x=int((tl.x+.17f*(br.x-tl.x))*data->FramebufferScale.x);
             int y=int((tl.y+.16f*(br.y-tl.y))*data->FramebufferScale.y);
             auto color=read(0,x,pixels.height-1-y);
-            if (d.lighting) {
+            if (d.normalMapping) {
+                int mirrored=int((tl.y+.84f*(br.y-tl.y))*data->FramebufferScale.y);
+                auto other=read(0,x,pixels.height-1-mirrored);
+                if (i==5) check(color[1]>185 && other[1]<85,"asymmetric world +Y groove above -Y bevel in ImGui image");
+                else check(std::abs(int(color[0])-128)<=1 && std::abs(int(color[1])-128)<=1 &&
+                           color[2]==255 && color==other,"current flat frame displayed without tone mapping");
+            } else if (d.lighting) {
                 int mirrored=int((tl.y+.84f*(br.y-tl.y))*data->FramebufferScale.y);
                 auto other=read(0,x,pixels.height-1-mirrored);
                 const auto lit=i==3?color:other, ambient=i==3?other:color;
@@ -145,7 +162,7 @@ void imageOrientation(Window& window) {
             } else check(std::abs(int(color[0])-231)<4 && std::abs(int(color[1])-213)<4,"displayed UV and single encoding");
             found=true;
         }
-        check(found && stats.previewMask==(d.lighting?31u:15u),"all requested image commands visible");
+        check(found && stats.previewMask==(d.normalMapping?63u:d.lighting?31u:15u),"all requested image commands visible");
     }
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER,0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,0);glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);glDisable(GL_FRAMEBUFFER_SRGB);
@@ -186,6 +203,14 @@ void focusBatches(Window& window) {
              <<" movement="<<movement<<'\n';
     check(!resets && !pausedFrames && !bloomOffFrames && !hiddenFrames && !movement,
           "commands from the previous focus cycle were replayed");
+
+    display.lighting=true;
+    tap(GLFW_KEY_N); tap(GLFW_KEY_6); refocus();
+    for (int i=0;i<6;++i) {
+        tick();
+        check(!display.normalMapping && display.view==View::Final,"pre-loss normal toggle and view discarded");
+    }
+    display.lighting=false;
 
     key(GLFW_KEY_W,GLFW_PRESS); check(tick().motion.y==-1,"W moves before focus loss");
     tap(GLFW_KEY_P); refocus();
@@ -251,7 +276,24 @@ void focusBatches(Window& window) {
         ~RestoreCursor() { glfwSetCursorPos(window,x,y); glfwPollEvents(); }
     } restore{w,0,0};
     glfwGetCursorPos(w,&restore.x,&restore.y);
-    glfwSetCursorPos(w,522,112); glfwPollEvents();
+    // Recovery queries Cocoa through GLFW_HOVERED and glfwGetCursorPos. An
+    // injected ImGui callback alone cannot establish those native conditions.
+    // Wait for the real window to be frontmost and the requested warp to land.
+    glfwFocusWindow(w);
+    const auto deadline=Clock::now()+std::chrono::seconds(2);
+    double nativeX=0,nativeY=0;
+    bool settled=false;
+    while (Clock::now()<deadline && !settled) {
+        glfwPollEvents();
+        if (glfwGetWindowAttrib(w,GLFW_FOCUSED)) {
+            glfwSetCursorPos(w,522,112);
+            glfwWaitEventsTimeout(.01);
+            glfwGetCursorPos(w,&nativeX,&nativeY);
+            settled=glfwGetWindowAttrib(w,GLFW_HOVERED) &&
+                    std::abs(nativeX-522)<2 && std::abs(nativeY-112)<2;
+        } else glfwWaitEventsTimeout(.01);
+    }
+    check(settled,"native focused window and stationary pointer required for focus fixture");
     ImGui_ImplGlfw_CursorEnterCallback(w,GLFW_TRUE);
     ImGui_ImplGlfw_CursorPosCallback(w,522,112); tick();
     auto button=[&](int action){ImGui_ImplGlfw_MouseButtonCallback(w,0,action,0);};
@@ -261,6 +303,9 @@ void focusBatches(Window& window) {
     std::cout<<"held Bloom checkbox on refocus: bloom="<<display.bloom<<'\n';
     check(display.bloom,"focus-loss release must cancel pressed widget");
     const auto cursor=ImGui::GetIO().MousePos;
+    glfwGetCursorPos(w,&nativeX,&nativeY);
+    std::cout<<"refocus pointer: hovered="<<glfwGetWindowAttrib(w,GLFW_HOVERED)
+             <<" native=("<<nativeX<<','<<nativeY<<") ImGui=("<<cursor.x<<','<<cursor.y<<")\n";
     check(std::abs(cursor.x-522)<2 && std::abs(cursor.y-112)<2,"stationary cursor restored");
     button(GLFW_PRESS); tick(); button(GLFW_RELEASE); tick();
     check(!display.bloom,"fresh stationary click after refocus toggles Bloom");
@@ -285,7 +330,7 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         routed=gui.build(tools,n,1,d,controls.paused,history,timer.counts,queries->reason,true);
         c.build=micros(building);
         action=controls.poll(routed.keys,true,1./60,d,routed.captureKeyboard,routed.commands,routed.freshFocus);
-        pipe.resize(window.framebufferSize(),d.lighting);
+        pipe.resize(window.framebufferSize(),d.lighting,d.normalMapping);
         Content rect{0,0,window.size()};
         if (tools.visible && routed.click) tools.selected=shown.pick(*routed.click,rect,d.view,pipe.generation(),n,1);
         auto updating=Clock::now();
@@ -297,7 +342,7 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
         if (tools.visible && d.lighting && tools.lightRadii) p.lightRadii(tools.selected);
         c.prepare=micros(preparing);
         building=Clock::now();
-        auto previews=gui.finish(tools,pipe,frame,n.tick,d.lighting?&p:nullptr);
+        auto previews=gui.finish(tools,pipe,frame,n.tick,d.lighting?&p:nullptr,d.normalMapping);
         c.build+=micros(building);
         FrameInfo f{frame,n.tick,1,pipe.generation(),window.framebufferSize(),rect.size,d,tools.visible,true,false,previews};
         DrawTools draw; draw.previews=previews;
@@ -368,6 +413,21 @@ void interaction(Window& window,const std::filesystem::path& evidence) {
     check(d.view==View::Light,"GUI shows Light buffer");
     click(520,112);
     check(!d.lighting && d.view==View::Final && last.previewMask==15,"off restores Final and four previews");
+    click(520,112); click(520,226);
+    check(d.lighting && d.normalMapping && last.previewMask==63,"normal mapping widget enables sixth live preview");
+    priorTick=n.tick; click(635,250);
+    check(n.tick>priorTick && d.normalMaterial.strength>1,"normal strength slider adjusts while ticking");
+    click(605,90); click(536,132); // Objects tab text filter.
+    ImGui_ImplGlfw_CharCallback(w,'6'); key(GLFW_KEY_6,true); key(GLFW_KEY_N,true);
+    check(routed.captureKeyboard && d.normalMapping && d.view==View::Final,"typing 6, N in focused filter");
+    key(GLFW_KEY_F2,true); step();
+    check(!tools.visible && d.normalMapping && d.view==View::Final,"held normal shortcuts gated when F2 hides Inspector");
+    key(GLFW_KEY_N,false); key(GLFW_KEY_6,false); key(GLFW_KEY_F2,false);
+    key(GLFW_KEY_6,true); key(GLFW_KEY_6,false);
+    check(d.view==View::Normal,"re-pressed 6 selects Normal");
+    key(GLFW_KEY_N,true); key(GLFW_KEY_N,false);
+    check(!d.normalMapping && d.view==View::Final && !last.passDraws[Normal],"disabling normals restores Final");
+    rejects([&]{pipe.normalPreview();});
     Window other(32,32,"foreign");
     rejects([&]{gui.build(tools,n,1,d,false,history,timer.counts,queries->reason,true);});
     window.makeContextCurrent();
