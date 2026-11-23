@@ -27,6 +27,7 @@ public:
     void setInt(const char* name, int value) const;
     void setMat4(const char* name, const Mat4& value) const;
     void setVec4(const char* name, float r,float g,float b,float a) const;
+    void setVec4Array(const char* name, int count, const float* values) const;
     void setFloat(const char* name, float value) const;
     void setVec2(const char* name, float x, float y) const;
     unsigned int nativeHandle() const noexcept { return object_.id(); }

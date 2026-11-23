@@ -22,7 +22,7 @@ FrameState::FrameState() {
         enabled_[i]=glIsEnabled(flags[i]);
         glDisable(flags[i]);
     }
-    for (int i=0;i<2;++i) {
+    for (unsigned i=0;i<std::size(textures_);++i) {
         glActiveTexture(GL_TEXTURE0+i);
         glGetIntegerv(GL_TEXTURE_BINDING_2D,&textures_[i]);
         glGetIntegerv(GL_SAMPLER_BINDING,&samplers_[i]);
@@ -44,7 +44,7 @@ FrameState::~FrameState() noexcept {
     glViewport(viewport_[0],viewport_[1],viewport_[2],viewport_[3]);
     glUseProgram(program_);
     glBindVertexArray(vao_);
-    for (int i=0;i<2;++i) {
+    for (unsigned i=0;i<std::size(textures_);++i) {
         glActiveTexture(GL_TEXTURE0+i);
         glBindTexture(GL_TEXTURE_2D,textures_[i]);
         glBindSampler(i,samplers_[i]);

@@ -90,6 +90,11 @@ void ShaderProgram::setFloat(const char* name, float value) const {
     glUniform1f(uniformLocation(name), value);
     detail::checkGL("glUniform1f");
 }
+void ShaderProgram::setVec4Array(const char* name, int count, const float* values) const {
+    if (count < 1 || !values) throw std::invalid_argument("expected an array of vec4 uniforms");
+    glUniform4fv(uniformLocation(name), count, values);
+    detail::checkGL("glUniform4fv");
+}
 void ShaderProgram::setVec2(const char* name, float x, float y) const {
     glUniform2f(uniformLocation(name), x, y);
     detail::checkGL("glUniform2f");

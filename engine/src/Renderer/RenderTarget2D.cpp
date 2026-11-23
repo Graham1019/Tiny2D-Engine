@@ -57,7 +57,7 @@ void RenderTarget2D::bindDraw() const {
 }
 void RenderTarget2D::bindColor(unsigned unit) const {
     texture_.requireCurrent("RenderTarget2D::bindColor");
-    if (unit > 1) throw std::invalid_argument("render target sampling supports units 0 and 1");
+    if (unit > 2) throw std::invalid_argument("render target sampling supports units 0 through 2");
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, texture_.id());
 }
