@@ -1,4 +1,5 @@
 #pragma once
+#include "NormalMaterial.h"
 #include "tiny2d/FixedTimestep.h"
 #include "tiny2d/Vector2.h"
 #include <array>
@@ -8,7 +9,7 @@
 #include <string>
 
 namespace lab {
-enum class View { Scene, Bright, Blur, Final, Light };
+enum class View { Scene, Bright, Blur, Final, Light, Normal };
 const char* name(View);
 struct Display {
     View view = View::Final;
@@ -18,6 +19,8 @@ struct Display {
     float ambient = .32f, lightStrength = 1.f, radiusMultiplier = 1.f;
     static constexpr float maxAmbient = 2.f, maxLightStrength = 4.f;
     static constexpr float minRadiusMultiplier = .25f, maxRadiusMultiplier = 3.f;
+    bool normalMapping = false;
+    NormalMaterial2D normalMaterial;
     void validate() const;
 };
 struct Options {
@@ -31,7 +34,8 @@ struct Options {
 Options parse(int argc, const char* const* argv);
 
 enum Key { Left, Right, Up, Down, Fire, Bloom, Scene, Bright, Blur, Final,
-           Weaker, Stronger, Pause, Step, Reset, Hud, Escape, ToggleLighting, ShowLight, KeyCount };
+           Weaker, Stronger, Pause, Step, Reset, Hud, Escape, ToggleLighting, ShowLight,
+           ToggleNormal, ShowNormal, KeyCount };
 using Keys = std::bitset<KeyCount>;
 struct Motion { int x = 0, y = 0; bool fire = false; };
 struct Action { unsigned steps = 0; Motion motion; bool reset = false, exit = false; };
@@ -40,6 +44,8 @@ struct Commands {
     std::optional<int> strength;
     std::optional<View> view;
     std::optional<float> ambient, lightStrength, radiusMultiplier;
+    std::optional<float> normalStrength;
+    std::optional<NormalMaterialKind> normalMaterial;
 };
 class Controls {
 public:

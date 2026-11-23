@@ -31,7 +31,8 @@ public:
     Inspector& operator=(const Inspector&)=delete;
     RoutedInput build(ToolState&,const Neon&,std::uint64_t epoch,const Display&,bool paused,
                       const History&,const tiny2d::QueryCounts&,const std::string& capability,bool focused);
-    unsigned finish(ToolState&,Pipeline&,std::uint64_t frame,std::uint64_t tick,const Picture* litPicture=nullptr);
+    unsigned finish(ToolState&,Pipeline&,std::uint64_t frame,std::uint64_t tick,
+                    const Picture* litPicture=nullptr,bool normals=false);
     void submit(Stats&);
     std::uint64_t atlasBytes() const { return atlasBytes_; }
     void discard();

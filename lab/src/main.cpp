@@ -15,7 +15,7 @@ void run(Options o) {
     Controls controls;
     Picture picture;
     Stats last, attempt;
-    std::uint64_t frames=0, storage=0;
+    std::uint64_t frames=0, storage=0, materialUpload=0;
     tiny2d::Size logical{}, pixels{};
     // Keep the Context alive while reporting and retiring queries on every exit path.
     std::optional<tiny2d::Window> owner;
@@ -35,9 +35,10 @@ void run(Options o) {
                  <<" view="<<name(o.display.view)<<" bloom="<<(o.display.bloom?"on":"off")
                  <<" strength="<<o.display.strength/10.f<<" last_passes="<<last.passes
                  <<" fullscreen="<<last.fullscreen<<" draws="<<last.draws<<" sprites="<<last.sprites
-                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload+last.lightUniformBytes)
+                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload+last.lightUniformBytes+materialUpload)
                  <<" lighting="<<(o.display.lighting?"on":"off")<<" active_lights="<<picture.lights.size()
                  <<" light_uniform_bytes="<<last.lightUniformBytes
+                 <<" normals="<<(o.display.normalMapping?"on":"off")<<" material_upload_bytes="<<materialUpload
                  <<" batch_vertex_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
                  <<" attempt_passes="<<attempt.passes<<" attempt_draws="<<attempt.draws
                  <<" attempt_complete="<<attempt.complete<<'\n';
@@ -82,10 +83,11 @@ void run(Options o) {
             previous=start;
             logical=window.size(); pixels=window.framebufferSize();
             attempt={};
+            const auto priorMaterialBytes=renderer.materialBytes();
             bool drawable=false;
             if (logical.width>0 && logical.height>0 && !window.iconified()) {
                 try {
-                    drawable=renderer.resize(pixels,o.display.lighting);
+                    drawable=renderer.resize(pixels,o.display.lighting,o.display.normalMapping);
                     resizeError.clear();
                 } catch (const std::exception& e) {
                     if (o.frames) throw;
@@ -136,18 +138,20 @@ void run(Options o) {
             const Content content{0,0,logical};
             const auto oldView=o.display.view;
             const bool wasLit=o.display.lighting;
+            const bool hadNormals=o.display.normalMapping;
             Action action;
             if (o.frames) action.steps=1;
             else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands,routed.freshFocus);
             if (action.exit) break;
-            if (wasLit!=o.display.lighting) {
+            if (wasLit!=o.display.lighting || hadNormals!=o.display.normalMapping) {
                 // Resolve a same-frame GUI/key toggle before borrowing any attachment.
-                try { renderer.resize(pixels,o.display.lighting); }
+                try { renderer.resize(pixels,o.display.lighting,o.display.normalMapping); }
                 catch (const std::exception& e) {
                     std::cerr<<"Lighting change failed: "<<e.what()<<'\n';
                     o.display.lighting=wasLit;
+                    o.display.normalMapping=hadNormals;
                     o.display.view=oldView;
-                    renderer.resize(pixels,wasLit);
+                    renderer.resize(pixels,wasLit,hadNormals);
                 }
                 info.generation=renderer.generation();
             }
@@ -179,12 +183,19 @@ void run(Options o) {
             cpu.activeLights=picture.lights.size();
             cpu.droppedLights=picture.lights.dropped();
             cpu.lightSize=renderer.lightSize();
+            cpu.normalSize=renderer.normalSize();
+            cpu.materialBytes=renderer.materialBytes();
+            if (cpu.materialBytes && !priorMaterialBytes) {
+                cpu.normalPrepare=renderer.normalPrepareUs();
+                cpu.materialUpload=cpu.materialBytes;
+            }
             storage=renderer.storage();
             DrawTools draw;
             if (gui) {
                 const auto build=Clock::now();
                 try {
-                    draw.previews=gui->finish(tools,renderer,info.id,info.tick,o.display.lighting?&picture:nullptr);
+                    draw.previews=gui->finish(tools,renderer,info.id,info.tick,o.display.lighting?&picture:nullptr,
+                                              o.display.normalMapping);
                     if (tools.visible) draw.gui=[&](Stats& s){gui->submit(s);};
                 } catch (const PreviewAllocationError& e) {
                     if (o.frames) throw;
@@ -233,6 +244,7 @@ void run(Options o) {
             if (draw.timer) draw.timer->finish(info,true);
             presented=std::move(next);
             last=attempt;
+            materialUpload=cpu.materialUpload;
             History::append(history.cpu,cpu);
             csv.record(cpu);
             if (o.frames && info.measurement) samples.push_back(cpu);
@@ -249,8 +261,9 @@ void run(Options o) {
 }
 int main(int argc,char** argv) {
     if (argc==2 && std::string_view(argv[1])=="--help") {
-        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light] "
+        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal] "
                  <<"[--lighting on|off] [--ambient 0..2] "
+                 <<"[--normal-mapping on|off] [--normal-material flat|tile] [--normal-strength 0..2] "
                  <<"[--bloom on|off] [--capture PNG] [--inspector on|off] [--gpu-timing on|off] "
                  <<"[--previews off|all] [--metrics CSV]\nInteractive: Inspector and GPU timing on. Finite frames: both off. Previews default off.\n";
         return 0;

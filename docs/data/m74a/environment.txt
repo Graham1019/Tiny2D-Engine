@@ -1,0 +1,31 @@
+Repository base
+0eed250114277b76bb0ae53e9d58e39048079282
+Lab implementation commit (benchmark executable)
+3f58e910a709df3cc42f6da48d2a6be37df4cb5a
+ProductName:		macOS
+ProductVersion:		26.7.3
+BuildVersion:		25G342
+arm64
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+cmake version 4.4.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+build/m74a-release/lab/tiny2d_lab: Mach-O 64-bit executable arm64
+5304bdd2db3f4af49c114a5960912790119fbbc536af56a691a502529c31f1d8  build/m74a-release/lab/tiny2d_lab
+84a16806a22c70ba3e43ada120c6783ae595f26b48c792fbe378e54e2c7f244e  build/m74a-release/lab/assets/shaders/blur.frag
+c920d2dcb2af7ced9aba474caf34310f796227a8e761e7c7fe30cda5f5a446ee  build/m74a-release/lab/assets/shaders/bright.frag
+a69153d1777e7f694c5e1e1ae10f318651db0a3c2a34fc525cf6b8a9645a1f03  build/m74a-release/lab/assets/shaders/compose.frag
+344a9eba73d559cdc89713a954d6a38fb365919545d7a46d979b81d8306d8647  build/m74a-release/lab/assets/shaders/display.frag
+e232c87d297ec3a37da30f49e824ba6eb61cba94b497669b660d04b4ff7a01a9  build/m74a-release/lab/assets/shaders/fullscreen.vert
+4d430fd09fe76132ab62dc26410d7bffc12bd323e43a070ba7fb78648a489e31  build/m74a-release/lab/assets/shaders/light.frag
+a0178e5183c9b7a2d9d2649df934fb50bec343cd244a1a073b58c54a91c38718  build/m74a-release/lab/assets/shaders/normal.frag
+92e6efbc7c68decb798262197d2b919457be16c474b5c42027ec1fce11b45981  build/m74a-release/lab/assets/shaders/normal.vert
+da24620853296aecbb030f0a11a3f2f58299dc92fc51d67da4ad2aab4f8a73b4  build/m74a-release/lab/assets/shaders/normal_display.frag
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=ON
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=240

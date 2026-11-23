@@ -14,7 +14,8 @@ using namespace ImGui;
 using U64=unsigned long long;
 constexpr ImGuiKey keys[]={ImGuiKey_A,ImGuiKey_D,ImGuiKey_W,ImGuiKey_S,ImGuiKey_Space,ImGuiKey_B,
     ImGuiKey_1,ImGuiKey_2,ImGuiKey_3,ImGuiKey_4,ImGuiKey_LeftBracket,ImGuiKey_RightBracket,
-    ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape,ImGuiKey_L,ImGuiKey_5};
+    ImGuiKey_P,ImGuiKey_Period,ImGuiKey_R,ImGuiKey_F1,ImGuiKey_Escape,ImGuiKey_L,ImGuiKey_5,
+    ImGuiKey_N,ImGuiKey_6};
 static_assert(std::size(keys)==KeyCount);
 void cancelPendingInput(ImGuiIO& io) {
     // A button normally fires on release. Cancel a pressed widget before
@@ -36,7 +37,9 @@ void controls(const Display& d,bool paused,Commands& cmd,ToolState& tools) {
         cmd.strength=strength;
     int view=int(d.view);
     SetNextItemWidth(-74);
-    if (Combo("View",&view,d.lighting?"Scene\0Bright\0Blur\0Final\0Light\0":"Scene\0Bright\0Blur\0Final\0"))
+    const char* views[]={"Scene","Bright","Blur","Final","Light","Normal"};
+    const int count=d.lighting ? (d.normalMapping?6:5) : 4;
+    if (Combo("View",&view,views,count))
         cmd.view=static_cast<View>(view);
     if (Button(paused?"Resume":"Pause")) cmd.edges.set(Pause);
     SameLine(); BeginDisabled(!paused);
@@ -63,6 +66,17 @@ void lightingControls(const Display& display,Commands& commands,ToolState& tools
     Checkbox("Light radii",&tools.lightRadii); SameLine();
     if (Button(display.view==View::Light?"Show Final (4)":"Show Light (5)"))
         commands.view=display.view==View::Light?View::Final:View::Light;
+    bool normals=display.normalMapping;
+    if (Checkbox("Normal Mapping (N)",&normals)) commands.edges.set(ToggleNormal);
+    if (!normals) { TextDisabled("Normal buffer off"); return; }
+    SameLine();
+    if (Button(display.view==View::Normal?"Final (4)":"Show Normal (6)"))
+        commands.view=display.view==View::Normal?View::Final:View::Normal;
+    slider("Normal strength",display.normalMaterial.strength,0,NormalMaterial2D::maxStrength,commands.normalStrength);
+    int material=static_cast<int>(display.normalMaterial.kind);
+    SetNextItemWidth(-105);
+    if (Combo("Material",&material,"Flat\0Beveled tile\0"))
+        commands.normalMaterial=static_cast<NormalMaterialKind>(material);
 }
 void lightDetails(ToolState& tools,const LightList& lights,std::uint64_t tick) {
     Text("Tick %llu   Active %zu / %zu   Dropped %zu",U64(tick),std::size_t(lights.size()),
@@ -85,7 +99,7 @@ void lightDetails(ToolState& tools,const LightList& lights,std::uint64_t tick) {
         EndCombo();
     }
     if (!selected) return;
-    Text("World position   %.1f, %.1f",selected->position.x,selected->position.y);
+    Text("XY %.1f, %.1f   Height %.1f",selected->position.x,selected->position.y,selected->height);
     const auto c=selected->color;
     Text("Linear RGB       %.2f  %.2f  %.2f",c.r,c.g,c.b);
     Text("Radius %.1f   Intensity %.2f",selected->radius,selected->intensity);
@@ -149,6 +163,7 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
     Text("GUI V/I %llu / %llu B",U64(s.vertexBytes),U64(s.indexBytes));
     Text("Font upload %llu B",U64(s.fontUpload));
     TextWrapped("Attachment bytes: HDR %llu, thumbnails %llu, font %llu",U64(c.hdrBytes),U64(c.previewBytes),U64(s.fontBytes));
+    if (c.materialBytes) Text("Normal tile %llu B",U64(c.materialBytes));
     SeparatorText("CPU submission / us");
     TextDisabled("stage       p50  p95  p99   n");
     auto cpu=[&](const char* n,double CpuSample::*field){row(n,history.cpu,[&](const auto& v){return std::optional<double>(v.*field);});};
@@ -161,6 +176,7 @@ void performance(const History& history,const tiny2d::QueryCounts& counts,const 
     };
     measured("GUI build",&CpuSample::build); measured("query poll",&CpuSample::poll);
     measured("light data",&CpuSample::lightExtract);
+    measured("tile build",&CpuSample::normalPrepare);
     for (unsigned i=0;i<PassCount;++i) {
         char label[40]; std::snprintf(label,sizeof(label),"%s[%u]",passNames[i],s.passDraws[i]);
         row(label,history.cpu,[&](const auto& v)->std::optional<double>{
@@ -332,14 +348,20 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         input.click=tiny2d::Vector2{io.MouseClickedPos[0].x,io.MouseClickedPos[0].y};
     return input;
 }
-unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,std::uint64_t tick,const Picture* litPicture) {
+unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,std::uint64_t tick,
+                           const Picture* litPicture,bool normals) {
     requireOwner();
     unsigned mask=0;
     if (lightingTab_ && litPicture) {
         // Finish after fixed updates. Details and texture views describe the
         // exact light payload submitted in this frame.
-        if (Begin("Neon Inspector",nullptr,finite_?ImGuiWindowFlags_NoInputs:0))
+        if (Begin("Neon Inspector",nullptr,finite_?ImGuiWindowFlags_NoInputs:0)) {
+            if (normals) {
+                const auto size=pipe.normalSize();
+                Text("Normal XYZ   RGBA16F %dx%d",size.width,size.height);
+            }
             lightDetails(tools,litPicture->lights,tick);
+        }
         End();
     }
     if (tools.visible && tools.previews) {
@@ -349,14 +371,16 @@ unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,s
         SetNextWindowPos({6,std::max(0.f,size.y-45.f-height)},ImGuiCond_FirstUseEver);
         SetNextWindowSize({width,height},ImGuiCond_Always);
         if (Begin("Buffers",nullptr,(finite_?ImGuiWindowFlags_NoInputs:0))) {
-            if (litPicture) TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB",U64(frame),U64(tick));
+            if (normals) TextDisabled("Frame %llu  Tick %llu  |  Normal XYZ: (n+1)/2",U64(frame),U64(tick));
+            else if (litPicture) TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB",U64(frame),U64(tick));
             else TextDisabled("Frame %llu  Tick %llu  |  Reinhard + sRGB  |  Final: scene composite",U64(frame),U64(tick));
-            std::array<PreviewView,5> views;
-            const unsigned count=litPicture?5:4;
+            std::array<PreviewView,6> views;
+            const unsigned count=normals?6:(litPicture?5:4);
             try {
                 const auto legacy=pipe.previews();
                 std::copy(legacy.begin(),legacy.end(),views.begin());
                 if (litPicture) views[4]=pipe.lightPreview();
+                if (normals) views[5]=pipe.normalPreview();
             }
             catch (const std::exception& error) {
                 End(); discard(); throw PreviewAllocationError(error.what());
@@ -374,6 +398,10 @@ unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,std::uint64_t frame,s
                 else if (IsItemHovered())
                     SetTooltip("Source %dx%d; RGBA8 preview %dx%d",v.source.width,v.source.height,v.thumbnail.width,v.thumbnail.height);
                 EndGroup();
+            }
+            if (normals) {
+                const auto& v=views[unsigned(View::Normal)];
+                TextDisabled("Normal %dx%d -> RGBA8 %dx%d",v.source.width,v.source.height,v.thumbnail.width,v.thumbnail.height);
             }
         }
         End();

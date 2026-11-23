@@ -11,6 +11,8 @@ struct Light2D {
     tiny2d::Color color;
     float intensity = 1;
     LabHandle source{};
+    static constexpr float defaultHeight = 32.f;
+    float height = defaultHeight; // World +Z above the scene plane.
     void validate() const;
 };
 
@@ -31,5 +33,6 @@ private:
 };
 
 float attenuation(const Light2D&, tiny2d::Vector2 worldPoint);
+float directionalFactor(const Light2D&, tiny2d::Vector2 worldPoint, WorldNormal);
 LightList extractLights(const Neon&, const Display&, std::uint64_t epoch);
 }

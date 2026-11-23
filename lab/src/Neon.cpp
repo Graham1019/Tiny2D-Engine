@@ -15,13 +15,13 @@ std::uint32_t number(std::string_view value, std::string_view option) {
         throw std::invalid_argument(std::string(option) + " expects an unsigned 32-bit decimal integer");
     return result;
 }
-float ambientValue(std::string_view value) {
+float displayValue(std::string_view value, std::string_view option, float maximum) {
     double result=0;
     const auto end=value.data()+value.size();
     const auto parsed=std::from_chars(value.data(),end,result);
     if (parsed.ec!=std::errc{} || parsed.ptr!=end || !std::isfinite(result) ||
-        std::signbit(result) || result>Display::maxAmbient)
-        throw std::invalid_argument("--ambient expects a finite number in [0,2]");
+        std::signbit(result) || result>maximum)
+        throw std::invalid_argument(std::string(option) + " is outside its supported range");
     return static_cast<float>(result);
 }
 }
@@ -32,6 +32,7 @@ const char* name(View v) {
     case View::Blur: return "blur";
     case View::Final: return "final";
     case View::Light: return "light";
+    case View::Normal: return "normal";
     }
     throw std::invalid_argument("invalid view");
 }
@@ -42,6 +43,9 @@ void Display::validate() const {
           radiusMultiplier>=minRadiusMultiplier && radiusMultiplier<=maxRadiusMultiplier))
         throw std::invalid_argument("lighting parameters outside supported ranges");
     if (view==View::Light && !lighting) throw std::invalid_argument("Light view requires lighting on");
+    normalMaterial.validate();
+    if (normalMapping && !lighting) throw std::invalid_argument("normal mapping requires lighting on");
+    if (view==View::Normal && !normalMapping) throw std::invalid_argument("Normal view requires normal mapping on");
 }
 Options parse(int argc, const char* const* argv) {
     Options o;
@@ -61,9 +65,17 @@ Options parse(int argc, const char* const* argv) {
             else if (value == "blur") o.display.view = View::Blur;
             else if (value == "final") o.display.view = View::Final;
             else if (value == "light") o.display.view = View::Light;
+            else if (value == "normal") o.display.view = View::Normal;
             else throw std::invalid_argument("unknown --view");
         } else if (key == "--lighting" && (value == "on" || value == "off")) o.display.lighting=value=="on";
-        else if (key == "--ambient") o.display.ambient=ambientValue(value);
+        else if (key == "--ambient") o.display.ambient=displayValue(value,key,Display::maxAmbient);
+        else if (key == "--normal-mapping" && (value=="on" || value=="off")) o.display.normalMapping=value=="on";
+        else if (key == "--normal-strength") o.display.normalMaterial.strength=displayValue(value,key,NormalMaterial2D::maxStrength);
+        else if (key == "--normal-material") {
+            if (value=="flat") o.display.normalMaterial.kind=NormalMaterialKind::Flat;
+            else if (value=="tile") o.display.normalMaterial.kind=NormalMaterialKind::ProceduralTile;
+            else throw std::invalid_argument("--normal-material expects flat or tile");
+        }
         else if (key == "--bloom" && (value == "on" || value == "off")) o.display.bloom = value == "on";
         else if ((key=="--inspector" || key=="--gpu-timing") && (value=="on" || value=="off")) {
             (key=="--inspector" ? inspector : timing) = value=="on";
@@ -110,16 +122,27 @@ Action Controls::poll(Keys keys, bool active, double dt, Display& d, bool captur
     if (pressed[Bloom]) d.bloom = !d.bloom;
     if (pressed[Hud]) d.hud = !d.hud;
     if (pressed[ToggleLighting]) d.lighting = !d.lighting;
+    if (!d.lighting) d.normalMapping=false;
+    else if (pressed[ToggleNormal]) d.normalMapping=!d.normalMapping;
     for (int k=Scene; k<=Final; ++k)
         if (pressed[k]) d.view = static_cast<View>(k-Scene);
     d.strength = std::clamp(d.strength + pressed[Stronger] - pressed[Weaker],0,30);
     if (ui.strength) d.strength = std::clamp(*ui.strength,0,30);
     if (ui.view) d.view = *ui.view;
     if (pressed[ShowLight] && d.lighting) d.view=View::Light;
+    if (pressed[ShowNormal] && d.normalMapping) d.view=View::Normal;
     if (!d.lighting && d.view==View::Light) d.view=View::Final;
+    if (!d.normalMapping && d.view==View::Normal) d.view=View::Final;
     if (ui.ambient) d.ambient=*ui.ambient;
     if (ui.lightStrength) d.lightStrength=*ui.lightStrength;
     if (ui.radiusMultiplier) d.radiusMultiplier=*ui.radiusMultiplier;
+    if (ui.normalStrength || ui.normalMaterial) {
+        auto material=d.normalMaterial;
+        if (ui.normalStrength) material.strength=*ui.normalStrength;
+        if (ui.normalMaterial) material.kind=*ui.normalMaterial;
+        material.validate();
+        d.normalMaterial=material;
+    }
     a.motion = {keys[Right]-keys[Left],keys[Down]-keys[Up],keys[Fire]};
     if (pressed[Reset]) {
         a.reset = true;

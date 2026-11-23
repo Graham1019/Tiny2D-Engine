@@ -1,0 +1,30 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m73-off
+  Test  #1: M3CPUTests
+  Test  #2: Vector2Tests
+  Test  #3: RenderFailureTests
+  Test  #4: M5_scene
+  Test  #5: M5_collision
+  Test  #6: M5_fixed_step
+  Test  #7: M61_combat
+  Test  #8: M61_projectiles
+  Test  #9: M61_spawning
+  Test #10: M62_game_phase
+  Test #11: M62_restart
+  Test #12: M62_hud
+  Test #13: M63a_difficulty
+  Test #14: M63a_flow
+  Test #15: M63a_pacing
+  Test #16: M63a_invalid_difficulty_0
+  Test #17: M63a_invalid_difficulty_6
+  Test #18: M63a_invalid_difficulty_-1
+  Test #19: M63a_invalid_difficulty_abc
+  Test #20: M63b_events
+  Test #21: M63b_vfx
+  Test #22: M63b_fps
+  Test #23: M63b_priority
+  Test #24: M71CPU
+  Test #25: M72CPU
+  Test #26: M73_cpu
+  Test #27: M73_controls
+
+Total Tests: 27

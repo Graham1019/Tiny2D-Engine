@@ -8,9 +8,9 @@
 
 namespace lab {
 enum Pass { World, Extract, Horizontal, Vertical, Output, Overlay, Debug, Preview, Gui,
-            Albedo, Emission, Light, SceneCompose, PassCount };
+            Albedo, Emission, Light, SceneCompose, Normal, PassCount };
 inline constexpr const char* passNames[]={"world","bright","horizontal","vertical","output","hud","debug","preview","gui",
-                                         "albedo","emission","light","scene_compose"};
+                                         "albedo","emission","light","scene_compose","normal"};
 static_assert(sizeof(passNames)/sizeof(*passNames)==PassCount);
 struct Stats {
     unsigned mask=0, previewMask=0, guiVertices=0, guiIndices=0;
@@ -24,6 +24,7 @@ struct Stats {
 };
 struct Quad { tiny2d::Vector2 position, size; float angle; tiny2d::Color color; };
 struct Picture {
+    inline static const tiny2d::Vector2 floorOrigin{-320,-144}, floorSize{640,288};
     std::vector<Quad> world, albedo, emission, hud, debug;
     LightList lights;
     double lightExtractUs=0;

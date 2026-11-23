@@ -1,0 +1,26 @@
+build/m74a-release/lab/tiny2d_lab --seed 71 --size 1120x630 --frames 1320 --view final --lighting on --normal-mapping on --normal-material tile --bloom on --inspector on --previews all --gpu-timing on --metrics docs/data/m74a/1120x630-D.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=240
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=236.791 p95=383.417 p99=450.958
+metric=fixed_update n=1200 p50=0.042 p95=0.833 p99=1.209
+metric=prepare n=1200 p50=9.5 p95=16.833 p99=19.916
+metric=light_extract n=1200 p50=0.208 p95=2.166 p99=3.167
+metric=draw_calls n=1200 p50=32 p95=32 p99=32
+metric=sprites n=1200 p50=1051 p95=1062 p99=1066
+metric=uploaded_bytes n=1200 p50=206740 p95=208600 p99=209176
+metric=bright n=1200 p50=7.125 p95=11.75 p99=14.083
+metric=horizontal n=1200 p50=7.208 p95=11.334 p99=13.459
+metric=vertical n=1200 p50=6.334 p95=9 p99=11.458
+metric=output n=1200 p50=10.041 p95=17 p99=23.417
+metric=hud n=1200 p50=34.583 p95=43.083 p99=50.167
+metric=preview n=1200 p50=40.333 p95=52.042 p99=59.75
+metric=gui n=1200 p50=18.958 p95=32.5 p99=39.5
+metric=albedo n=1200 p50=36.667 p95=69.958 p99=95.125
+metric=emission n=1200 p50=13.042 p95=18.75 p99=21.75
+metric=light n=1200 p50=8.5 p95=13.583 p99=16.75
+metric=scene_compose n=1200 p50=7.792 p95=12.292 p99=14.959
+metric=normal n=1200 p50=8.792 p95=14.5 p99=18.834
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=1120x630 framebuffer=2240x1260 view=final bloom=on strength=1.2 last_passes=17 fullscreen=12 draws=32 sprites=1039 upload_bytes=205288 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 batch_vertex_bytes=149616 rgba16f_attachment_bytes=129830400 attempt_passes=17 attempt_draws=32 attempt_complete=1
