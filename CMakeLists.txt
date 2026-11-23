@@ -338,9 +338,9 @@ endif()
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
-    lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
-target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui PRIVATE glfw OpenGL::GL)
+target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
     third_party/imgui/imgui.cpp third_party/imgui/imgui_draw.cpp
     third_party/imgui/imgui_widgets.cpp third_party/imgui/imgui_tables.cpp
@@ -444,4 +444,14 @@ if(BUILD_TESTING)
         add_test(NAME M74b_OcclusionGL COMMAND tiny2d_m74b_gl)
         set_tests_properties(M74b_OcclusionGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
     endif()
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m81_gl tests/test_m81_gl.cpp)
+    target_include_directories(tiny2d_m81_gl PRIVATE engine/src/Renderer)
+    target_link_libraries(tiny2d_m81_gl PRIVATE tiny2d_lab_core glfw OpenGL::GL)
+    set_target_properties(tiny2d_m81_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m81_gl tiny2d_lab_assets)
+    add_test(NAME M81_ParticleInstancingGL COMMAND tiny2d_m81_gl)
+    set_tests_properties(M81_ParticleInstancingGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
 endif()

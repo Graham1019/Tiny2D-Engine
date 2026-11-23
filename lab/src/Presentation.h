@@ -8,9 +8,9 @@
 
 namespace lab {
 enum Pass { World, Extract, Horizontal, Vertical, Output, Overlay, Debug, Preview, Gui,
-            Albedo, Emission, Light, SceneCompose, Normal, ShadowBatch, ShadowInspect, PassCount };
+            Albedo, Emission, Light, SceneCompose, Normal, ShadowBatch, ShadowInspect, ParticleEmission, PassCount };
 inline constexpr const char* passNames[]={"world","bright","horizontal","vertical","output","hud","debug","preview","gui",
-                                         "albedo","emission","light","scene_compose","normal","shadow_batch","shadow_inspect"};
+                                         "albedo","emission","light","scene_compose","normal","shadow_batch","shadow_inspect","particle_emission"};
 static_assert(sizeof(passNames)/sizeof(*passNames)==PassCount);
 struct ShadowMaskStamp {
     LabHandle source;
@@ -29,6 +29,9 @@ struct Stats {
     double geometryUs=0, maskUs=0, lightSubmitUs=0; // ShadowBatch CPU subintervals.
     std::optional<ShadowMaskStamp> shadowMask; // Only an explicitly rebuilt inspection mask has provenance.
     std::array<double,PassCount> cpuUs{};
+    unsigned activeInstances=0, particleDrawCalls=0;
+    std::uint64_t instanceUploadBytes=0;
+    double instanceUploadUs=0;
     bool complete = false;
 };
 struct Quad { tiny2d::Vector2 position, size; float angle; tiny2d::Color color; };

@@ -1,4 +1,5 @@
 #include "Pipeline.h"
+#include "ParticleRenderer.h"
 #include "FrameState.h"
 #include "NormalMaterial.h"
 #include "Occlusion.h"
@@ -317,16 +318,28 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
         detail::checkGL("Lab fullscreen triangle");
         ++s.draws; ++s.fullscreen;
     };
+    auto particles=[&](const RenderTarget2D& hdr) {
+        if (!tools.particles || tools.particles->instances.empty()) return;
+        pass(ParticleEmission,[&] {
+            if (!particleRenderer_)
+                particleRenderer_=createParticleRenderer_ ? createParticleRenderer_() : std::make_unique<ParticleRenderer>();
+            // The particle program has no samplers. Only fixed-function blending reads the destination.
+            hdr.bindDraw();
+            particleRenderer_->draw(*tools.particles,picture.worldCamera,s);
+        });
+    };
     {
         FrameState state;
-        if (!d.lighting) pass(World,[&] {
-            t.scene.bindDraw();
-            constexpr GLfloat background[]={.002f,.004f,.008f,1};
-            glClearBufferfv(GL_COLOR,0,background);
-            sprites(picture.world,picture.worldCamera,s);
-            s.worldSprites=s.sprites;
-        });
-        else {
+        if (!d.lighting) {
+            pass(World,[&] {
+                t.scene.bindDraw();
+                constexpr GLfloat background[]={.002f,.004f,.008f,1};
+                glClearBufferfv(GL_COLOR,0,background);
+                sprites(picture.world,picture.worldCamera,s);
+                s.worldSprites=s.sprites;
+            });
+            particles(t.scene);
+        } else {
             auto& lit=*t.lighting;
             const auto casters=shadowEnabled_ ? selectShadowCasters(picture.lights,d.shadowLights) : ShadowCasters{};
             auto setProjection=[&](ShaderProgram& shader) {
@@ -347,6 +360,7 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
                 sprites(picture.emission,picture.worldCamera,s);
                 s.worldSprites=s.sprites;
             });
+            particles(lit.emission);
             if (normalEnabled_) pass(Normal,[&] {
                 t.normal->buffer.bindDraw();
                 constexpr GLfloat flat[]={0,0,1,1};
