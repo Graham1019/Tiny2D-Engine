@@ -35,7 +35,9 @@ void run(Options o) {
                  <<" view="<<name(o.display.view)<<" bloom="<<(o.display.bloom?"on":"off")
                  <<" strength="<<o.display.strength/10.f<<" last_passes="<<last.passes
                  <<" fullscreen="<<last.fullscreen<<" draws="<<last.draws<<" sprites="<<last.sprites
-                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload)
+                 <<" upload_bytes="<<(last.bytes+last.vertexBytes+last.indexBytes+last.fontUpload+last.lightUniformBytes)
+                 <<" lighting="<<(o.display.lighting?"on":"off")<<" active_lights="<<picture.lights.size()
+                 <<" light_uniform_bytes="<<last.lightUniformBytes
                  <<" batch_vertex_bytes="<<last.bytes<<" rgba16f_attachment_bytes="<<storage
                  <<" attempt_passes="<<attempt.passes<<" attempt_draws="<<attempt.draws
                  <<" attempt_complete="<<attempt.complete<<'\n';
@@ -83,7 +85,7 @@ void run(Options o) {
             bool drawable=false;
             if (logical.width>0 && logical.height>0 && !window.iconified()) {
                 try {
-                    drawable=renderer.resize(pixels);
+                    drawable=renderer.resize(pixels,o.display.lighting);
                     resizeError.clear();
                 } catch (const std::exception& e) {
                     if (o.frames) throw;
@@ -133,10 +135,22 @@ void run(Options o) {
             }
             const Content content{0,0,logical};
             const auto oldView=o.display.view;
+            const bool wasLit=o.display.lighting;
             Action action;
             if (o.frames) action.steps=1;
             else action=controls.poll(routed.keys,input.focused(),dt,o.display,routed.captureKeyboard,routed.commands,routed.freshFocus);
             if (action.exit) break;
+            if (wasLit!=o.display.lighting) {
+                // Resolve a same-frame GUI/key toggle before borrowing any attachment.
+                try { renderer.resize(pixels,o.display.lighting); }
+                catch (const std::exception& e) {
+                    std::cerr<<"Lighting change failed: "<<e.what()<<'\n';
+                    o.display.lighting=wasLit;
+                    o.display.view=oldView;
+                    renderer.resize(pixels,wasLit);
+                }
+                info.generation=renderer.generation();
+            }
             if (action.reset) {
                 ++epoch; neon=Neon(o.seed); presented={}; tools.selected.reset(); history={}; last={};
             } else if (tools.visible && routed.click && oldView==o.display.view &&
@@ -149,22 +163,35 @@ void run(Options o) {
             info.tick=neon.tick; info.epoch=epoch; info.display=o.display;
             info.inspector=tools.visible; info.timing=tools.timing;
             const auto prepareStart=Clock::now();
-            picture.prepare(neon,o.display,controls.paused,logical,pixels,last);
+            picture.prepare(neon,o.display,controls.paused,logical,pixels,last,epoch);
             Presented next;
             if (tools.visible) {
                 next={objects(neon,epoch),picture.worldCamera,content,o.display.view,info.generation,info.id,neon.tick};
                 if (tools.selected && !resolve(neon,epoch,*tools.selected)) tools.selected.reset();
-                if (tools.bounds || (tools.outline && tools.selected))
+                const bool sceneView=o.display.view==View::Final || o.display.view==View::Scene;
+                if (sceneView && (tools.bounds || (tools.outline && tools.selected)))
                     picture.bounds(next.objects,tools.selected,tools.bounds,tools.outline);
+                if (tools.lightRadii && o.display.lighting && (sceneView || o.display.view==View::Light))
+                    picture.lightRadii(tools.selected);
             }
-            cpu.prepare=micros(prepareStart);
+            cpu.lightExtract=picture.lightExtractUs;
+            cpu.prepare=micros(prepareStart)-cpu.lightExtract;
+            cpu.activeLights=picture.lights.size();
+            cpu.droppedLights=picture.lights.dropped();
+            cpu.lightSize=renderer.lightSize();
             storage=renderer.storage();
             DrawTools draw;
             if (gui) {
                 const auto build=Clock::now();
-                draw.previews=gui->finish(tools,renderer,info.id,info.tick);
+                try {
+                    draw.previews=gui->finish(tools,renderer,info.id,info.tick,o.display.lighting?&picture:nullptr);
+                    if (tools.visible) draw.gui=[&](Stats& s){gui->submit(s);};
+                } catch (const PreviewAllocationError& e) {
+                    if (o.frames) throw;
+                    std::cerr<<"Buffer previews disabled: "<<e.what()<<'\n';
+                    tools.previews=false;
+                }
                 cpu.build+=micros(build);
-                if (tools.visible) draw.gui=[&](Stats& s){gui->submit(s);};
             }
             info.previews=draw.previews;
             if (tools.timing) {
@@ -222,7 +249,8 @@ void run(Options o) {
 }
 int main(int argc,char** argv) {
     if (argc==2 && std::string_view(argv[1])=="--help") {
-        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final] "
+        std::cout<<"tiny2d_lab [--scene neon] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light] "
+                 <<"[--lighting on|off] [--ambient 0..2] "
                  <<"[--bloom on|off] [--capture PNG] [--inspector on|off] [--gpu-timing on|off] "
                  <<"[--previews off|all] [--metrics CSV]\nInteractive: Inspector and GPU timing on. Finite frames: both off. Previews default off.\n";
         return 0;

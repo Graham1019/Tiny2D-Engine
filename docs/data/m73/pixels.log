@@ -1,0 +1,7 @@
+gray_scene_linear ambient=(0.0999756,0.0999756,0.0999756)
+gray_scene_linear red_at_A=(2.09961,0.0999756,0.0999756)
+gray_scene_linear A_after_move=(0.0999756,0.0999756,0.0999756)
+gray_scene_linear B_after_move=(2.09961,0.0999756,0.0999756)
+bloom_neighbor_display_red off=85 on=185 delta=100
+neon_floor tick=0 GL_pixel=(123,79) world=(-91.25,26.25) player=(-62,12) scene=(0.0647583,0.39209,0.554688) expected=(0.0647909,0.392457,0.555139)
+neon_floor tick=40 GL_pixel=(123,79) world=(-91.25,26.25) player=(34,12) scene=(0.0447388,0.0511169,0.06073) expected=(0.0447656,0.0511719,0.0607812)

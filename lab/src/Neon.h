@@ -8,12 +8,16 @@
 #include <string>
 
 namespace lab {
-enum class View { Scene, Bright, Blur, Final };
+enum class View { Scene, Bright, Blur, Final, Light };
 const char* name(View);
 struct Display {
     View view = View::Final;
     int strength = 12; // tenths, 0..30
     bool bloom = true, hud = true;
+    bool lighting = false;
+    float ambient = .32f, lightStrength = 1.f, radiusMultiplier = 1.f;
+    static constexpr float maxAmbient = 2.f, maxLightStrength = 4.f;
+    static constexpr float minRadiusMultiplier = .25f, maxRadiusMultiplier = 3.f;
     void validate() const;
 };
 struct Options {
@@ -27,7 +31,7 @@ struct Options {
 Options parse(int argc, const char* const* argv);
 
 enum Key { Left, Right, Up, Down, Fire, Bloom, Scene, Bright, Blur, Final,
-           Weaker, Stronger, Pause, Step, Reset, Hud, Escape, KeyCount };
+           Weaker, Stronger, Pause, Step, Reset, Hud, Escape, ToggleLighting, ShowLight, KeyCount };
 using Keys = std::bitset<KeyCount>;
 struct Motion { int x = 0, y = 0; bool fire = false; };
 struct Action { unsigned steps = 0; Motion motion; bool reset = false, exit = false; };
@@ -35,6 +39,7 @@ struct Commands {
     Keys edges;
     std::optional<int> strength;
     std::optional<View> view;
+    std::optional<float> ambient, lightStrength, radiusMultiplier;
 };
 class Controls {
 public:

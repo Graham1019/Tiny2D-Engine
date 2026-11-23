@@ -101,6 +101,7 @@ void glTexParameteri(GLenum,GLenum,GLint) {}
 void glTexImage2D(GLenum,GLint,GLint,GLsizei,GLsizei,GLint,GLenum,GLenum,const void*) { if(fault==Fault::TextureUpload) pendingError=GL_OUT_OF_MEMORY; }
 void glUniform1i(GLint,GLint) {}
 void glUniform4f(GLint,GLfloat,GLfloat,GLfloat,GLfloat) {}
+void glUniform4fv(GLint,GLsizei,const GLfloat*) {}
 void glUniformMatrix4fv(GLint,GLsizei,GLboolean,const GLfloat*) {}
 void glUniform1f(GLint, GLfloat) {}
 void glUniform2f(GLint, GLfloat, GLfloat) {}

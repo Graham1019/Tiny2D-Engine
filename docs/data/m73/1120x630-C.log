@@ -1,0 +1,24 @@
+build/m73-release/lab/tiny2d_lab --scene neon --seed 71 --size 1120x630 --frames 1320 --lighting on --bloom on --view final --inspector on --previews off --gpu-timing on --metrics docs/data/m73/1120x630-C.csv
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=224
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=182.25 p95=282.709 p99=343.583
+metric=fixed_update n=1200 p50=0.042 p95=1 p99=1.375
+metric=prepare n=1200 p50=9.5 p95=15.834 p99=19.083
+metric=light_extract n=1200 p50=0.209 p95=1.667 p99=3.333
+metric=draw_calls n=1200 p50=11 p95=11 p99=11
+metric=sprites n=1200 p50=1050 p95=1061 p99=1065
+metric=uploaded_bytes n=1200 p50=184040 p95=185716 p99=186292
+metric=bright n=1200 p50=7.334 p95=11 p99=12.875
+metric=horizontal n=1200 p50=7.583 p95=11.125 p99=13.041
+metric=vertical n=1200 p50=7 p95=9.584 p99=12.125
+metric=output n=1200 p50=11.167 p95=17.25 p99=22.584
+metric=hud n=1200 p50=35.792 p95=44.791 p99=49.584
+metric=gui n=1200 p50=8.917 p95=18.209 p99=24.083
+metric=albedo n=1200 p50=38.792 p95=66.875 p99=85.792
+metric=emission n=1200 p50=14 p95=18.709 p99=23.083
+metric=light n=1200 p50=9.042 p95=14.333 p99=16.75
+metric=scene_compose n=1200 p50=8.834 p95=12.417 p99=15.125
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=1320 ticks=1320 seed=71 window=1120x630 framebuffer=2240x1260 view=final bloom=on strength=1.2 last_passes=10 fullscreen=6 draws=11 sprites=1038 upload_bytes=182404 lighting=on active_lights=7 light_uniform_bytes=224 batch_vertex_bytes=149472 rgba16f_attachment_bytes=107251200 attempt_passes=10 attempt_draws=11 attempt_complete=1
