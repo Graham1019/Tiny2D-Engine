@@ -30,7 +30,10 @@ Metrics::Metrics(const std::string& path) {
     for (auto label:passNames) out_<<','<<label<<"_draws";
     for (auto label:passNames) out_<<','<<label<<"_batch_bytes";
     out_<<",light_extract_us,active_lights,dropped_lights,light_w,light_h,light_uniform_bytes"
-        <<",normal_mapping,normal_material,normal_strength,normal_w,normal_h,normal_prepare_us,material_bytes,material_upload_bytes\n";
+        <<",normal_mapping,normal_material,normal_strength,normal_w,normal_h,normal_prepare_us,material_bytes,material_upload_bytes"
+        <<",shadows,shadow_light_budget,occluders,active_casters,skipped_casters,occluder_count,edge_count"
+        <<",mask_rebuilds,mask_draw_calls,masked_light_draw_calls,inspect_rebuilds,inspect_draw_calls"
+        <<",geometry_us,mask_submit_us,light_submit_us,shadow_vertex_bytes,shadow_bytes,fullscreen\n";
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
@@ -61,14 +64,19 @@ void Metrics::record(const CpuSample& c) {
         <<','<<s.lightUniformBytes<<','<<c.info.display.normalMapping
         <<','<<(c.info.display.normalMaterial.kind==NormalMaterialKind::Flat?"flat":"tile")
         <<','<<c.info.display.normalMaterial.strength<<','<<c.normalSize.width<<','<<c.normalSize.height
-        <<','<<c.normalPrepare<<','<<c.materialBytes<<','<<c.materialUpload<<'\n';
+        <<','<<c.normalPrepare<<','<<c.materialBytes<<','<<c.materialUpload
+        <<','<<c.info.display.shadows<<','<<c.info.display.shadowLights<<','<<(c.info.display.demoOccluders?"demo":"none")
+        <<','<<s.activeCasters<<','<<s.skippedCasters<<','<<s.occluderCount<<','<<s.edgeCount
+        <<','<<s.maskRebuilds<<','<<s.maskDraws<<','<<s.lightDraws<<','<<s.inspectRebuilds<<','<<s.inspectDraws
+        <<','<<s.geometryUs<<','<<s.maskUs<<','<<s.lightSubmitUs<<','<<s.shadowVertexBytes
+        <<','<<c.shadowBytes<<','<<s.fullscreen<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
     if (!out_.is_open()) return;
     prefix(g.info,"gpu",g.status); out_<<g.received;
     for (auto us:g.us) {out_<<','; if (g.status==QueryStatus::Complete && us) out_<<*us;}
     // CPU-only columns: general, per-pass draws and bytes, lighting, materials.
-    out_<<std::string(16+2*PassCount+6+8,',')<<'\n';
+    out_<<std::string(16+2*PassCount+6+8+18,',')<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
 void Metrics::flushRetired() {
@@ -103,7 +111,7 @@ void report(const std::vector<CpuSample>& samples) {
     });
     metric("draw_calls",[](const auto& c){return std::optional<double>(c.stats.draws);});
     metric("sprites",[](const auto& c){return std::optional<double>(c.stats.sprites);});
-    metric("uploaded_bytes",[](const auto& c){return std::optional<double>(c.stats.bytes+c.stats.vertexBytes+c.stats.indexBytes+c.stats.fontUpload+c.stats.lightUniformBytes+c.materialUpload);});
+    metric("uploaded_bytes",[](const auto& c){return std::optional<double>(c.stats.bytes+c.stats.vertexBytes+c.stats.indexBytes+c.stats.fontUpload+c.stats.lightUniformBytes+c.stats.shadowVertexBytes+c.materialUpload);});
     for (unsigned i=0;i<PassCount;++i) metric(passNames[i],[&](const auto& c)->std::optional<double>{
         if (c.stats.mask&(1u<<i)) return c.stats.cpuUs[i]; return {};
     });

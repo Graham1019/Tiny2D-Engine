@@ -324,7 +324,7 @@ add_custom_target(package_macos
     DEPENDS Tiny2DSurvivor VERBATIM)
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
-add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Presentation.cpp
+add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
     lab/src/FrameState.cpp lab/src/Pipeline.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui PRIVATE glfw OpenGL::GL)
@@ -414,5 +414,21 @@ if(BUILD_TESTING)
         add_dependencies(tiny2d_m74a_gl tiny2d_lab_assets)
         add_test(NAME M74a_NormalLightingGL COMMAND tiny2d_m74a_gl)
         set_tests_properties(M74a_NormalLightingGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    endif()
+endif()
+
+if(BUILD_TESTING)
+    add_executable(tiny2d_m74b_cpu tests/test_m74b_cpu.cpp)
+    target_link_libraries(tiny2d_m74b_cpu PRIVATE tiny2d_lab_core)
+    add_test(NAME M74b_OcclusionCPU COMMAND tiny2d_m74b_cpu)
+    set_tests_properties(M74b_OcclusionCPU PROPERTIES LABELS "cpu")
+    if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m74b_gl tests/test_m74b_gl.cpp)
+        target_include_directories(tiny2d_m74b_gl PRIVATE engine/src/Renderer)
+        target_link_libraries(tiny2d_m74b_gl PRIVATE tiny2d_inspector glfw OpenGL::GL)
+        set_target_properties(tiny2d_m74b_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+        add_dependencies(tiny2d_m74b_gl tiny2d_lab_assets)
+        add_test(NAME M74b_OcclusionGL COMMAND tiny2d_m74b_gl)
+        set_tests_properties(M74b_OcclusionGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
     endif()
 endif()

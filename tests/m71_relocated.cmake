@@ -29,6 +29,24 @@ execute_process(COMMAND "${STAGE}/Lab Demo/tiny2d_lab" --frames 1 --lighting on 
 if(NOT rc EQUAL 0 OR NOT out MATCHES "status=ok frames=1 ticks=1.*view=normal")
     message(FATAL_ERROR "relocated normal view: ${rc} ${out} ${err}")
 endif()
+set(shadow_shader "${STAGE}/Lab Demo/assets/shaders/shadow_mask.vert")
+file(WRITE "${shadow_shader}" "invalid shadow mask shader")
+execute_process(COMMAND "${STAGE}/Lab Demo/tiny2d_lab" --frames 1 --lighting on --normal-mapping on
+    WORKING_DIRECTORY "${STAGE}/cwd" RESULT_VARIABLE rc OUTPUT_VARIABLE out ERROR_VARIABLE err)
+if(NOT rc EQUAL 0 OR NOT out MATCHES "status=ok frames=1 ticks=1")
+    message(FATAL_ERROR "disabled shadows loaded mask shader: ${rc} ${out} ${err}")
+endif()
+execute_process(COMMAND "${STAGE}/Lab Demo/tiny2d_lab" --frames 1 --lighting on --shadows on
+    WORKING_DIRECTORY "${STAGE}/cwd" RESULT_VARIABLE rc OUTPUT_VARIABLE out ERROR_VARIABLE err)
+if(rc EQUAL 0 OR NOT err MATCHES "shadow_mask.vert: compilation failed" OR NOT out MATCHES "status=error frames=0 ticks=0")
+    message(FATAL_ERROR "shadow shader diagnostic: ${rc} ${out} ${err}")
+endif()
+configure_file("${bin}/assets/shaders/shadow_mask.vert" "${shadow_shader}" COPYONLY)
+execute_process(COMMAND "${STAGE}/Lab Demo/tiny2d_lab" --frames 1 --lighting on --shadows on --view shadow
+    WORKING_DIRECTORY "${STAGE}/cwd" RESULT_VARIABLE rc OUTPUT_VARIABLE out ERROR_VARIABLE err)
+if(NOT rc EQUAL 0 OR NOT out MATCHES "status=ok frames=1 ticks=1.*view=shadow")
+    message(FATAL_ERROR "restored shadow shader: ${rc} ${out} ${err}")
+endif()
 file(WRITE "${shader}" "invalid shader")
 execute_process(COMMAND "${STAGE}/Lab Demo/tiny2d_lab" --frames 1 WORKING_DIRECTORY "${STAGE}/cwd"
     RESULT_VARIABLE rc OUTPUT_VARIABLE out ERROR_VARIABLE err)
