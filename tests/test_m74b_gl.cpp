@@ -86,8 +86,6 @@ void pixels() {
     pic.albedo.push_back({{-65,-49},{131,99},0,{.5f,.5f,.5f,1}});
     pic.emission.push_back({{-65,-49},{131,99},0,{6,0,0,1}});
     pic.occluders.addRect(1,{-1,-9},{3,25});
-    pic.occluders.addSegment(2,{5,11},{11,22});
-    const auto walls=pic.occluders;
     pic.lights.add(redLight(-20));
     Stats s;
     DrawTools tools; tools.shadowSource=player; tools.frame=90; tools.tick=84; tools.epoch=7;
@@ -120,6 +118,10 @@ void pixels() {
           "two independent direct-light draws and one inspection");
     check(s.shadowMask && s.shadowMask->source==player && s.shadowMask->frame==90 && s.shadowMask->tick==84 &&
           s.shadowMask->epoch==7 && s.shadowMask->generation==pipe.generation(),"current inspection identity");
+    // Add a second, overlapping shadow only after verifying the single-wall RGB fixture.
+    pic.occluders.addSegment(2,{5,11},{11,22});
+    const auto walls=pic.occluders;
+    draw();
     const auto red=maskImage();
     referenceMask(redLight(-20),pic,red);
     for (const auto& img:{read(thumb.texture,extent),read(0,extent)}) {
