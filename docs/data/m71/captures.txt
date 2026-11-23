@@ -1,0 +1,8 @@
+profile=core opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=969 upload_bytes=139536 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+profile=core opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=scene bloom=on strength=1.2 last_passes=3 fullscreen=1 draws=3 sprites=960 upload_bytes=138240 rgba16f_attachment_bytes=20160000 attempt_passes=3 attempt_draws=3 attempt_complete=1
+profile=core opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=bright bloom=on strength=1.2 last_passes=4 fullscreen=2 draws=4 sprites=981 upload_bytes=141264 rgba16f_attachment_bytes=20160000 attempt_passes=4 attempt_draws=4 attempt_complete=1
+profile=core opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=blur bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=964 upload_bytes=138816 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1

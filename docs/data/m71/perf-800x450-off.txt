@@ -1,0 +1,15 @@
+profile=core opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=1200 clock=steady units=us
+metric=fixed_update p50=0.042 p95=0.125 p99=0.208
+metric=prepare p50=7.709 p95=10.959 p99=14.041
+metric=scene p50=28.208 p95=38.417 p99=64.875
+metric=bright p50=0 p95=0 p99=0
+metric=horizontal p50=0 p95=0 p99=0
+metric=vertical p50=0 p95=0 p99=0
+metric=output p50=10.708 p95=16.583 p99=22.291
+metric=hud p50=35.5 p95=49.125 p99=54.792
+metric=frame p50=86.875 p95=107.041 p99=138.209
+metric=draw_calls p50=3 p95=3 p99=3
+metric=sprites p50=980 p95=990 p99=994
+metric=uploaded_bytes p50=141120 p95=142560 p99=143136
+status=ok frames=1320 ticks=1320 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=off strength=1.2 last_passes=3 fullscreen=1 draws=3 sprites=978 upload_bytes=140832 rgba16f_attachment_bytes=20160000 attempt_passes=3 attempt_draws=3 attempt_complete=1

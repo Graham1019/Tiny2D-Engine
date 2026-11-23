@@ -23,3 +23,10 @@ Suggested 30–60 second recording with macOS Screenshot toolbar / QuickTime:
 feedback; 40–50s genuine outcome; 50–60s restart and a caption naming fixed ticks,
 batching and CPU-only gameplay. Use real play, label any cuts or time compression.
 No Victory image or video should be linked until the corresponding recording exists.
+
+## M7.1 Neon
+
+The four M7.1 PNGs were read from the live OpenGL back buffer before swap on
+2026-11-23. Each uses seed 71, tick 4, 800×450 logical points, 1600×900 pixels
+and the on-screen HUD. Final, Scene, Bright and Blur use the same display mapping.
+[Side-by-side views and capture command](../milestone-07-1.md) · [Capture logs](../data/m71/captures.txt)
