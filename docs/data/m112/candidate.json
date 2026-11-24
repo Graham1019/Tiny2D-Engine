@@ -1,0 +1,35 @@
+{
+  "candidate": "0.6.0-rc1",
+  "zip": "build/m112-dist/candidate-sj5chk_s/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip",
+  "zip_bytes": 2854170,
+  "sha256": "28eaf1170f22ff0974c2fb8ad8116653d0c5af6b4b6ed138f3e4832e962d6327",
+  "source_commit": "ae0b9ae1981c6e716f3dde646e36c812eecc1f55",
+  "files_or_links": 77,
+  "mach_o_files": 7,
+  "target": {
+    "architecture": "arm64",
+    "cmake_options": [
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_OSX_ARCHITECTURES=arm64",
+      "-DCMAKE_OSX_DEPLOYMENT_TARGET=26.0",
+      "-DBUILD_TESTING=OFF"
+    ],
+    "configuration": "Release",
+    "minimum_macos": "26.0",
+    "source": "git archive of source_commit into a new build directory"
+  },
+  "host": {
+    "build": "25G342",
+    "cmake": "cmake version 4.4.3",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "macos": "26.7.3",
+    "sdk": "26.5"
+  },
+  "cpu": "Apple M5 Pro",
+  "signatures": {
+    "notarization": "none",
+    "publication": "local candidate",
+    "signature": "ad-hoc"
+  },
+  "built_utc": "2026-11-24T06:36:15+00:00"
+}

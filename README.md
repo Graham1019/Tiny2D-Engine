@@ -1,216 +1,97 @@
 # Tiny2D Engine
 
-**C++17 · macOS OpenGL · Batched 2D rendering · Playable arena survival**
+**A C++17 engine for macOS OpenGL. Play an arena survivor, inspect an HDR render pass, or rewind a recorded simulation and try a different upgrade.**
 
-Tiny2D is a lightweight C++17 2D engine built with OpenGL on macOS. It combines
-RAII GPU ownership, fixed-step simulation, collision detection and a playable
-90-second arena-survival game with five difficulty levels.
+Tiny2D Showcase opens eight playable exhibits. Each starts a real Lab scene or Survivor process. The launcher stays open while you play. Close the exhibit to return and choose another.
 
-![Actual Survivor difficulty menu](docs/media/menu.png)
-
-[Play / RC notes](docs/releases/v0.5.0-rc1.md) · [Architecture](docs/project-architecture-overview.md) ·
-[Performance evidence](docs/performance-m41.md) · [Interview walkthrough](docs/interview-walkthrough.md)
-
-## Overview
-
-An engineering portfolio focused on explicit ownership, testable gameplay and
-measured rendering behavior. The standalone **Tiny2D Survivor** opens directly to
-the difficulty menu; the developer Sandbox retains its original demos and CLI.
-Version **0.5.0 / rc1** is a local release candidate, not a published GitHub Release.
-
-## Features
-
-- C++17 and RAII; move-only GPU objects with owning-context checks.
-- OpenGL 3.3 Core request, orthographic cameras, alpha blending and PNG textures.
-- Dynamic VBO / static EBO batching, up to eight texture slots and automatic flush.
-- Scene identity and ObjectId generations reject stale or foreign handles.
-- 60 Hz fixed ticks, AABB/circle collisions and ordered combat resolution.
-- CPU-only GameSession, five difficulty configurations and 90-second survival.
-- Event-driven bounded VFX, independent HUD camera, Victory/GameOver and restart.
-- Exception-safe render passes and CPU / real-context GPU regression tests.
-
-## Play the Game
-
-The RC ZIP is prepared locally; **no download asset has been published yet**.
-After owner review, extract the ZIP and double-click `Tiny2D Survivor.app` in Finder.
-This candidate is **arm64 only**, deployment target macOS **26.0**, tested on **26.5.1**.
-Ad-hoc signing is for local integrity checks; it is not Developer ID signing or Apple notarization.
-External downloads may be blocked by Gatekeeper. See [release notes](docs/releases/v0.5.0-rc1.md).
-
-| Input | Action |
+| Tiny2D Showcase | Survivor Enhanced |
 |---|---|
-| 1–5, Enter | Select difficulty, start |
-| WASD | Move; combat fires automatically |
-| Arrow keys; Q/E | Camera offset; zoom |
-| R (press/release) | Restart the applied difficulty after an outcome |
-| Escape | Exit |
+| ![The native Showcase launcher from the extracted macOS candidate](docs/media/m112/native-launcher.png) | ![Survivor Enhanced rendering the first enemy kill at simulation tick 87](docs/media/m111/survivor-enhanced.png) |
 
-![Actual Lv.3 gameplay](docs/media/gameplay-lv3.png)
+[Candidate and Mac acceptance guide](docs/releases/v0.6.0-rc1.md) · [Recorded demo and storyboard](docs/media/m112/storyboard.md) · [Architecture](docs/project-architecture-overview.md) · [Engineering interview guide](docs/interview-walkthrough.md)
 
-## Build from Source
+## Run the local candidate
 
-Install Xcode Command Line Tools, CMake, GLFW and libpng (`brew install cmake glfw libpng`).
-The build uses local dependencies and performs no implicit source downloads.
+Build or obtain the candidate ZIP from its owner, verify its checksum, and extract it. Keep **Tiny2D Showcase.app** and **Tiny2D Survivor.app** beside one another. Open Showcase and select **Open exhibit**. Launching Survivor directly opens the Classic difficulty menu. Choose **Survivor Enhanced** in Showcase to see the same game with HDR feedback and Bloom.
 
-```bash
-cmake -S . -B build/m63c-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m63c-release --parallel
-ctest --test-dir build/m63c-release --output-on-failure
-cmake --build build/m63c-release --target package_macos
-```
-
-The packaging target builds `Tiny2DSurvivor`, stages a fresh named App, recursively
-embeds third-party libraries, signs inside-out, verifies, archives with `ditto`,
-checks SHA-256 and verifies an independent extraction. Each invocation preserves
-previous candidates under `build/m63c-dist/candidate-*`.
-[Bundle design and exact commands](docs/release-architecture.md).
-
-The developer executable remains `build/m63c-release/tiny2d_sandbox`:
-
-```bash
-./build/m63c-release/tiny2d_sandbox --scene survivor-demo --difficulty 3 --frames 600
-./build/m63c-release/tiny2d_sandbox --scene sprites --renderer batch --sprite-count 500 --frames 4
-```
-
-No arguments still select the original immediate sprite demo.
-
-## Tiny2D Lab · Neon
-
-Move the cyan Player with WASD and hold Space to fire. **F2** toggles the Inspector.
-Click a Player, Relay, Bolt or Burst in Scene or Final, or use the **Objects** tab in
-any view. Enable **Buffers** for display-mapped thumbnails. **Timing** shows
-CPU submission and the latest available GPU timestamp measurements with their frame IDs.
-
-**L** enables dynamic lighting. Cyan light follows the player, orange light travels with each bolt,
-and amber relays and fading violet bursts illuminate the grid. **5** shows the linear Light Buffer
-through the display transform. The **Lighting** tab controls ambient intensity, global strength,
-radius scale and radius outlines. Lighting defaults to off.
-
-With lighting on, **N** toggles world-space normal mapping. Move the player past a
-floor panel to see its opposing bevels respond to the same light. **6** shows the
-signed normal buffer encoded as RGB. In **Lighting**, switch between flat and beveled
-tiles or adjust **Normal strength** from 0 to 2. Normal mapping defaults to off.
-
-With lighting on, **O** enables two visual-only walls and per-light hard shadows.
-Hold **A** to move the cyan Player past the short wall. Amber light from the nearby
-relay can still reach the floor in the player's shadow. **7** displays the selected
-light's visibility mask. In **Shadows**, choose a caster, change the budget from
-1 to 8, or display wall edges and projected triangles. The default budget is 4.
-
-**1–4** select Scene, Bright, Blur and Final. **B** toggles Bloom, **[ / ]** adjust
-strength by 0.1, **P** pauses, **.** advances one paused tick, **R** resets the seed
-and **F1** toggles the HUD. Escape exits when the scene owns keyboard input.
+From the directory containing the ZIP and its SHA256SUMS file, the following commands verify the archive and open its app pair from a fresh location.
 
 ```sh
-cmake -S . -B build/m74b-release -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
-cmake --build build/m74b-release --parallel
-./build/m74b-release/lab/tiny2d_lab --scene neon --lighting on --normal-mapping on --shadows on --view final
-./build/m74b-release/lab/tiny2d_lab --seed 71 --frames 4 --lighting on --normal-mapping on --view normal --capture /tmp/neon-normal.png
+shasum -a 256 -c SHA256SUMS
+OUT=$(mktemp -d)
+ditto -x -k Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip "$OUT"
+open "$OUT/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app"
 ```
 
-![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
+The candidate targets **arm64, macOS 26.0 or later**. The validation host ran macOS 26.7.3 on Apple M5 Pro. The ad-hoc signed candidate passed a native test from a separate extraction. It launched and reaped nine children covering all eight exhibits and one reopen. Notarization, third-party machines, other macOS versions and the primary Mac's Finder/quarantine behavior have separate acceptance entries. The owner retains the decision on publishing a Release and selecting a repository-wide source license. [Extracted candidate smoke results](docs/data/m112/smoke/smoke.json) · [Candidate notes, hashes and support boundaries](docs/releases/v0.6.0-rc1.md)
 
-## Tiny2D Lab · Enemy Navigation and Random Upgrades
+### A short tour
 
-Run `build/m92-release/lab/tiny2d_lab --scene navigation --seed 71`. Survive
-60 seconds as 16 enemies follow you through the maze. Move with **WASD** and
-choose an upgrade every 10 seconds of simulation. Open the **F2** Inspector
-to see the shared distance field and the route for an individual enemy.
-[Controls, captures, CPU measurements and Mac checklist](docs/milestone-09-2.md)
-
-## Tiny2D Lab · Seeded Tilemap
-
-Run `build/m91-release/lab/tiny2d_lab --scene map --seed 71` to explore a
-64×40 maze. Move with **WASD**, pause with **P**, advance one tick with **.**,
-and restart the same seed with **R**. The **F2** Inspector shows connectivity,
-the shortest route length, wall contact and tile batch counts. Enter a seed
-and click **Regenerate** to start another map.
-[Build, native captures, measurements and Mac checklist](docs/milestone-09-1.md)
-
-## Tiny2D Lab · Shader Gallery
-
-Run `build/m82-release/lab/tiny2d_lab --scene shaders --effect aurora` to open the
-gallery. Select Aurora, Orbitals or Contours in the Inspector. Pause with **P**,
-edit the displayed fragment file and press **F5**. A valid edit advances the
-exhibit's version. A failed edit leaves the previous picture visible alongside
-the driver diagnostic. Use **B** or views **1–4** to inspect the HDR highlights.
-[Build instructions, recovery screenshots, pixel measurements and Mac checklist](docs/milestone-08-2.md)
-
-[M8.1 Particle Forcefield Playground, native captures and measurements](docs/milestone-08-1.md) ·
-[M7.4b shadow geometry, HDR pixel tests and measurements](docs/milestone-07-4b.md) ·
-[M7.4a normal materials, framebuffer readbacks and measurements](docs/milestone-07-4a.md) ·
-[M7.3 dynamic lighting, tests and measurements](docs/milestone-07-3.md) ·
-[M7.2 controls, measurements and verification](docs/milestone-07-2.md) ·
-[M7.1 rendering pipeline](docs/milestone-07-1.md) · [Lab roadmap](docs/lab-roadmap.md)
-
-## Architecture
-
-CPU gameplay owns rules and collision; presentation consumes copied combat events.
-The Survivor adapter coordinates simulation and separate world/UI passes. See
-[architecture diagram and ownership](docs/project-architecture-overview.md).
-
-## Performance
-
-| Measured fixture | Result | Evidence |
-|---|---|---|
-| 500 sprites, immediate vs batch | 500 → 1 draw calls (99.8% fewer) | [M4.1](docs/performance-m41.md) |
-| M4.1 500-sprite CPU workload | CPU submission p50 489.92 → 90.67 µs (~5.40× ratio) | [M4.1 methodology](docs/performance-m41.md) |
-| Historical M6.3b, 48 enemies + 64 projectiles | Fixed update p95 24.625 µs; CPU frame p95 103.291 µs | [raw summary](docs/data/m63b/summary.md) |
-
-These are fixture-specific measurements, not a 5.4× game-FPS claim. CPU frame
-excludes swap/poll and explicit `glFinish`; completion wait is not pure GPU time.
-[M6.3b methodology](docs/performance-m63b.md) and [M6.3b.1 follow-up](docs/m63b1-review-fixes.md)
-retain regressions and tail-latency limitations. No new performance claim is made for packaging.
-
-## Testing
-
-M7.4b passed **52/52 Debug**, **52/52 Release** and **29/29** with OpenGL tests disabled on Apple M5 Pro. The new fixtures compare GPU shadows with CPU ray intersections, verify HDR red/blue contributions and exercise attachment rollback. [Shadow tests and native evidence](docs/milestone-07-4b.md)
-
-M7.4a passed **50/50 Debug**, **50/50 Release** and **28/28** with OpenGL tests disabled on Apple M5 Pro. The GL suites include signed normal readback, equal-distance lighting from opposite sides, preview orientation and the original radial lighting fixtures. [Test logs and pixel evidence](docs/milestone-07-4a.md)
-
-M7.1 passed **43/43 Debug**, **43/43 Release** and **24/24** with OpenGL tests disabled. [M7.1 evidence](docs/milestone-07-1.md)
-
-M6.3c: Debug **40/40**, Release **40/40**, Headless **23/23**.
-[Logs, packaging checks and manual acceptance](docs/milestone-06-3c.md).
-Use the same configure/build/ctest sequence with `build/m63c-debug` and `Debug`;
-for headless use `build/m63c-headless`, `Release`, `-DTINY2D_OPENGL_TESTS=OFF`.
-Headless still requires platform build dependencies; CPU GameSession tests create no GL context.
-No hosted CI execution is claimed.
-
-## Project Structure
-
-| Directory | Role |
+| Exhibit | Try this |
 |---|---|
-| `engine/` | Math, Scene, collision, platform and rendering |
-| `game/` | CPU gameplay, difficulty and flow |
-| `lab/` | Independent Neon demo, HDR passes, observation and finite-frame capture |
-| `sandbox/` | Developer scenes, standalone entry, HUD/VFX, assets |
-| `tests/` | CPU/GPU regressions and profiling fixtures |
-| `scripts/`, `cmake/` | Packaging, verification and bundle metadata |
-| `docs/` | Design, measured evidence, release and portfolio material |
+| Neon Lighting | Move with WASD and fire with Space. Toggle Bloom (B), lighting (L), world-space normals (N) and shadows (O). Inspect the corresponding buffers. |
+| Particle Fields | Drag a force center through 8,192 particles. Pause with P and press period to follow a single simulation step. |
+| Shader Gallery | Open an effect in the Inspector, edit the file at the displayed path and press F5. A broken edit retains the last working program. The packaged Gallery keeps edits under `~/Library/Application Support/Tiny2D Showcase/Shader Gallery/`. |
+| Seeded Tilemap | Change the Seed in the World panel and walk the regenerated maze. Check corners and face contacts against the collision overlay. |
+| Enemy Navigation | Follow a committed enemy waypoint using the path overlay. At the upgrade prompt, choose an eligible card. |
+| Replay & Timeline | The bundled recording opens at the first offer, event 600. Step to 601 for Vitality or fork at 600 and choose Fleet. Both choices occur at the same simulation Tick. |
+| Survivor Classic / Enhanced | Select difficulty with 1–5, start with Enter, move with WASD and let the player auto-fire. Try B in Enhanced to compare Bloom. R restarts the applied level after an outcome. |
 
-## Milestones
+Survivor retains its arrow-key camera offset and Q/E zoom controls. The timeline's viewing pause and the simulation's manual pause are separate. Existing standalone scene shortcuts, controls and CLI examples are documented with each exhibit. [Showcase and Survivor](docs/milestone-11-1.md) · [Timeline](docs/milestone-10-2.md) · [Lab roadmap](docs/lab-roadmap.md)
 
-[M0–M6.3b historical README](docs/development-history.md) preserves the earlier narrative.
-[M6.3a](docs/milestone-06-3a.md) adds difficulty; [M6.3b](docs/milestone-06-3b.md)
-adds presentation; [M6.3b.1](docs/m63b1-review-fixes.md) fixes priority/recovery;
-[M6.3c](docs/milestone-06-3c.md) packages the macOS RC. [M7.1](docs/milestone-07-1.md) opens the HDR/Bloom Lab, [M7.2](docs/milestone-07-2.md) adds its Inspector, and [M7.3](docs/milestone-07-3.md) lights its surfaces.
+## Build from source
 
-## Known Limitations
+Use a graphical macOS session with Xcode Command Line Tools, CMake 3.20+, GLFW and libpng available locally. Dear ImGui is vendored. The project uses the system OpenGL framework.
 
-macOS only; no Intel/Universal validation or alternative rendering backend. Apple
-OpenGL is deprecated. Main-thread, current-context GPU lifetime is required; no
-multithreaded rendering or full-process leak certification. The Lab has its own explicit HDR-to-sRGB output contract. Cross-system,
-Finder quarantine, resize/minimize, multi-display Retina and extended human playtesting
-remain acceptance work. [Media capture status](docs/media/README.md).
+```sh
+cmake -S . -B build/local -DCMAKE_BUILD_TYPE=Release -DTINY2D_OPENGL_TESTS=ON
+cmake --build build/local --parallel
+ctest --test-dir build/local --output-on-failure
 
-## Credits & Licenses
+build/local/lab/tiny2d_lab --scene showcase
+build/local/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation enhanced
+```
 
-**No repository-wide source license has been selected.** The owner must decide
-before formal release; this work does not assign MIT, Apache or GPL to Tiny2D.
-GLFW (zlib/libpng license) and libpng (PNG Reference Library License version 2)
-notices are preserved in [third-party credits](docs/third-party/README.md) and the App.
-Original procedural texture CC0 notices remain in [assets](sandbox/assets/textures/LICENSE.txt)
-and [M4 assets](sandbox/assets/textures/M4-LICENSE.txt).
+The plain Lab executable opens Neon. The developer Sandbox retains the original immediate sprite demo and its existing command line. To run a CPU-only test suite, configure a separate build with `-DTINY2D_OPENGL_TESTS=OFF`. The macOS build still needs the platform dependencies, and the CPU replay verifier runs without a window or GL context.
 
-The Lab tools vendor [Dear ImGui v1.93.0 and its MIT license](third_party/imgui/LICENSE.txt).
+```sh
+build/local/tiny2d_sandbox --scene sprites --renderer batch --sprite-count 500 --frames 4
+build/local/tiny2d_sandbox --scene survivor-demo --difficulty 5 --frames 600
+build/local/tiny2d_m101_evidence verify docs/data/m101/cross-process/A/events.replay
+build/local/tiny2d_timeline_verify branch docs/data/m102/fleet.branch 1
+```
+
+To prepare and verify a new candidate on macOS, use the packaging script. It builds a clean candidate in a new directory. The candidate notes describe archive verification, extraction, native launch and the editable shader workspace. [Packaging design](docs/release-architecture.md) · [Native verification and measurements](docs/milestone-11-2.md)
+
+```sh
+python3 scripts/package_showcase_macos.py build/m112-dist-builds build/m112-dist
+```
+
+## Engineering results
+
+| Fixture | Observed result |
+|---|---|
+| 500 sprites using one texture | 500 immediate draws became 1 batched draw. In the M4.1 CPU-oriented fixture, submission p50 was 489.92 µs vs 90.67 µs. [Measurement conditions and raw data](docs/performance-m41.md) |
+| 8,192 active particles | The Showcase's particle exhibit submitted 8,192 instances in one instanced draw. [Native frame records](docs/data/m111/frames.csv) |
+| Seeded movement and navigation | Independent baseline builds matched 32,400 movement records and 11,319 complete navigation boundaries. An independent forward BFS matched all 4,096 first hops for the 256-enemy moving-target fixture on each tested size. [Movement](docs/data/m111/map-regression.log) · [Navigation](docs/data/m111/navigation-regression.log) · [BFS](docs/data/m111/bfs.csv) |
+| Snapshot, Replay and Time Travel | Three cross-process runs matched full snapshots after 1,929 events. A 2,400-event default-map/16-enemy fixture had a 0.91 ms median seek with 120-event checkpoints and 69,005 B retained. [Replay experiment](docs/milestone-10-1.md) · [Seek distribution and memory](docs/milestone-10-2.md) |
+| Classic / Enhanced at Normal and Extreme | Separate game processes produced byte-identical combat traces across 383 and 338 simulation ticks respectively, including all 44 combat events. [Combat parity](docs/data/m111/combat-parity.csv) |
+
+The final candidate passed 89/89 native tests in both Debug and Release, 48/48 with GL tests disabled, and 18/18 CPU sanitizer tests. On the validation Mac the Lab reported zero valid GPU timestamp bits. The separate sprite benchmark recorded elapsed GPU queries. Replay determinism covers the same simulation rules and supported floating-point environment. [Final validation, performance methodology and raw data](docs/milestone-11-2.md)
+
+## Source guide
+
+| Directory | What to inspect |
+|---|---|
+| [engine](engine/) | GPU object lifetimes, batching, Scene, collisions, immutable maps and navigation |
+| [game](game/) | Survivor combat, NavigationSession, snapshots, codecs, verified replay, checkpoints and branches |
+| [lab](lab/) | Native showcase, HDR pipeline, lighting, particles, shader reload, map rendering and timeline tools |
+| [sandbox](sandbox/) | Developer demos, independent Survivor entry, cameras, HUD and combat VFX |
+| [tests](tests/) | CPU fixtures, real GL readbacks, failure recovery, process tests and performance probes |
+| [scripts](scripts/) | Distribution, archive verification, offline launch and reproducible measurements |
+
+[Development history](docs/development-history.md) · [Architecture and ownership](docs/project-architecture-overview.md) · [Bilingual portfolio / résumé](docs/portfolio-resume.md) · [Interview walkthrough](docs/interview-walkthrough.md)
+
+## Credits
+
+GLFW and libpng notices accompany the apps. Dear ImGui is distributed under the MIT license. Original procedural texture notices remain with the assets. The repository-wide source license awaits an owner decision. [Third-party credits](docs/third-party/README.md) · [Dear ImGui](third_party/imgui/LICENSE.txt) · [Texture notices](sandbox/assets/textures/LICENSE.txt) · [M4 assets](sandbox/assets/textures/M4-LICENSE.txt)

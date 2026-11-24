@@ -75,3 +75,36 @@ Repeated builds are procedural/reproducible, not promised byte-identical archive
 (timestamps/signatures can vary). Build trees, .app, .zip and dylibs are ignored.
 For external distribution, owner review, source-license choice, Developer ID and
 notarization remain separate decisions.
+
+## Unified Showcase candidate · 0.6.0-rc1
+
+The original Survivor packaging entry above remains available. The unified builder exports a specific Git commit into a fresh directory, builds arm64 Release products with deployment target 26.0, and stages executable bytes and an explicit asset inventory in two sibling applications. The native Finder entry resolves its own bundle path and replaces itself with the adjacent Lab helper via execv. The helper uses posix_spawn to open one exhibit at a time. The standalone Survivor entry defaults to its difficulty menu. Moving the enclosing directory preserves the paths between the applications. [Builder](../scripts/package_showcase_macos.py) · [Finder entry](../sandbox/src/ShowcaseMain.cpp) · [Exhibit selection and child ownership](../lab/src/ShowcaseProcess.cpp)
+
+```text
+Tiny2D-Showcase-0.6.0-rc1-macos-arm64/
+  Tiny2D Showcase.app/Contents/
+    MacOS/{Tiny2DShowcase,tiny2d_lab}
+    Frameworks/                         relocated GLFW and libpng
+    Resources/assets/{shaders,showcase,examples,...}
+    Resources/licenses/
+  Tiny2D Survivor.app/Contents/
+    MacOS/Tiny2DSurvivor
+    Frameworks/
+    Resources/{assets,licenses}/
+  manifest.json
+  README.txt
+```
+
+Both bundles carry their own dependencies, plist and ad-hoc signature. BundleUtilities updates Mach-O install names before signing. The verifier checks every embedded executable and dylib, arm64 slices, deployment minima, resolved non-system loads and resource hashes, then requests strict signature verification. A second validation starts from an independent ZIP extraction. The sidecar SHA256SUMS names the ZIP, and manifest.json inside the directory identifies its build commit, versions and per-file contents. [Closure verifier](../scripts/verify_showcase_macos.py)
+
+The Lab locates installed shaders, examples and previews relative to its executable. The packaged Shader Gallery creates a working copy under Application Support or an explicit external directory. F5 compiles the edited program, preserving the active program and its version when a candidate fails. Replay accepts user-selected external paths for snapshots, recordings and branches. Existing save files use create-only publication. All edits and replay exports in the independent smoke run leave the two signed application trees byte-identical. [Writable shader workspace](../lab/src/ShaderWorkspace.cpp) · [Replay files](../lab/src/ReplayApp.cpp) · [Independent smoke](../scripts/smoke_showcase_candidate.py)
+
+Reproduce the build from a checkout of the recorded source. Both directory arguments can name new folders. Each invocation makes its own candidate subdirectory.
+
+```sh
+python3 scripts/package_showcase_macos.py build/m112-dist-builds build/m112-dist
+python3 scripts/verify_showcase_macos.py "/path/to/candidate.zip" --source .
+python3 scripts/smoke_showcase_candidate.py "/path/to/candidate.zip" "/tmp/Tiny2D smoke 独立"
+```
+
+The unified candidate uses marketing version 0.6.0 and build 6001. Local arm64 evaluation, ad-hoc signing, and independent extraction/readback are recorded separately from human acceptance. Developer ID distribution, notarization, licensing of repository source and publication require owner decisions. [Candidate record and Mac acceptance](releases/v0.6.0-rc1.md) · [Final validation](milestone-11-2.md)

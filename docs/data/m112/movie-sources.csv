@@ -1,0 +1,14 @@
+start_seconds,duration_seconds,source,png_sha256
+0,8,docs/media/m111/showcase.png,5c8261da070d3056153f63a9e2d04cb4d506f127bab310786fd6d15bc4328811
+8,8,docs/media/m111/neon.png,ad999e18d498c3a8d4432c5adba5ade55c6d31a0218051d971a9996e7810f883
+16,8,docs/media/m111/particles.png,620a9127b82a385edec7af1b3db9a7569fdb6718d2c33c793449a10c9cc3d045
+24,6,docs/media/m111/reload-failed.png,32661b0b6e19d2cb12366c5411cbf8719e968225bb73033e3f04888f5c5f8b8c
+30,6,docs/media/m111/reload-recovered.png,a1d8710d0f93240daea2b9824c083144a2252c3fd8f709f1d02c24b8766b816c
+36,8,docs/media/m111/map-71.png,7faca1f39ad5a3bab2307a1205b0f930ac2699bc33739353b2819593304ff8e1
+44,8,docs/media/m111/navigation.png,f370081e5e42493cfb4c17636682c1d8ac8729e55c6d30c87f3f91c7885e1201
+52,8,docs/media/m101/verified.png,8cc94820e7c5d16a73d6e51a604d1c9e5af92e75aa0082693066f1cb87f50996
+60,8,docs/media/m102/seek-before-choice.png,2aac51c661e4319fad59b3f2d383df1476a395b5ba37deb183a14f57ae7a16a1
+68,8,docs/media/m102/child-fleet.png,8a334e3247722b22b521580addad418393d712b4689184f37ae8f2cbf7a5b327
+76,7,docs/media/m111/survivor-classic.png,14b55e02484490ae9ebb5374b62f0a00f3db6cb8d321db7c4af866cb21f9e70f
+83,9,docs/media/m111/survivor-enhanced.png,6f90c73139e9c3e25b1bff7f5bd7544058db4247e74e267c80c49445f9b4db26
+92,8,docs/media/m111/showcase-return.png,6ebb7a60672eb76d48eabb0fe0a78e981a4e5d1f11f3d2c4f2a8a575c5515fc2

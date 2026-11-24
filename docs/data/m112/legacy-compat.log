@@ -1,0 +1,20 @@
+Legacy Survivor compatibility check on macOS 26.7.3
+Working revision ae0b9ae1981c6e716f3dde646e36c812eecc1f55
+No changes since accepted M9.2 base to scripts/package_macos.sh, scripts/verify_macos_bundle.sh, scripts/verify_macos_bundle.py or cmake/FixBundle.cmake (git diff --exit-code 5b5ca9b).
+
+Existing M6.3c archive, verified read-only
+Original ZIP matches the digest recorded in docs/milestone-06-3c.md.
+build/m63c-dist/candidate-dOgOD9/Tiny2D-Survivor-v0.5.0-rc1-macos-arm64.zip
+bytes=244602 sha256=6c1fd130d99795b00a9224172dccff09a05a1640eeb07845a60875d8acfff3c1
+Tiny2D-Survivor-v0.5.0-rc1-macos-arm64.zip: OK
+Staged App + independently extracted ZIP: scripts/verify_macos_bundle.sh PASS in both locations (bundle metadata 0.5.0/5001, existing assets, arm64, deployment, complete embedded dependency resolution, codesign --verify --deep --strict).
+
+Current Release built by the legacy script into fresh staging
+Command: scripts/package_macos.sh "$PWD/build/m112-release" "$PWD/build/m112-work/legacy-compat"
+Using an absolute staging parent is necessary for this version of CMake BundleUtilities. The initial relative-path invocation failed during fixup, before distribution ZIP creation. The successful run used a new candidate directory.
+build/m112-work/legacy-compat/candidate-x2lpH8/Tiny2D-Survivor-v0.5.0-rc1-macos-arm64.zip
+bytes=319920 sha256=3d059fa22c4284432c51e681456abb31db74414eaf5f90e7b4fee1108c88f325
+Tiny2D-Survivor-v0.5.0-rc1-macos-arm64.zip: OK
+Staged App + independently extracted ZIP: scripts/verify_macos_bundle.sh PASS in both locations (bundle metadata 0.5.0/5001, existing assets, arm64, deployment, complete embedded dependency resolution, codesign --verify --deep --strict).
+
+Both checks were static. These legacy archives are distinct from the unified 0.6.0-rc1 candidate.

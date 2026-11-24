@@ -1,0 +1,16 @@
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0
+warmup=120 samples=240 clock=steady units=us
+metric=frame n=240 p50=130.375 p95=170.125 p99=213.625
+metric=fixed_update n=240 p50=28.834 p95=37.791 p99=122.542
+metric=prepare n=240 p50=5.417 p95=8.875 p99=14.667
+metric=draw_calls n=240 p50=8 p95=8 p99=8
+metric=sprites n=240 p50=727 p95=733 p99=735
+metric=uploaded_bytes n=240 p50=104688 p95=105552 p99=105840
+metric=world n=240 p50=40.375 p95=52.375 p99=70.041
+metric=bright n=240 p50=7.292 p95=9.583 p99=11.541
+metric=horizontal n=240 p50=6.5 p95=8.416 p99=10.708
+metric=vertical n=240 p50=6.125 p95=7.459 p99=12.166
+metric=output n=240 p50=9.583 p95=12.458 p99=13.833
+metric=hud n=240 p50=16.375 p95=19.708 p99=21.791
+status=ok scene=navigation frames=360 ticks=360 seed=71 epoch=1 map_size=128x96 script=walk shortest_path=1250 phase=Playing hp=5 enemies=256 requested_enemies=256 offer_serial=0 last_choice=none timestamp_bits=0 valid_gpu_samples=0
