@@ -21,6 +21,7 @@ struct DrawTools {
     std::optional<LabHandle> shadowSource;
     std::uint64_t frame=0, tick=0, epoch=0;
     const ParticleRenderSnapshot* particles=nullptr; // Borrowed only for this synchronous draw.
+    std::function<tiny2d::RenderStats()> submitWorld, submitOverlay; // Synchronous scene-renderer passes.
     const ShaderReloadManager* gallery=nullptr; // Same borrowing rule, with reloads between draws.
 };
 class Pipeline {

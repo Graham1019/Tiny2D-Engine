@@ -11,8 +11,9 @@ void SceneRenderer::setAsset(uint32_t id,std::shared_ptr<const Texture2D> t){
 }
 void SceneRenderer::removeAsset(uint32_t id){requireContext();auto i=assets_.find(id);if(i!=assets_.end()){i->second->requireCurrentContext();assets_.erase(i);}}
 void SceneRenderer::begin(const Camera2D& c){requireContext();if(active_)throw std::logic_error("nested scene pass");batch_.beginFrame(c);active_=true;}
-SceneRenderer::Prepared SceneRenderer::prepare(const Scene& scene)const {
+SceneRenderer::Prepared SceneRenderer::prepare(const Scene& scene,float rgbGain)const {
     requireContext();
+    if (!std::isfinite(rgbGain) || rgbGain < 0.f) throw std::invalid_argument("invalid scene RGB gain");
     Prepared result;
     const auto ids=scene.renderables();
     result.commands.reserve(ids.size());
@@ -26,7 +27,7 @@ SceneRenderer::Prepared SceneRenderer::prepare(const Scene& scene)const {
         const auto& texture=asset->second;
         texture->requireCurrentContext();
         const Vector2 size{sprite.size.x*object->transform.scale.x,sprite.size.y*object->transform.scale.y};
-        const Color tint{sprite.r,sprite.g,sprite.b,sprite.a};
+        const Color tint{sprite.r*rgbGain,sprite.g*rgbGain,sprite.b*rgbGain,sprite.a};
         (void)detail::spriteCorners(object->transform.position,size,object->transform.rotation,tint);
         result.textures.try_emplace(texture.get(),texture);
         result.commands.push_back({texture.get(),object->transform.position,size,object->transform.rotation,tint});
@@ -46,9 +47,10 @@ void SceneRenderer::submitPrepared(Prepared prepared) {
         throw;
     }
 }
-void SceneRenderer::submit(const Scene& scene) {
+void SceneRenderer::submit(const Scene& scene) { submit(scene,1.f); }
+void SceneRenderer::submit(const Scene& scene,float rgbGain) {
     requireContext();if(!active_)throw std::logic_error("inactive scene pass");
-    submitPrepared(prepare(scene)); // validation failure preserves previous submissions
+    submitPrepared(prepare(scene,rgbGain)); // validation failure preserves previous submissions
 }
 void SceneRenderer::cancel() {
     requireContext();if(!active_)throw std::logic_error("inactive scene pass");

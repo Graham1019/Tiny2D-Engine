@@ -18,6 +18,8 @@ public:
     void begin(const Camera2D&);
     // Preflight failure preserves the active pass; runtime draw failure cancels it.
     void submit(const Scene&);
+    // HDR presentation gain multiplies only the submitted RGB tint.
+    void submit(const Scene&,float rgbGain);
     void end();
     // Drops only pending commands. Requires the owning context.
     void cancel();
@@ -34,7 +36,7 @@ private:
     };
     using Owners=std::map<const Texture2D*,std::shared_ptr<const Texture2D>>;
     struct Prepared { std::vector<Command> commands; Owners textures; };
-    Prepared prepare(const Scene&)const;
+    Prepared prepare(const Scene&,float rgbGain=1.f)const;
     void submitPrepared(Prepared);
     std::map<uint32_t,std::shared_ptr<const Texture2D>> assets_;
     Owners keepAlive_;
