@@ -405,8 +405,12 @@ set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BI
 add_custom_target(tiny2d_lab_assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/lab/assets"
         "$<TARGET_FILE_DIR:tiny2d_lab>/assets"
+    COMMAND ${CMAKE_COMMAND}
+        "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DDEST=$<TARGET_FILE_DIR:tiny2d_lab>/assets/showcase"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/StageShowcaseAssets.cmake"
     VERBATIM)
-add_dependencies(tiny2d_lab tiny2d_lab_assets)
+add_dependencies(tiny2d_lab tiny2d_lab_assets Tiny2DSurvivor)
 if(BUILD_TESTING)
     add_executable(tiny2d_m71_cpu tests/test_m71_cpu.cpp)
     target_link_libraries(tiny2d_m71_cpu PRIVATE tiny2d_lab_core)
@@ -641,4 +645,13 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_dependencies(tiny2d_m102_gl tiny2d_lab_assets)
     add_test(NAME M102_TimelineGL COMMAND tiny2d_m102_gl)
     set_tests_properties(M102_TimelineGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
+endif()
+
+target_sources(tiny2d_lab PRIVATE lab/src/ShowcaseApp.cpp lab/src/ShowcaseProcess.cpp)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m111_showcase_process tests/m111_showcase_process.cpp lab/src/ShowcaseProcess.cpp)
+    target_include_directories(tiny2d_m111_showcase_process PRIVATE lab/src)
+    target_compile_features(tiny2d_m111_showcase_process PRIVATE cxx_std_17)
+    add_test(NAME M111_ShowcaseProcessCPU COMMAND tiny2d_m111_showcase_process)
+    set_tests_properties(M111_ShowcaseProcessCPU PROPERTIES LABELS cpu)
 endif()

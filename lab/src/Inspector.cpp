@@ -351,7 +351,7 @@ void Inspector::suspend() {
     cancelPendingInput(ImGui::GetIO());
     focusGate_=true; freshFocus_=false; mouseBlocked_=true; restoreCursor_=true;
 }
-Inspector::InputGates Inspector::beginInput(ToolState& tools,bool focused,RoutedInput& input) {
+Inspector::InputGates Inspector::beginInput(ToolState& tools,bool focused,RoutedInput& input,bool allowHide) {
     requireOwner(); discard();
     if (restoreCursor_ && focused && !finite_) {
         restoreCursor_=false;
@@ -368,7 +368,7 @@ Inspector::InputGates Inspector::beginInput(ToolState& tools,bool focused,Routed
     bool f2=rawDown(ImGuiKey_F2);
     input.freshFocus=focused && freshFocus_;
     freshFocus_=false;
-    bool toggle=focused && (!focusGate_ || input.freshFocus) && f2 && !f2Down_ && !finite_;
+    bool toggle=allowHide && focused && (!focusGate_ || input.freshFocus) && f2 && !f2Down_ && !finite_;
     if (toggle) tools.visible=!tools.visible;
     f2Down_=f2;
     bool transition=toggle || first_ || focusGate_;
@@ -428,9 +428,9 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
     return input;
 }
 RoutedInput Inspector::buildPanel(ToolState& tools,bool focused,const std::function<void(Commands&)>& panel,
-                                  bool galleryKeys,bool overlay) {
+                                  bool galleryKeys,bool overlay,bool allowHide) {
     RoutedInput input;
-    auto gates=beginInput(tools,focused,input);
+    auto gates=beginInput(tools,focused,input,allowHide);
     if (galleryKeys) input.keys[ReloadShader]=rawDown(ImGuiKey_F5);
     if (tools.visible) panel(input.commands);
     routeInput(tools.visible || overlay,focused,gates,input);
@@ -526,6 +526,12 @@ unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,const FrameInfo& info
     if (tools.visible || overlay) { ImGui::Render(); ready_=true; } else ImGui::EndFrame();
     active_=false;
     return mask;
+}
+void Inspector::finishPanelOnly() {
+    requireOwner();
+    ImGui::Render();
+    ready_=true;
+    active_=false;
 }
 void Inspector::submit(Stats& s) {
     requireOwner();

@@ -8,14 +8,18 @@
 #include <stdexcept>
 #include <vector>
 
-std::filesystem::path assetPath(const char* relative) {
+std::filesystem::path tiny2dExecutablePath() {
     std::uint32_t size = 0;
     _NSGetExecutablePath(nullptr, &size);
     std::vector<char> executable(size);
     if (_NSGetExecutablePath(executable.data(), &size) != 0) {
         throw std::runtime_error("Cannot resolve executable path for shader assets");
     }
-    const auto directory = std::filesystem::canonical(executable.data()).parent_path();
+    return std::filesystem::canonical(executable.data());
+}
+
+std::filesystem::path assetPath(const char* relative) {
+    const auto directory = tiny2dExecutablePath().parent_path();
     const bool bundle = directory.filename() == "MacOS" &&
                         directory.parent_path().filename() == "Contents";
     const auto root = bundle ? directory.parent_path() / "Resources/assets" : directory / "assets";
