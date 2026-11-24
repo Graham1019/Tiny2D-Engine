@@ -1,7 +1,6 @@
 #pragma once
 
-#include "tiny2d/MapGenerator.h"
-#include "tiny2d/TileCollision.h"
+#include "tiny2d/MapSnapshot.h"
 
 #include <cstdint>
 
@@ -20,6 +19,9 @@ MapInput mapWalkInput(std::uint64_t currentTick);
 class MapSession {
 public:
     explicit MapSession(std::uint32_t seed = 71, const MapParameters& parameters = {});
+
+    MapSnapshot captureSnapshot() const;
+    static MapSession fromSnapshot(const MapSnapshot& snapshot);
 
     const TileMap& map() const { return generated_.map; }
     const MapParameters& parameters() const { return parameters_; }

@@ -22,6 +22,8 @@ struct UpgradeChoice {
     UpgradeId id;
 };
 
+struct UpgradeSnapshot;
+
 class UpgradeSystem {
 public:
     explicit UpgradeSystem(std::uint32_t seed);
@@ -29,6 +31,7 @@ public:
     bool choose(std::uint64_t epoch, std::uint64_t serial, UpgradeId id);
 
     int level(UpgradeId id) const;
+    static int levelCap(UpgradeId id);
     bool eligible(UpgradeId id) const;
     float playerSpeed() const { return 120.f + 12.f * level(UpgradeId::Fleet); }
     float enemySpeed() const { return 60.f - 6.f * level(UpgradeId::Slow); }
@@ -41,6 +44,9 @@ public:
     std::uint64_t rngState() const { return rng_; }
 
 private:
+    friend class NavigationSession;
+    explicit UpgradeSystem(const UpgradeSnapshot& validated);
+    void validateSeededChoices(std::uint32_t seed) const;
     std::array<int, 4> levels_{};
     std::uint64_t rng_, serial_ = 0;
     std::optional<UpgradeOffer> offer_;

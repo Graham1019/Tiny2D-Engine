@@ -1,6 +1,7 @@
 #include "tiny2d_game/NavigationSession.h"
 #include "tiny2d/FixedTimestep.h"
 #include "NavigationRandom.h"
+#include "NavigationSpawn.h"
 
 #include <algorithm>
 #include <chrono>
@@ -38,33 +39,40 @@ NavigationSession::NavigationSession(std::uint32_t seed, const tiny2d::MapParame
 
 NavigationSession::NavigationSession(tiny2d::MapSession&& world, int enemyCount)
     : world_(std::move(world)), upgrades_(world_.seed()),
-      spawnRng_(UINT64_C(0x535041574e000000) ^ world_.seed()), requestedEnemies_(enemyCount) {
+      spawnRng_(initialSpawnRng(world_.seed())), requestedEnemies_(enemyCount) {
     if (enemyCount < 0 || enemyCount > maxEnemies)
         throw std::invalid_argument("navigation enemy count must be within 0..256");
     navigator_.refresh(world_.map(), world_.epoch(), enemyHalfSize(), world_.map().spawn());
     spawnEnemies();
 }
 
-void NavigationSession::spawnEnemies() {
-    const auto& map = world_.map();
-    const auto& field = navigator_.field();
+SpawnSites navigationSpawnSites(const tiny2d::MapSession& world, const tiny2d::DistanceField& field) {
+    const auto& map = world.map();
     if (field.distance(map.spawn()) != 0)
         throw std::invalid_argument("spawn is not a valid navigation target");
     int farthest = 0;
     for (int y = 0; y < map.height(); ++y)
         for (int x = 0; x < map.width(); ++x)
             farthest = std::max(farthest, field.distance({x,y}));
-    spawnMinimumDistance_ = std::clamp(farthest / 2, 1, 36);
-
-    std::vector<tiny2d::TileCoord> candidates;
+    SpawnSites sites{std::clamp(farthest / 2, 1, 36), {}};
+    const auto spawn = map.spawn();
+    const auto player = map.tileToWorldCenter(spawn.x, spawn.y);
     for (int y = 0; y < map.height(); ++y) {
         for (int x = 0; x < map.width(); ++x) {
-            if (field.distance({x,y}) >= spawnMinimumDistance_ &&
-                !overlap(map.tileToWorldCenter(x,y), enemyHalfSize(),
-                         world_.playerPosition(), world_.playerHalfSize()))
-                candidates.push_back({x,y});
+            if (field.distance({x,y}) >= sites.minimumDistance &&
+                !overlap(map.tileToWorldCenter(x,y), NavigationSession::enemyHalfSize(),
+                         player, world.playerHalfSize()))
+                sites.cells.push_back({x,y});
         }
     }
+    return sites;
+}
+
+void NavigationSession::spawnEnemies() {
+    const auto& map = world_.map();
+    auto sites = navigationSpawnSites(world_, navigator_.field());
+    spawnMinimumDistance_ = sites.minimumDistance;
+    auto& candidates = sites.cells;
     const auto count = std::min(candidates.size(), static_cast<std::size_t>(requestedEnemies_));
     enemies_.reserve(count);
     for (std::size_t i = 0; i < count; ++i) {

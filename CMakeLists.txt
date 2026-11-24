@@ -557,3 +557,16 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/m92_finite.py" "$<TARGET_FILE:tiny2d_lab>")
     set_tests_properties(M92_NavigationGL M92_NavigationFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
 endif()
+
+target_sources(tiny2d_game PRIVATE
+    game/src/NavigationSnapshot.cpp game/src/SnapshotCodec.cpp
+    game/src/SnapshotCompare.cpp game/src/SnapshotFile.cpp)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m101_snapshot tests/m101_snapshot.cpp)
+    add_executable(tiny2d_m101_snapshot_codec tests/m101_snapshot_codec.cpp)
+    target_link_libraries(tiny2d_m101_snapshot PRIVATE tiny2d_game)
+    target_link_libraries(tiny2d_m101_snapshot_codec PRIVATE tiny2d_game)
+    add_test(NAME M101_SnapshotCPU COMMAND tiny2d_m101_snapshot)
+    add_test(NAME M101_SnapshotCodecCPU COMMAND tiny2d_m101_snapshot_codec)
+    set_tests_properties(M101_SnapshotCPU M101_SnapshotCodecCPU PROPERTIES LABELS cpu)
+endif()
