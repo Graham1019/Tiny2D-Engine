@@ -4,7 +4,7 @@
 #include "MapApp.h"
 #include "ShowcaseApp.h"
 #include "ShaderAssets.h"
-#include "ShaderWorkspace.h"
+#include "tiny2d/OutputFiles.h"
 #include "Metrics.h"
 #include "OpenGL.h"
 #include "tiny2d/Input.h"
@@ -302,16 +302,20 @@ int main(int argc,char** argv) {
     }
     try {
         auto options=lab::parse(argc,argv);
-        if (lab::insideApplication(tiny2dExecutablePath())) {
-            for (const auto* path:{&options.capture,&options.metrics,&options.snapshotOut,&options.recordPath,
-                                  &options.branchOut,&options.showcaseOutput})
-                if (!path->empty()) lab::requireExternalOutput(*path);
+        tiny2d::PackagedOutputs outputs;
+        if (tiny2d::insideApplication(tiny2dExecutablePath())) {
+            if (!options.shaderWorkspace.empty()) tiny2d::requireExternalOutput(options.shaderWorkspace);
+            outputs.prepare({&options.capture, &options.metrics, &options.snapshotOut,
+                             &options.recordPath, &options.branchOut}, &options.showcaseOutput);
+            if (!options.shaderWorkspace.empty())
+                options.shaderWorkspace=outputs.stagedDirectoryPath(options.shaderWorkspace).string();
         }
         if (options.scene==lab::LabScene::Showcase) lab::runShowcase(options);
         else if (options.scene==lab::LabScene::Particles) lab::runParticles(options);
         else if (options.scene==lab::LabScene::Shaders) lab::runShaders(options);
         else if (options.scene==lab::LabScene::Map || options.scene==lab::LabScene::Navigation || options.scene==lab::LabScene::Replay) lab::runTileLab(options);
         else lab::run(options);
+        outputs.publish();
     }
     catch (const std::exception& e) { std::cerr<<"Tiny2D Lab: "<<e.what()<<'\n'; return 1; }
 }

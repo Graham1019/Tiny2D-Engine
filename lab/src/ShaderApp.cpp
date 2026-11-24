@@ -1,6 +1,7 @@
 #include "ShaderApp.h"
 #include "ShaderGallery.h"
 #include "ShaderWorkspace.h"
+#include "tiny2d/OutputFiles.h"
 #include "ShaderAssets.h"
 #include "ShaderPanel.h"
 #include "Capture.h"
@@ -46,7 +47,7 @@ std::optional<ShaderFrameCommand> readCommand(std::string& pending) {
     const auto verb=line.substr(0,space);
     if (verb!="draw" && verb!="reload") throw std::invalid_argument("unknown shader control command");
     ShaderFrameCommand cmd{verb=="reload",line.substr(space+1)};
-    requireExternalOutput(cmd.output);
+    tiny2d::requireExternalOutput(cmd.output);
     return cmd;
 }
 
@@ -74,7 +75,7 @@ void runShaders(Options o) {
     std::string workspaceError;
     const auto defaults=assetPath("shaders/gallery/aurora.frag").parent_path();
     if (!o.shaderWorkspace.empty()) workspace=prepareShaderWorkspace(o.shaderWorkspace,defaults);
-    else if (insideApplication(tiny2dExecutablePath())) {
+    else if (tiny2d::insideApplication(tiny2dExecutablePath())) {
         try { workspace=prepareShaderWorkspace(defaultShaderWorkspace(),defaults); }
         catch (const std::exception& error) {
             workspaceError="Editable workspace unavailable. Bundled shaders active. "+std::string(error.what());

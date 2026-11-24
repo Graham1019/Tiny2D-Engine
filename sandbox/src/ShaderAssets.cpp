@@ -1,10 +1,9 @@
 #include "ShaderAssets.h"
+#include "tiny2d/BoundedFile.h"
 
 #include <mach-o/dyld.h>
 #include <cstdint>
 #include <filesystem>
-#include <fstream>
-#include <iterator>
 #include <stdexcept>
 #include <vector>
 
@@ -34,9 +33,6 @@ std::string readShaderAsset(const char* filename) {
 }
 
 std::string readShaderFile(const std::filesystem::path& path) {
-    std::ifstream file(path, std::ios::binary);
-    if (!file) throw std::runtime_error("Cannot open shader asset: " + path.string());
-    std::string source{std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
-    if (file.bad()) throw std::runtime_error("Cannot read shader asset: " + path.string());
-    return source;
+    const auto bytes = tiny2d::readBoundedFile(path, maxShaderBytes);
+    return {bytes.begin(), bytes.end()};
 }

@@ -5,6 +5,7 @@ python3 smoke_showcase_candidate.py candidate.zip NEW_DIR
 python3 smoke_showcase_candidate.py --shader-only /path/to/tiny2d_lab [NEW_DIR]
 """
 import argparse
+from contextlib import contextmanager
 import csv
 import hashlib
 import json
@@ -14,6 +15,7 @@ import plistlib
 import queue
 import re
 import shlex
+import stat
 import struct
 import subprocess
 import tempfile
@@ -55,11 +57,11 @@ def png(path):
 
 
 class Probe:
-    def __init__(self, out):
+    def __init__(self, out, log_name="native.log"):
         self.out = out
         self.cwd = out / "other cwd 无源码"
         self.cwd.mkdir()
-        self.log = out / "native.log"
+        self.log = out / log_name
         self.images = {}
         self.frames = []
         self.shader_results = []
@@ -80,70 +82,91 @@ class Probe:
         self.images[path.name] = png(path)
         return self.images[path.name]["sha256"]
 
+    @contextmanager
+    def controlled_shader(self, lab, work, frames, *extra):
+        args = [str(lab), "--scene", "shaders", "--shader-workspace", str(work),
+                "--shader-control-stdin", "on", "--frames", str(frames), "--size", "384x216",
+                "--inspector", "off", "--gpu-timing", "off", *map(str, extra)]
+        self.note("$ " + shlex.join(args))
+        child = subprocess.Popen(args, cwd=self.cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT, text=True, bufsize=1)
+        lines = queue.Queue()
+
+        def pump():
+            for line in child.stdout:
+                lines.put(line.rstrip("\n"))
+            lines.put(None)
+
+        reader = threading.Thread(target=pump, daemon=True)
+        reader.start()
+        def until(prefix, diagnostics=None):
+            deadline = time.monotonic() + 30
+            while time.monotonic() < deadline:
+                try:
+                    line = lines.get(timeout=max(.001, deadline - time.monotonic()))
+                except queue.Empty:
+                    break
+                require(line is not None, "gallery closed before " + prefix + "; see " + str(self.log))
+                self.note(line)
+                if line.startswith(prefix):
+                    return line
+                if diagnostics is not None:
+                    diagnostics.append(line)
+            raise RuntimeError("gallery did not acknowledge " + prefix)
+
+        try:
+            until("shader_control_ready ")
+            yield child, until
+        finally:
+            if child.poll() is None:
+                child.kill()
+            child.wait(timeout=8)
+            reader.join(timeout=2)
+            child.stdout.close()
+            if not child.stdin.closed:
+                child.stdin.close()
+
     def gallery(self, lab):
         work = self.out / "External Shader 工作副本"
         aurora = work / "aurora.frag"
         initial, failed, recovered, stable = [self.out / (name + ".png") for name in
                                              ("shader-initial", "shader-rejected", "shader-recovered", "shader-stable")]
         def session(steps):
-            args = [str(lab), "--scene", "shaders", "--shader-workspace", str(work),
-                    "--shader-control-stdin", "on", "--frames", str(len(steps)), "--size", "384x216",
-                    "--inspector", "off", "--gpu-timing", "off"]
-            self.note("$ " + shlex.join(args))
-            child = subprocess.Popen(args, cwd=self.cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                     stderr=subprocess.STDOUT, text=True, bufsize=1)
-            lines = queue.Queue()
-
-            def pump():
-                for line in child.stdout:
-                    lines.put(line.rstrip("\n"))
-                lines.put(None)
-
-            reader = threading.Thread(target=pump, daemon=True)
-            reader.start()
-            def until(prefix):
-                deadline = time.monotonic() + 30
-                while time.monotonic() < deadline:
-                    try:
-                        line = lines.get(timeout=max(.001, deadline - time.monotonic()))
-                    except queue.Empty:
-                        break
-                    require(line is not None, "gallery closed before " + prefix + "; see " + str(self.log))
-                    self.note(line)
-                    if line.startswith(prefix):
-                        return line
-                raise RuntimeError("gallery did not acknowledge " + prefix)
-
-            try:
-                until("shader_control_ready ")
+            with self.controlled_shader(lab, work, len(steps)) as (child, until):
                 for frame, (verb, dest, change, version, result) in enumerate(steps, 1):
                     if change == "invalid":
                         aurora.write_text("#version 330 core\nthis is not a fragment shader\n", encoding="utf-8")
+                    elif change == "oversize":
+                        aurora.write_bytes(b" " * (1024 * 1024 + 1))
+                    elif change == "fifo":
+                        aurora.unlink()
+                        os.mkfifo(aurora)  # No writer. A blocking read cannot complete the frame.
                     elif change == "contours":
+                        aurora.unlink()
                         aurora.write_bytes((work / "contours.frag").read_bytes())
                     self.note("> " + verb + " " + str(dest))
                     child.stdin.write(verb + " " + str(dest) + "\n")
                     child.stdin.flush()
-                    response = until("shader_control ")
+                    diagnostics = []
+                    response = until("shader_control ", diagnostics)
                     expected = f"shader_control frame={frame} tick=0 version={version} result={result}"
                     require(response == expected, response)
+                    if change in ("fifo", "oversize"):
+                        reason = "expected regular file" if change == "fifo" else "byte budget"
+                        require(any(str(aurora) in line and reason in line for line in diagnostics),
+                                f"{change} shader did not report a bounded-file diagnostic: {diagnostics}")
                     self.shader_results.append({"capture": dest.name, "tick": 0, "version": version,
-                                                "result": result, "png_sha256": self.image(dest)})
+                                                "result": result, "diagnostics": diagnostics, "png_sha256": self.image(dest)})
                 child.stdin.close()
                 until("status=ok scene=shaders ")
                 require(child.wait(timeout=10) == 0, "gallery shutdown failed")
-            finally:
-                if child.poll() is None:
-                    child.kill()
-                child.wait(timeout=8)
-                reader.join(timeout=2)
-                child.stdout.close()
-                if not child.stdin.closed:
-                    child.stdin.close()
 
+        oversize = self.out / "shader-oversize.png"
+        fifo = self.out / "shader-fifo.png"
         session([("draw", initial, None, 1, "ok"), ("reload", failed, "invalid", 1, "failed"),
+                 ("reload", oversize, "oversize", 1, "failed"), ("reload", fifo, "fifo", 1, "failed"),
                  ("reload", recovered, "contours", 2, "ok"), ("draw", stable, None, 2, "ok")])
-        require(sha(initial) == sha(failed), "failed reload changed actual back-buffer pixels")
+        require(sha(initial) == sha(failed) == sha(oversize) == sha(fifo), "rejected reload changed back-buffer pixels")
         require(sha(initial) != sha(recovered) == sha(stable), "recovery did not replace the visible shader")
         edited = sha(aurora)
         restart = self.out / "shader-edited-restart.png"
@@ -154,6 +177,17 @@ class Probe:
         fallback = self.out / "shader-startup-fallback.png"
         session([("draw", fallback, None, 1, "failed")])
         require(sha(aurora) == invalid and sha(fallback) == sha(initial), "invalid startup edit lost or fallback differs")
+        aurora.write_bytes(b" " * (1024 * 1024 + 1))
+        oversized_edit = sha(aurora)
+        fallback_size = self.out / "shader-startup-oversize.png"
+        session([("draw", fallback_size, None, 1, "failed")])
+        require(sha(aurora) == oversized_edit and sha(fallback_size) == sha(initial), "oversize startup fallback differs")
+        aurora.unlink()
+        os.mkfifo(aurora)
+        fallback_fifo = self.out / "shader-startup-fifo.png"
+        session([("draw", fallback_fifo, None, 1, "failed")])
+        require(aurora.is_fifo() and sha(fallback_fifo) == sha(initial), "FIFO startup fallback replaced the edit or pixels")
+        aurora.unlink()
         aurora.write_bytes((work / "contours.frag").read_bytes())
         self.note("External edits preserved across runs. Failed reload retained same-tick pixels; repaired shader changed them.")
 
@@ -194,6 +228,109 @@ class Probe:
         result = self.run(lab, "--scene", "replay", "--frames", 1, "--snapshot-out", blocked, ok=False)
         require("outside the application" in result and not blocked.exists(), "package output protection failed")
 
+    def signed_state(self, apps, manifest, phase):
+        root = apps[0].parent
+        self.note(f"Checking both strict signatures and the complete distribution inventory {phase}")
+        for app in apps:
+            self.run("/usr/bin/codesign", "--verify", "--deep", "--strict", "--verbose=2", app)
+        files = {}
+        modes = {}
+        for path in sorted(root.rglob("*")):
+            rel = path.relative_to(root).as_posix()
+            modes[rel] = path.lstat().st_mode
+            if path.is_symlink():
+                files[rel] = {"link": os.readlink(path)}
+            elif stat.S_ISREG(modes[rel]):
+                files[rel] = {"bytes": path.stat().st_size, "sha256": sha(path)}
+            else:
+                require(stat.S_ISDIR(modes[rel]), "unexpected special file: " + rel)
+        manifest_digest = files.pop("manifest.json")["sha256"]
+        require(files == manifest["files"], "distribution contents differ from manifest " + phase)
+        self.note(f"Verified {len(files)} manifest entries; manifest SHA-256 {manifest_digest}")
+        # The manifest pins each file and link. Compare directory names and entry modes as well.
+        return modes, manifest_digest
+
+    def output_protection(self, lab, survivor_exe, showcase, survivor):
+        cases = []
+        for name, exe, own, other, flags in (
+                ("Survivor", survivor_exe, survivor, showcase, ("capture", "trace", "metrics")),
+                ("Lab", lab, showcase, survivor, ("capture", "metrics"))):
+            own_resources = own / "Contents/Resources"
+            other_resources = other / "Contents/Resources"
+            alias = self.cwd / (name + " 目录链接")
+            alias.symlink_to(own_resources, target_is_directory=True)
+            original = other_resources / "assets/shaders/triangle.vert"
+            hardlink = self.cwd / (name + " 硬链接")
+            os.link(original, hardlink)
+            original_hash = sha(original)
+            partial = self.cwd / (name + " 未完成输出")
+            cwd_contents = set(self.cwd.iterdir())
+            for flag in flags:
+                output_name = f"rejected-{name}-{flag}"
+                for kind, target in (("own-app", own_resources / output_name),
+                                     ("sibling-app", other_resources / output_name),
+                                     ("linked-directory", alias / output_name),
+                                     ("hardlink", hardlink)):
+                    label = f"{name} --{flag} {kind}"
+                    companion = "--metrics" if flag == "capture" else "--capture"
+                    result = self.run(exe, "--frames", 2, companion, partial, "--" + flag, target, ok=False)
+                    require(target.name in result, "missing target in diagnostic: " + label)
+                    if kind == "hardlink":
+                        require(re.search(r"new|exist|overwrite", result, re.I), "missing no-clobber diagnostic: " + label)
+                        require(hardlink.samefile(original) and sha(hardlink) == original_hash,
+                                "resource alias changed: " + label)
+                    else:
+                        require("outside the application" in result and not os.path.lexists(target),
+                                "bundle output was not rejected: " + label)
+                    require(set(self.cwd.iterdir()) == cwd_contents, "partial output left behind: " + label)
+                    cases.append(label)
+                    self.note("PASS " + label + " (no partial output)")
+            hardlink.unlink()
+            alias.unlink()
+        # Pause at the native Gallery's stdin barrier after CLI preflight but before
+        # the last frame can finish. Introduce an existing resource at publication time.
+        original = survivor / "Contents/Resources/assets/shaders/triangle.vert"
+        original_hash = sha(original)
+        occupied = self.cwd / "late metrics.csv"
+        drawn = self.out / "late-link frame.png"
+        previous_entries = set(self.cwd.iterdir())
+        with self.controlled_shader(lab, self.out / "late-link workspace", 1, "--metrics", occupied) as (child, until):
+            require(not os.path.lexists(occupied), "packaged metrics published before the run succeeded")
+            os.link(original, occupied)
+            self.note(f"Added hard link to {original} at {occupied} after shader_control_ready")
+            child.stdin.write("draw " + str(drawn) + "\n")
+            child.stdin.close()
+            diagnostic = until("Tiny2D Lab:")
+            require(occupied.name in diagnostic and re.search(r"new|exist|overwrite", diagnostic, re.I),
+                    "missing late collision diagnostic: " + diagnostic)
+            require(child.wait(timeout=10) == 1, "late metrics collision must fail the process")
+        png(drawn)  # This independent stdin draw completed before the CLI metrics collision.
+        require(occupied.samefile(original) and sha(occupied) == original_hash, "late hardlink resource changed")
+        occupied.unlink()
+        require(set(self.cwd.iterdir()) == previous_entries, "late collision left partial metrics or staging files")
+        cases.append("Lab --metrics hardlink after CLI preflight")
+        self.note("PASS " + cases[-1] + " (resource unchanged, staging cleaned)")
+        return cases
+
+    def relative_outputs(self, lab, survivor_exe):
+        for name, exe in (("Survivor", survivor_exe), ("Lab", lab)):
+            directory = Path(name + " 外部输出")
+            (self.cwd / directory).mkdir()
+            capture, metrics = directory / "画面 capture.png", directory / "指标 metrics.csv"
+            args = [exe, "--frames", 2, "--capture", capture, "--metrics", metrics]
+            trace = directory / "轨迹 trace.csv"
+            if name == "Survivor":
+                args.extend(("--trace", trace))
+            self.run(*args)
+            png(self.cwd / capture)
+            with (self.cwd / metrics).open() as stream:
+                rows = [row for row in csv.DictReader(stream) if row.get("record", "cpu") == "cpu"]
+            require([r["frame"] for r in rows] == ["1", "2"], name + " incomplete relative metrics")
+            if name == "Survivor":
+                with (self.cwd / trace).open() as stream:
+                    require([row["tick"] for row in csv.DictReader(stream)] == ["1", "2"], "incomplete relative trace")
+            self.note("PASS " + name + " relative external PNG and CSV output(s) in path with spaces and Chinese")
+
     def candidate(self, archive):
         digest = sha(archive)
         destination = self.out / "隔离 安装"
@@ -212,18 +349,16 @@ class Probe:
                 return app/"Contents/MacOS"/plistlib.load(f)["CFBundleExecutable"]
         lab = showcase/"Contents/MacOS/tiny2d_lab"
         examples = showcase/"Contents/Resources/assets/examples"
-        def sealed():
-            state = {}
-            for app in (showcase, survivor):
-                self.run("/usr/bin/codesign", "--verify", "--deep", "--strict", "--verbose=2", app)
-                for path in sorted(app.rglob("*")):
-                    key = str(path.relative_to(showcase.parent))
-                    if path.is_symlink():
-                        state[key] = "link:" + os.readlink(path)
-                    elif path.is_file():
-                        state[key] = sha(path)
-            return state
-        before = sealed()
+        guard_out = self.out / "output protection"
+        guard_out.mkdir()
+        guard = Probe(guard_out, "signature-protection.log")
+        guard.note(f"Archive {archive.name} SHA-256 {digest}; source {revision}; fresh extraction {destination}")
+        apps = (showcase, survivor)
+        before = guard.signed_state(apps, manifest, "before negative cases")
+        rejected = guard.output_protection(lab, entry(survivor), showcase, survivor)
+        require(before == guard.signed_state(apps, manifest, "after negative cases"),
+                "negative cases changed the distribution")
+        guard.relative_outputs(lab, entry(survivor))
         launcher = self.out/"launch-services.png"
         self.run("/usr/bin/open", "-n", "-W", showcase, "--args", "--frames", 4, "--capture", launcher)
         self.image(launcher)
@@ -232,9 +367,10 @@ class Probe:
         self.image(classic)
         visits = ["neon","particles","shaders","map","navigation","replay","survivor-classic","survivor-enhanced","neon"]
         output = self.out/"Tour renders"
+        tour_workspace = output/"Tour shader work"
         returned = self.out/"launcher-return.png"
         transcript = self.run(entry(showcase), "--showcase-tour", ",".join(visits), "--child-frames", 8,
-                              "--showcase-output", output, "--shader-workspace", self.out/"Tour shader work",
+                              "--showcase-output", output, "--shader-workspace", tour_workspace,
                               "--capture", returned, timeout=180)
         require(re.findall(r"^showcase_launch exhibit=([\w-]+)", transcript, re.M) == visits and
                 re.findall(r"^showcase_exit exhibit=([\w-]+) code=0 signal=0", transcript, re.M) == visits and
@@ -242,12 +378,21 @@ class Probe:
         self.image(returned)
         for i, exhibit in enumerate(visits, 1):
             self.image(output / f"{i}-{exhibit}.png")
+        defaults = showcase/"Contents/Resources/assets/shaders/gallery"
+        require((tour_workspace/".tiny2d-gallery-v1").is_file() and
+                all(sha(tour_workspace/path.name) == sha(path) for path in defaults.iterdir() if path.is_file()),
+                "tour did not publish its external shader workspace alongside exhibit captures")
         self.replay(lab, examples)
         self.gallery(lab)
-        require(before == sealed(), "signed app contents changed during native exercise")
+        require(before == guard.signed_state(apps, manifest, "after positive cases and exhibit tour"),
+                "native exercise changed the distribution")
         require(digest == sha(archive), "ZIP changed during acceptance")
         return {"archive": archive.name, "zip_sha256": digest, "source_commit": revision,
-                "signed_entries_compared": len(before),
+                "signed_entries_compared": sum(rel.startswith(tuple(app.name + "/" for app in apps))
+                                               for rel in manifest["files"]),
+                "manifest_entries_compared": len(manifest["files"]), "manifest_sha256": before[1],
+                "rejected_outputs": rejected, "relative_external_outputs": ["Survivor PNG/trace/metrics", "Lab PNG/metrics"],
+                "signature_log": str(guard.log.relative_to(self.out)),
                 "launch_services_entry": entry(showcase).name, "launched": len(visits), "reaped": len(visits)}
 
 

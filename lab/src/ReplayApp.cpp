@@ -1,5 +1,5 @@
 #include "ReplayApp.h"
-#include "ShaderWorkspace.h"
+#include "tiny2d/OutputFiles.h"
 #include "ShaderAssets.h"
 #include "tiny2d_game/SnapshotCodec.h"
 #include <imgui.h>
@@ -11,7 +11,7 @@ namespace lab {
 using namespace tiny2d_game;
 
 ReplayApp::ReplayApp(const Options& options,NavigationSession& live) {
-    packaged_=insideApplication(tiny2dExecutablePath());
+    packaged_=tiny2d::insideApplication(tiny2dExecutablePath());
     initialTab_=options.timelineView;
     if (!options.snapshotIn.empty()) loadSnapshot(options.snapshotIn,live);
     if (!options.replayPath.empty()) loadReplay(options.replayPath);
@@ -101,7 +101,7 @@ void ReplayApp::loadSnapshot(const std::filesystem::path& path,NavigationSession
 }
 
 void ReplayApp::saveSnapshot(const std::filesystem::path& path,const NavigationSession& live) const {
-    if (packaged_) requireExternalOutput(path);
+    if (packaged_) tiny2d::requireExternalOutput(path);
     writeNewFile(path,encodeSnapshot(displayed(live).captureSnapshot()));
 }
 
@@ -124,7 +124,7 @@ void ReplayApp::loadBranch(const std::filesystem::path& path) {
 
 void ReplayApp::saveReplay(const std::filesystem::path& path) const {
     if (!tape()) throw std::logic_error("no recording to save");
-    if (packaged_) requireExternalOutput(path);
+    if (packaged_) tiny2d::requireExternalOutput(path);
     writeNewFile(path,encodeReplay(*tape()));
 }
 
@@ -212,7 +212,7 @@ bool ReplayApp::perform(ReplayAction action,NavigationSession& live) {
         case ReplayAction::LoadBranch: loadBranch(branchPath_.data()); return true;
         case ReplayAction::SaveBranch:
             if (const auto* child=timeline_->selectedBranch()) {
-                if (packaged_) requireExternalOutput(branchPath_.data());
+                if (packaged_) tiny2d::requireExternalOutput(branchPath_.data());
                 writeNewFile(branchPath_.data(),encodeBranch(*child));
                 diagnostic_="Saved branch to "+std::filesystem::absolute(branchPath_.data()).string();
             }

@@ -1,5 +1,6 @@
 #include "M5Test.h"
 #include "ShaderWorkspace.h"
+#include "tiny2d/OutputFiles.h"
 #include <fstream>
 #include <future>
 #include <unistd.h>
@@ -19,6 +20,44 @@ struct Scratch {
 };
 void put(const fs::path& path,const std::string& value) { std::ofstream(path)<<value; }
 std::string get(const fs::path& path) { std::ifstream file(path); return {std::istreambuf_iterator<char>(file),{}}; }
+
+void packagedOutputs(const fs::path& root,const fs::path& bundledShader) {
+    const auto dir=root/"外部 输出";
+    fs::create_directory(dir);
+    const auto first=dir/"capture.png",second=dir/"metrics.csv";
+    const auto original=get(bundledShader);
+    {
+        std::string capture=first.string(),metrics=second.string();
+        tiny2d::PackagedOutputs outputs;
+        outputs.prepare({&capture,&metrics});
+        put(capture,"new pixels");
+        put(metrics,"new metrics");
+        check(!fs::exists(first) && !fs::exists(second),"final paths stay absent until publish");
+        fs::create_hard_link(bundledShader,second);
+        rejects([&]{outputs.publish();});
+    }
+    check(!fs::exists(first) && fs::equivalent(second,bundledShader) && get(second)==original,
+          "late hard link survives without a partial capture or modified resource");
+    fs::remove(second);
+    check(fs::is_empty(dir),"failed command removes its private outputs");
+
+    fs::create_directory_symlink(dir,root/"another name");
+    {
+        std::string capture=first.string(),duplicate=(root/"another name"/first.filename()).string();
+        tiny2d::PackagedOutputs outputs;
+        rejects([&]{outputs.prepare({&capture,&duplicate});});
+    }
+    check(fs::is_empty(dir),"aliased duplicate outputs leave no files");
+    {
+        std::string capture=first.string(),metrics=second.string();
+        tiny2d::PackagedOutputs outputs;
+        outputs.prepare({&capture,&metrics});
+        put(capture,"complete PNG");
+        put(metrics,"complete CSV");
+        outputs.publish();
+    }
+    check(get(first)=="complete PNG" && get(second)=="complete CSV","fresh outputs published together");
+}
 }
 
 int main() {
@@ -48,8 +87,11 @@ int main() {
         fs::create_hard_link(defaults/"orbitals.frag",dest/"contours.frag");
         rejects([&]{prepareShaderWorkspace(dest,defaults);});
         check(get(defaults/"orbitals.frag")=="orbitals.frag","installed shader intact");
-        rejects([&]{requireExternalOutput(bundle/"Contents/Resources/new.snap");});
-        check(!insideApplication(tmp.root/"my application previews"),"ordinary data directory allowed");
+        rejects([&]{tiny2d::requireExternalOutput(bundle/"Contents/Resources/new.snap");});
+        rejects([&]{tiny2d::requireExternalOutput(tmp.root/"alias/../new.png");});
+        rejects([&]{tiny2d::requireExternalOutput(tmp.root/"Another.ApP/Resources/new.csv");});
+        check(!tiny2d::insideApplication(tmp.root/"my application previews"),"ordinary data directory allowed");
+        packagedOutputs(tmp.root,defaults/"orbitals.frag");
         std::cout<<"Concurrent external shader initialization, UTF-8 paths, no-clobber edits, deletions, "
                     "hardlink/symlink and signed resource exclusion passed\n";
     } catch (const std::exception& error) { std::cerr<<error.what()<<'\n'; return 1; }

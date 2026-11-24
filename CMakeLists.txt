@@ -19,6 +19,10 @@ endif()
 find_package(OpenGL REQUIRED)
 find_package(PNG REQUIRED) # Local libpng; brew install libpng. No configure-time downloads.
 
+add_library(tiny2d_files STATIC engine/src/Platform/OutputFiles.cpp engine/src/Platform/BoundedFile.cpp)
+target_include_directories(tiny2d_files PUBLIC engine/include)
+target_compile_features(tiny2d_files PUBLIC cxx_std_17)
+
 # 引擎静态库
 add_library(tiny2d_engine STATIC
     engine/src/Renderer/DebugDraw.cpp
@@ -48,7 +52,7 @@ target_include_directories(tiny2d_engine PUBLIC
 )
 
 target_compile_features(tiny2d_engine PUBLIC cxx_std_17)
-target_link_libraries(tiny2d_engine PRIVATE glfw OpenGL::GL PNG::PNG)
+target_link_libraries(tiny2d_engine PUBLIC tiny2d_files PRIVATE glfw OpenGL::GL PNG::PNG)
 
 set_target_properties(tiny2d_engine PROPERTIES
     CXX_EXTENSIONS OFF
@@ -572,6 +576,7 @@ endif()
 target_sources(tiny2d_game PRIVATE
     game/src/NavigationSnapshot.cpp game/src/SnapshotCodec.cpp
     game/src/SnapshotCompare.cpp game/src/SnapshotFile.cpp)
+target_link_libraries(tiny2d_game PUBLIC tiny2d_files)
 if(BUILD_TESTING)
     add_executable(tiny2d_m101_snapshot tests/m101_snapshot.cpp)
     add_executable(tiny2d_m101_snapshot_codec tests/m101_snapshot_codec.cpp)
@@ -711,8 +716,8 @@ target_sources(tiny2d_lab_core PRIVATE lab/src/ShaderWorkspace.cpp)
 target_link_libraries(tiny2d_lab_core PRIVATE tiny2d_game)
 if(BUILD_TESTING)
     add_executable(tiny2d_m112_shader_workspace tests/m112_shader_workspace.cpp lab/src/ShaderWorkspace.cpp)
-    target_link_libraries(tiny2d_m112_shader_workspace PRIVATE tiny2d_game)
-    target_include_directories(tiny2d_m112_shader_workspace PRIVATE lab/src)
+    target_link_libraries(tiny2d_m112_shader_workspace PRIVATE tiny2d_game tiny2d_files)
+    target_include_directories(tiny2d_m112_shader_workspace PRIVATE lab/src sandbox/src)
     add_test(NAME M112_ShaderWorkspaceCPU COMMAND tiny2d_m112_shader_workspace)
     set_tests_properties(M112_ShaderWorkspaceCPU PROPERTIES LABELS cpu)
     if(TINY2D_OPENGL_TESTS)
