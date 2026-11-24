@@ -4,6 +4,7 @@
 #include "tiny2d_game/NavigationSnapshot.h"
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <variant>
 #include <vector>
@@ -78,7 +79,7 @@ class ReplayPlayer {
 public:
     explicit ReplayPlayer(ReplayData data);
     const NavigationSession& session() const { return session_; }
-    const ReplayData& data() const { return data_; }
+    const ReplayData& data() const { return *data_; }
     PlaybackStatus status() const { return status_; }
     std::size_t verifiedCount() const { return cursor_; }
     const std::string& error() const { return error_; }
@@ -89,8 +90,11 @@ public:
     void restart();
 
 private:
+    friend class Timeline;
+    // Timeline alone resumes from a checkpoint bound to this verified tape.
+    ReplayPlayer(std::shared_ptr<const ReplayData> data, NavigationSession session, std::size_t cursor);
     void atBase();
-    ReplayData data_;
+    std::shared_ptr<const ReplayData> data_;
     NavigationSession session_;
     PlaybackStatus status_ = PlaybackStatus::Paused;
     std::size_t cursor_ = 0;
