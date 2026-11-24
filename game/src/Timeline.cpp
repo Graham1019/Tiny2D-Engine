@@ -95,10 +95,21 @@ TimelineSeek Timeline::seek(std::size_t target) {
     const auto& cp = *std::prev(after);
     if (cp.recordingId != recordingId_ || cp.expectedHash != expectedAt(cp.cursor))
         throw std::invalid_argument("checkpoint recording or expected hash mismatch at cursor " + std::to_string(cp.cursor));
-    auto state = NavigationSession::fromSnapshot(decodeSnapshot(cp.snapshotBytes));
-    const auto restored = state.captureSnapshot();
-    if (stateHash(restored) != cp.expectedHash || encodeSnapshot(restored) != cp.snapshotBytes)
-        throw std::invalid_argument("restored checkpoint content mismatch at cursor " + std::to_string(cp.cursor));
+    auto state = [&] {
+        try {
+            auto candidate = NavigationSession::fromSnapshot(decodeSnapshot(cp.snapshotBytes));
+            const auto restored = candidate.captureSnapshot();
+            const auto& tape = data();
+            const auto epoch = cp.cursor ? tape.events[cp.cursor-1].afterEpoch : tape.base.world.epoch;
+            const auto tick = cp.cursor ? tape.events[cp.cursor-1].afterTick : tape.base.world.tick;
+            if (restored.world.epoch != epoch || restored.world.tick != tick ||
+                stateHash(restored) != cp.expectedHash || encodeSnapshot(restored) != cp.snapshotBytes)
+                throw std::invalid_argument("restored checkpoint content mismatch");
+            return candidate;
+        } catch (const std::exception& error) {
+            throw std::invalid_argument("checkpoint cursor " + std::to_string(cp.cursor) + ": " + error.what());
+        }
+    }();
     ReplayPlayer candidate(view_.data_, std::move(state), cp.cursor);
     const auto resumed = Clock::now();
     while (candidate.verifiedCount() < target) {
