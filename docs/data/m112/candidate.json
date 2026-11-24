@@ -1,9 +1,9 @@
 {
   "candidate": "0.6.0-rc1",
-  "zip": "build/m112-dist/candidate-sj5chk_s/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip",
-  "zip_bytes": 2854170,
-  "sha256": "28eaf1170f22ff0974c2fb8ad8116653d0c5af6b4b6ed138f3e4832e962d6327",
-  "source_commit": "ae0b9ae1981c6e716f3dde646e36c812eecc1f55",
+  "zip": "build/m112-dist/candidate-m910alvb/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip",
+  "zip_bytes": 2867277,
+  "sha256": "6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5",
+  "source_commit": "4dff8ddabfd6aa902f0310e55b90eed1c11764c4",
   "files_or_links": 77,
   "mach_o_files": 7,
   "target": {
@@ -31,5 +31,5 @@
     "publication": "local candidate",
     "signature": "ad-hoc"
   },
-  "built_utc": "2026-11-24T06:36:15+00:00"
+  "built_utc": "2026-11-24T08:01:32+00:00"
 }

@@ -17,13 +17,13 @@ Build or obtain the candidate ZIP from its owner, verify its checksum, and extra
 From the directory containing the ZIP and its SHA256SUMS file, the following commands verify the archive and open its app pair from a fresh location.
 
 ```sh
-shasum -a 256 -c SHA256SUMS
-OUT=$(mktemp -d)
-ditto -x -k Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip "$OUT"
+shasum -a 256 -c SHA256SUMS &&
+OUT=$(mktemp -d) &&
+ditto -x -k Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip "$OUT" &&
 open "$OUT/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app"
 ```
 
-The candidate targets **arm64, macOS 26.0 or later**. The validation host ran macOS 26.7.3 on Apple M5 Pro. The ad-hoc signed candidate passed a native test from a separate extraction. It launched and reaped nine children covering all eight exhibits and one reopen. Notarization, third-party machines, other macOS versions and the primary Mac's Finder/quarantine behavior have separate acceptance entries. The owner retains the decision on publishing a Release and selecting a repository-wide source license. [Extracted candidate smoke results](docs/data/m112/smoke/smoke.json) · [Candidate notes, hashes and support boundaries](docs/releases/v0.6.0-rc1.md)
+The review-fixed candidate was built from `4dff8ddabfd6aa902f0310e55b90eed1c11764c4`. The ZIP is 2,867,277 bytes and its SHA-256 is `6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5`. It targets **arm64, macOS 26.0 or later**. The validation host ran macOS 26.7.3 on Apple M5 Pro. The ad-hoc signed candidate passed a native test from a separate extraction. It launched and reaped nine children covering all eight exhibits and one reopen. Both signatures and the complete manifest matched before and after 21 output-protection checks and the native tour. Use new external filenames for packaged captures, traces and metrics. Notarization, third-party machines, other macOS versions and the primary Mac's Finder/quarantine behavior have separate acceptance entries. The owner retains the decision on publishing a Release and selecting a repository-wide source license. [Extracted candidate smoke results](docs/data/m112/smoke/smoke.json) · [Candidate notes, hashes and support boundaries](docs/releases/v0.6.0-rc1.md)
 
 ### A short tour
 
@@ -31,7 +31,7 @@ The candidate targets **arm64, macOS 26.0 or later**. The validation host ran ma
 |---|---|
 | Neon Lighting | Move with WASD and fire with Space. Toggle Bloom (B), lighting (L), world-space normals (N) and shadows (O). Inspect the corresponding buffers. |
 | Particle Fields | Drag a force center through 8,192 particles. Pause with P and press period to follow a single simulation step. |
-| Shader Gallery | Open an effect in the Inspector, edit the file at the displayed path and press F5. A broken edit retains the last working program. The packaged Gallery keeps edits under `~/Library/Application Support/Tiny2D Showcase/Shader Gallery/`. |
+| Shader Gallery | Open an effect in the Inspector, edit the file at the displayed path and press F5. Each GLSL file can be up to 1 MiB. A rejected edit retains the last working program. The packaged Gallery keeps edits under `~/Library/Application Support/Tiny2D Showcase/Shader Gallery/`. |
 | Seeded Tilemap | Change the Seed in the World panel and walk the regenerated maze. Check corners and face contacts against the collision overlay. |
 | Enemy Navigation | Follow a committed enemy waypoint using the path overlay. At the upgrade prompt, choose an eligible card. |
 | Replay & Timeline | The bundled recording opens at the first offer, event 600. Step to 601 for Vitality or fork at 600 and choose Fleet. Both choices occur at the same simulation Tick. |
@@ -77,7 +77,7 @@ python3 scripts/package_showcase_macos.py build/m112-dist-builds build/m112-dist
 | Snapshot, Replay and Time Travel | Three cross-process runs matched full snapshots after 1,929 events. A 2,400-event default-map/16-enemy fixture had a 0.91 ms median seek with 120-event checkpoints and 69,005 B retained. [Replay experiment](docs/milestone-10-1.md) · [Seek distribution and memory](docs/milestone-10-2.md) |
 | Classic / Enhanced at Normal and Extreme | Separate game processes produced byte-identical combat traces across 383 and 338 simulation ticks respectively, including all 44 combat events. [Combat parity](docs/data/m111/combat-parity.csv) |
 
-The final candidate passed 89/89 native tests in both Debug and Release, 48/48 with GL tests disabled, and 18/18 CPU sanitizer tests. On the validation Mac the Lab reported zero valid GPU timestamp bits. The separate sprite benchmark recorded elapsed GPU queries. Replay determinism covers the same simulation rules and supported floating-point environment. [Final validation, performance methodology and raw data](docs/milestone-11-2.md)
+The candidate source passed 89/89 tests in both Debug and Release with OpenGL enabled, 48/48 with GL tests disabled, and 20/20 CPU sanitizer tests. On the validation Mac the Lab reported zero valid GPU timestamp bits. The separate sprite benchmark recorded elapsed GPU queries. Replay determinism covers the same simulation rules and supported floating-point environment. [Final validation, performance methodology and raw data](docs/milestone-11-2.md)
 
 ## Source guide
 

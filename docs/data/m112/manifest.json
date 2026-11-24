@@ -1,5 +1,5 @@
 {
-  "built_utc": "2026-11-24T06:36:15+00:00",
+  "built_utc": "2026-11-24T08:01:32+00:00",
   "candidate": "0.6.0-rc1",
   "distribution": {
     "notarization": "none",
@@ -35,11 +35,11 @@
     },
     "Tiny2D Showcase.app/Contents/MacOS/Tiny2DShowcase": {
       "bytes": 59600,
-      "sha256": "c77076e4da126f6baa7d4a9839127b8103f33a009e51b3e79cd7bce5a4c630d4"
+      "sha256": "b602f7842f92327840d55608270dec2b41dd4b595576b7d205f98490646a7f8f"
     },
     "Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab": {
-      "bytes": 1651936,
-      "sha256": "dd4c21ac6a16800df16611ab1d2eeefe7f66a2f8cc2721eb7d2f6d6d5a6437c5"
+      "bytes": 1654432,
+      "sha256": "5cb9e1e017dcae14d73b3169c5ed7928680d8bd4e214534f1f7a7c2d98aa895f"
     },
     "Tiny2D Showcase.app/Contents/Resources/assets/examples/fleet.branch": {
       "bytes": 4208,
@@ -219,7 +219,7 @@
     },
     "Tiny2D Showcase.app/Contents/_CodeSignature/CodeResources": {
       "bytes": 14553,
-      "sha256": "a6784ca31270f0a22f5b99e5d58dcab2d017297171a2d105fffe9f5c6b6c16b3"
+      "sha256": "02b01a4fa224dd794360dd59df039d029ba6d39104cb1e1ac10162ab16cbecec"
     },
     "Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib": {
       "bytes": 263520,
@@ -237,8 +237,8 @@
       "sha256": "3fa34ff96a59fcdade2d51ef584ab4d2fed0eeb2209ee4258923d2b60797f410"
     },
     "Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor": {
-      "bytes": 383968,
-      "sha256": "fdd2b3a481fb0b647d371b30ba55682be6e9ce4e37a2d76aa821a48fd019af40"
+      "bytes": 389056,
+      "sha256": "9c4e294870e0eddf19e6267c8b52188ae8b3126c7616010a86172092513172b5"
     },
     "Tiny2D Survivor.app/Contents/Resources/assets/shaders/blur.frag": {
       "bytes": 680,
@@ -417,7 +417,7 @@
       "rpaths": []
     }
   },
-  "source_commit": "ae0b9ae1981c6e716f3dde646e36c812eecc1f55",
+  "source_commit": "4dff8ddabfd6aa902f0310e55b90eed1c11764c4",
   "target": {
     "architecture": "arm64",
     "cmake_options": [

@@ -1,0 +1,59 @@
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m112-review/release/lab/tiny2d_lab --scene shaders --effect aurora --size 800x450 --frames 1320 --view final --bloom on --inspector off --gpu-timing on --metrics '/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/historical metrics 中文.csv' --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/aurora.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=59.417 p95=77.666 p99=100.083
+metric=fixed_update n=1200 p50=0 p95=0.042 p99=0.042
+metric=prepare n=1200 p50=1.084 p95=1.541 p99=2.708
+metric=draw_calls n=1200 p50=6 p95=6 p99=6
+metric=sprites n=1200 p50=129 p95=129 p99=129
+metric=uploaded_bytes n=1200 p50=18576 p95=18576 p99=18576
+metric=bright n=1200 p50=7.458 p95=10.416 p99=14.917
+metric=horizontal n=1200 p50=6.875 p95=11.5 p99=14.583
+metric=vertical n=1200 p50=6.625 p95=11.125 p99=13.75
+metric=output n=1200 p50=9.625 p95=14.5 p99=17.75
+metric=hud n=1200 p50=13.958 p95=21.25 p99=28.083
+metric=shader_gallery n=1200 p50=9.792 p95=14.375 p99=19.667
+status=ok scene=shaders frames=1320 ticks=1320 effect=aurora shader_version=1 timestamp_bits=0 valid_gpu_samples=0
+aurora historical PNG byte-identical 66f86e6254aa9ea7203e8a7e416220ae3314894829462664e6328599ac27b75e
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m112-review/release/lab/tiny2d_lab --scene shaders --effect orbitals --size 800x450 --frames 1320 --view final --bloom on --inspector off --gpu-timing on --metrics '/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/historical metrics 中文.csv' --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/orbitals.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=59.334 p95=77.166 p99=96.667
+metric=fixed_update n=1200 p50=0 p95=0.042 p99=0.042
+metric=prepare n=1200 p50=1.208 p95=1.75 p99=2.834
+metric=draw_calls n=1200 p50=6 p95=6 p99=6
+metric=sprites n=1200 p50=131 p95=131 p99=131
+metric=uploaded_bytes n=1200 p50=18864 p95=18864 p99=18864
+metric=bright n=1200 p50=7.416 p95=10.334 p99=14.958
+metric=horizontal n=1200 p50=6.917 p95=11.167 p99=13.459
+metric=vertical n=1200 p50=6.542 p95=8.333 p99=12.167
+metric=output n=1200 p50=9.417 p95=14.083 p99=17.334
+metric=hud n=1200 p50=14.042 p95=20.917 p99=28.334
+metric=shader_gallery n=1200 p50=10.083 p95=15.083 p99=18.5
+status=ok scene=shaders frames=1320 ticks=1320 effect=orbitals shader_version=1 timestamp_bits=0 valid_gpu_samples=0
+orbitals historical PNG byte-identical 31c28456432e93192b197ea336b3652da62edea9af708c4bd1e1c7118dee5b2a
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m112-review/release/lab/tiny2d_lab --scene shaders --effect contours --size 800x450 --frames 1320 --view final --bloom on --inspector off --gpu-timing on --metrics '/var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/historical metrics 中文.csv' --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tmp0hrw6znz/contours.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=58.834 p95=75.042 p99=89.292
+metric=fixed_update n=1200 p50=0 p95=0.042 p99=0.042
+metric=prepare n=1200 p50=1.209 p95=1.625 p99=3.542
+metric=draw_calls n=1200 p50=6 p95=6 p99=6
+metric=sprites n=1200 p50=143 p95=143 p99=143
+metric=uploaded_bytes n=1200 p50=20592 p95=20592 p99=20592
+metric=bright n=1200 p50=7.375 p95=10.791 p99=13.958
+metric=horizontal n=1200 p50=6.708 p95=9.958 p99=13.167
+metric=vertical n=1200 p50=6.375 p95=9.708 p99=12.708
+metric=output n=1200 p50=9.25 p95=14 p99=18.208
+metric=hud n=1200 p50=14.5 p95=21.5 p99=26.041
+metric=shader_gallery n=1200 p50=9.583 p95=14 p99=17.625
+status=ok scene=shaders frames=1320 ticks=1320 effect=contours shader_version=1 timestamp_bits=0 valid_gpu_samples=0
+contours historical PNG byte-identical 47709b6e66a5ce58cc3a8af7f13a40716cd8762bda87875622f4950435e4b165
+Developer Lab reused existing capture and metrics paths on all three runs.
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m112-review/release/lab/tiny2d_m82_gl
+GL=4.1 Metal - 90.5 renderer=Apple M5 Pro
+effect=aurora tick=90 hdr_peak=6.13672 max_display_error=0.00196046 bloom_changed_fraction=0.468153 tick_changed_fraction=0.483497
+effect=orbitals tick=90 hdr_peak=8.78906 max_display_error=0.00196018 bloom_changed_fraction=0.248302 tick_changed_fraction=0.0249341
+effect=contours tick=90 hdr_peak=3.73242 max_display_error=0.00196046 bloom_changed_fraction=0.949333 tick_changed_fraction=0.888036
+rollback=compile,link,inactive,type,array,sampler,attribute,output_location,file wrong_context=blocked foreign_draw_state=restored worker=blocked alternating_commits=6 exact_HDR_restored=yes bound_program_retired=yes
+shader_file_limit=1048576 exact_limit=accepted oversized_vertex=rejected writerless_fragment_fifo=rejected program_version_binding=preserved same_tick_HDR=identical startup_bundled_fallback=both edits_preserved=yes

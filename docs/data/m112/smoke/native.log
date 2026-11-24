@@ -1,156 +1,141 @@
-$ /usr/bin/ditto -x -k '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip' '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装'
+$ /usr/bin/ditto -x -k /Users/grahm/Desktop/Tiny2D-Engine/build/m112-dist/candidate-m910alvb/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装'
 
-$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app'
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: valid on disk
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: satisfies its Designated Requirement
+$ /usr/bin/open -n -W '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app' --args --frames 4 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/launch-services.png'
 
-$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app'
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: valid on disk
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: satisfies its Designated Requirement
-
-$ /usr/bin/open -n -W '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app' --args --frames 4 --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/launch-services.png'
-
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 8 --presentation classic --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/standalone-survivor.png'
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 8 --presentation classic --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/standalone-survivor.png'
 Survivor frames=8 difficulty=3 ticks=8 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.8667 draws_world=1 draws_ui=1 draws_total=2
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/Tiny2DShowcase' --showcase-tour neon,particles,shaders,map,navigation,replay,survivor-classic,survivor-enhanced,neon --child-frames 8 --showcase-output '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/Tour renders' --shader-workspace '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/Tour shader work' --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/launcher-return.png'
-showcase_launch exhibit=neon pid=13027
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/Tiny2DShowcase' --showcase-tour neon,particles,shaders,map,navigation,replay,survivor-classic,survivor-enhanced,neon --child-frames 8 --showcase-output '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/Tour renders' --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/Tour renders/Tour shader work' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/launcher-return.png'
+showcase_launch exhibit=neon pid=38439
 profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
 gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
 measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
 status=ok frames=8 ticks=8 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=10 draws=16 sprites=1047 upload_bytes=151160 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=on shadow_bytes=5760000 shadow_casters=4 shadow_skipped=3 shadow_vertex_bytes=168 batch_vertex_bytes=150768 rgba16f_attachment_bytes=66240000 attempt_passes=11 attempt_draws=16 attempt_complete=1
 showcase_exit exhibit=neon code=0 signal=0
-showcase_launch exhibit=particles pid=13034
+showcase_launch exhibit=particles pid=38442
 opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
 status=ok scene=particles frames=8 ticks=8 seed=71 script=demo capacity=8192 active=8192 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=262144 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
 showcase_exit exhibit=particles code=0 signal=0
-showcase_launch exhibit=shaders pid=13036
+showcase_launch exhibit=shaders pid=38443
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
-shader_workspace=/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/Tour shader work
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/.tiny2d-output-NjvAaA/output/Tour shader work
 status=ok scene=shaders frames=8 ticks=8 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
 showcase_exit exhibit=shaders code=0 signal=0
-showcase_launch exhibit=map pid=13051
+showcase_launch exhibit=map pid=38444
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 status=ok scene=map frames=8 ticks=8 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 timestamp_bits=-1 valid_gpu_samples=0
 showcase_exit exhibit=map code=0 signal=0
-showcase_launch exhibit=navigation pid=13052
+showcase_launch exhibit=navigation pid=38445
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 status=ok scene=navigation frames=8 ticks=8 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
 showcase_exit exhibit=navigation code=0 signal=0
-showcase_launch exhibit=replay pid=13053
+showcase_launch exhibit=replay pid=38446
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback paused" event_sequence=600 recorded_events=626 verified_events=600 state_hash=14af145719a79472
 status=ok scene=replay frames=8 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
 showcase_exit exhibit=replay code=0 signal=0
-showcase_launch exhibit=survivor-classic pid=13055
+showcase_launch exhibit=survivor-classic pid=38447
 Survivor frames=8 difficulty=3 ticks=8 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.8667 draws_world=1 draws_ui=1 draws_total=2
 showcase_exit exhibit=survivor-classic code=0 signal=0
-showcase_launch exhibit=survivor-enhanced pid=13056
+showcase_launch exhibit=survivor-enhanced pid=38448
 Survivor frames=8 difficulty=3 ticks=8 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.8667 draws_world=1 draws_ui=1 draws_total=6 presentation=enhanced bloom=1 hdr_bytes=26880000
 showcase_exit exhibit=survivor-enhanced code=0 signal=0
-showcase_launch exhibit=neon pid=13057
+showcase_launch exhibit=neon pid=38449
 profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
 gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
 measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
 status=ok frames=8 ticks=8 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=10 draws=16 sprites=1047 upload_bytes=151160 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=on shadow_bytes=5760000 shadow_casters=4 shadow_skipped=3 shadow_vertex_bytes=168 batch_vertex_bytes=150768 rgba16f_attachment_bytes=66240000 attempt_passes=11 attempt_draws=16 attempt_complete=1
 showcase_exit exhibit=neon code=0 signal=0
-status=ok scene=showcase launched=9 reaped=9 frames=168
+status=ok scene=showcase launched=9 reaped=9 frames=161
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 40 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/restored.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/restored.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/restored.csv' --snapshot-in '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/mid.snap' --nav-script walk --record '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/recorded suffix.replay'
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 40 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/restored.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/restored.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/restored.csv' --snapshot-in '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/mid.snap' --nav-script walk --record '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/recorded suffix.replay'
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Recording" event_sequence=40 recorded_events=40 verified_events=0 state_hash=1cdbd94f8f42180b
 status=ok scene=replay frames=40 ticks=77 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 40 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/replayed.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/replayed.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/replayed.csv' --replay '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/recorded suffix.replay'
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 40 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/replayed.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/replayed.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/replayed.csv' --replay '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/recorded suffix.replay'
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback finished" event_sequence=40 recorded_events=40 verified_events=40 state_hash=1cdbd94f8f42180b
 status=ok scene=replay frames=40 ticks=77 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/offer.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/offer.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/offer.csv' --replay '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --seek-event 600
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/offer.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/offer.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/offer.csv' --replay '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --seek-event 600
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback paused" event_sequence=600 recorded_events=626 verified_events=600 state_hash=14af145719a79472
 status=ok scene=replay frames=2 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/parent-vitality.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/parent-vitality.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/parent-vitality.csv' --replay '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --seek-event 601
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/parent-vitality.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/parent-vitality.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/parent-vitality.csv' --replay '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --seek-event 601
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback paused" event_sequence=601 recorded_events=626 verified_events=601 state_hash=52b6aaabf796d40d
 status=ok scene=replay frames=2 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=6 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Vitality timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/supplied-fleet.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/supplied-fleet.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/supplied-fleet.csv' --branch-in '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/fleet.branch' --seek-event 1
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 2 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/supplied-fleet.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/supplied-fleet.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/supplied-fleet.csv' --branch-in '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/fleet.branch' --seek-event 1
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback paused" event_sequence=1 recorded_events=26 verified_events=1 state_hash=f19dc3e4f2e1970c
 status=ok scene=replay frames=2 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Fleet timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 8 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/forked.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/forked.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/forked.csv' --replay '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --fork-at 600 --nav-choice last --nav-script walk --branch-id 112 --branch-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/新保存.branch'
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 8 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/forked.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/forked.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/forked.csv' --replay '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay' --fork-at 600 --nav-choice last --nav-script walk --branch-id 112 --branch-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/新保存.branch'
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 upgrade_choice=Fleet serial=1 epoch=1 tick=600
 replay_mode="Branch live" event_sequence=8 recorded_events=8 verified_events=0 state_hash=1eb254f33134a43d
 status=ok scene=replay frames=8 ticks=607 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Fleet timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 8 --inspector off --capture '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/fork-replay.png' --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/fork-replay.snap' --metrics '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/fork-replay.csv' --branch-in '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/新保存.branch'
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --size 384x216 --frames 8 --inspector off --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/fork-replay.png' --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/fork-replay.snap' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/fork-replay.csv' --branch-in '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/新保存.branch'
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
 replay_mode="Playback finished" event_sequence=8 recorded_events=8 verified_events=8 state_hash=1eb254f33134a43d
 status=ok scene=replay frames=8 ticks=607 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Fleet timestamp_bits=-1 valid_gpu_samples=0
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --frames 1 --snapshot-out '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/forbidden.snap'
-Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/forbidden.snap
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene replay --frames 1 --snapshot-out '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/forbidden.snap'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/assets/examples/forbidden.snap
 
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本' --shader-control-stdin on --frames 4 --size 384x216 --inspector off --gpu-timing off
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本' --shader-control-stdin on --frames 6 --size 384x216 --inspector off --gpu-timing off
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
-shader_workspace=/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本
 shader_control_ready version=1
-> draw /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-initial.png
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-initial.png
 shader_control frame=1 tick=0 version=1 result=ok
-> reload /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-rejected.png
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本/aurora.frag: compilation failed
+> reload /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-rejected.png
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag: compilation failed
 ERROR: 0:2: 'this' : Reserved word.
 ERROR: 0:2: 'this' : syntax error: syntax error
 
 shader_control frame=2 tick=0 version=1 result=failed
-> reload /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-recovered.png
-shader_control frame=3 tick=0 version=2 result=ok
-> draw /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-stable.png
-shader_control frame=4 tick=0 version=2 result=ok
-status=ok scene=shaders frames=4 ticks=0 effect=aurora shader_version=2 timestamp_bits=-1 valid_gpu_samples=0
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
+> reload /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-oversize.png
+input size 1048577 exceeds byte budget 1048576: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag
+shader_control frame=3 tick=0 version=1 result=failed
+> reload /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-fifo.png
+expected regular file: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag
+shader_control frame=4 tick=0 version=1 result=failed
+> reload /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-recovered.png
+shader_control frame=5 tick=0 version=2 result=ok
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-stable.png
+shader_control frame=6 tick=0 version=2 result=ok
+status=ok scene=shaders frames=6 ticks=0 effect=aurora shader_version=2 timestamp_bits=-1 valid_gpu_samples=0
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
-shader_workspace=/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本
 shader_control_ready version=1
-> draw /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-edited-restart.png
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-edited-restart.png
 shader_control frame=1 tick=0 version=1 result=ok
 status=ok scene=shaders frames=1 ticks=0 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
-$ '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
 opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
-shader_workspace=/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/External Shader 工作副本
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本
 shader_control_ready version=1
-> draw /private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/shader-startup-fallback.png
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-startup-fallback.png
+shader_control frame=1 tick=0 version=1 result=failed
+status=ok scene=shaders frames=1 ticks=0 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本
+shader_control_ready version=1
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-startup-oversize.png
+shader_control frame=1 tick=0 version=1 result=failed
+status=ok scene=shaders frames=1 ticks=0 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本
+shader_control_ready version=1
+> draw /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/shader-startup-fifo.png
 shader_control frame=1 tick=0 version=1 result=failed
 status=ok scene=shaders frames=1 ticks=0 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
 External edits preserved across runs. Failed reload retained same-tick pixels; repaired shader changed them.
-$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app'
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: valid on disk
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: satisfies its Designated Requirement
-
-$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app'
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
---prepared:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
---validated:/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: valid on disk
-/private/tmp/Tiny2D M112 独立验收 kp2128hy/Fresh install 新安装/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: satisfies its Designated Requirement

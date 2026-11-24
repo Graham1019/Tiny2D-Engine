@@ -1,10 +1,13 @@
-candidate_source_commit=ae0b9ae1981c6e716f3dde646e36c812eecc1f55
-git diff --name-only candidate_source_commit and all nonignored untracked paths: documentation and M11.2 evidence only
-zip_bytes=2854170 zip_sha256=28eaf1170f22ff0974c2fb8ad8116653d0c5af6b4b6ed138f3e4832e962d6327
-Embedded manifest matches repository copy byte-for-byte. Archive, local SHA256SUMS, candidate and smoke reports carry the same SHA-256.
-archive_entries_excluding_manifest=77 mach_o=7 manifest_hashed_files_and_link_targets=match
-packaged_resources=63 compared with git show <source>:<input> and working-tree bytes, including eight previews and three examples
-Independent extracted tree: verify_showcase_macos.py verified 77 files/links, 7 Mach-O binaries and two ad-hoc signatures.
-Native smoke: 9 children launched/reaped, 25 captures and 76 signed bundle entries compared. Four published native PNGs match their smoke hashes.
-CTest summaries matched (89/89, 89/89, 48/48, 18/18). 13 movie source hashes and the local MP4 SHA-256 matched.
-Reviewed M11.2 Markdown local link destinations and verified the ZIP and MP4 are ignored by Git.
+candidate_source_commit=4dff8ddabfd6aa902f0310e55b90eed1c11764c4
+zip_bytes=2867277 zip_sha256=6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5
+archive=build/m112-dist/candidate-m910alvb/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip
+Source archive exported using git archive, new Release arm64 build, deployment target macOS 26.0.
+Packager and a separate ZIP verifier matched 63 resource files against the source, 77 manifest entries, 7 Mach-O binaries and both ad-hoc signatures.
+Embedded, staged and tracked manifests matched. sha256=9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd
+Archive, SHA256SUMS, candidate.json and independently extracted smoke report matched.
+Signed checks before negative tests, after negative tests and after all positive tests: both apps valid on disk each time.
+21 rejected outputs, 2 sets of valid relative external outputs. 77 manifest entries, all path modes, link destinations and both signed trees (76 entries) preserved.
+Native smoke: nine children launched/reaped, 29 PNG hashes, 10 controlled shader frames, seven replay runs. Exported recordings and final snapshots checked.
+Full CTest Debug GL 89/89, Release GL 89/89, Release GL OFF 48/48, ASan+UBSan 20/20. All 20 M10/M11 tests passed in both GL suites.
+Only README, documentation and evidence differ from the candidate source commit. Release notes, README, ZIP and report agree on source revision, size and digest. Local documentation link destinations verified.
+Previous archive retained at build/m112-dist/candidate-sj5chk_s/Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip with SHA-256=28eaf1170f22ff0974c2fb8ad8116653d0c5af6b4b6ed138f3e4832e962d6327. Prior review evidence retained in commit f1f1cca9f3699f50509eb04f7463a821c12501c7 and build/m112-review/previous-evidence-f1f1cca/.

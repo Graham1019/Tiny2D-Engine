@@ -1,8 +1,38 @@
 {
   "archive": "Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip",
-  "zip_sha256": "28eaf1170f22ff0974c2fb8ad8116653d0c5af6b4b6ed138f3e4832e962d6327",
-  "source_commit": "ae0b9ae1981c6e716f3dde646e36c812eecc1f55",
+  "zip_sha256": "6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5",
+  "source_commit": "4dff8ddabfd6aa902f0310e55b90eed1c11764c4",
   "signed_entries_compared": 76,
+  "manifest_entries_compared": 77,
+  "manifest_sha256": "9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd",
+  "rejected_outputs": [
+    "Survivor --capture own-app",
+    "Survivor --capture sibling-app",
+    "Survivor --capture linked-directory",
+    "Survivor --capture hardlink",
+    "Survivor --trace own-app",
+    "Survivor --trace sibling-app",
+    "Survivor --trace linked-directory",
+    "Survivor --trace hardlink",
+    "Survivor --metrics own-app",
+    "Survivor --metrics sibling-app",
+    "Survivor --metrics linked-directory",
+    "Survivor --metrics hardlink",
+    "Lab --capture own-app",
+    "Lab --capture sibling-app",
+    "Lab --capture linked-directory",
+    "Lab --capture hardlink",
+    "Lab --metrics own-app",
+    "Lab --metrics sibling-app",
+    "Lab --metrics linked-directory",
+    "Lab --metrics hardlink",
+    "Lab --metrics hardlink after CLI preflight"
+  ],
+  "relative_external_outputs": [
+    "Survivor PNG/trace/metrics",
+    "Lab PNG/metrics"
+  ],
+  "signature_log": "output protection/signature-protection.log",
   "launch_services_entry": "Tiny2DShowcase",
   "launched": 9,
   "reaped": 9,
@@ -12,6 +42,7 @@
       "tick": 0,
       "version": 1,
       "result": "ok",
+      "diagnostics": [],
       "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
     },
     {
@@ -19,6 +50,32 @@
       "tick": 0,
       "version": 1,
       "result": "failed",
+      "diagnostics": [
+        "/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag: compilation failed",
+        "ERROR: 0:2: 'this' : Reserved word. ",
+        "ERROR: 0:2: 'this' : syntax error: syntax error",
+        ""
+      ],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-oversize.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [
+        "input size 1048577 exceeds byte budget 1048576: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag"
+      ],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-fifo.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [
+        "expected regular file: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag"
+      ],
       "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
     },
     {
@@ -26,6 +83,7 @@
       "tick": 0,
       "version": 2,
       "result": "ok",
+      "diagnostics": [],
       "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
     },
     {
@@ -33,6 +91,7 @@
       "tick": 0,
       "version": 2,
       "result": "ok",
+      "diagnostics": [],
       "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
     },
     {
@@ -40,6 +99,7 @@
       "tick": 0,
       "version": 1,
       "result": "ok",
+      "diagnostics": [],
       "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
     },
     {
@@ -47,6 +107,23 @@
       "tick": 0,
       "version": 1,
       "result": "failed",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-startup-oversize.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-startup-fifo.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [],
       "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
     }
   ],
@@ -284,6 +361,18 @@
       "height": 432,
       "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
     },
+    "shader-oversize.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-fifo.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
     "shader-recovered.png": {
       "bytes": 338617,
       "width": 768,
@@ -303,6 +392,18 @@
       "sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
     },
     "shader-startup-fallback.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-startup-oversize.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-startup-fifo.png": {
       "bytes": 225472,
       "width": 768,
       "height": 432,

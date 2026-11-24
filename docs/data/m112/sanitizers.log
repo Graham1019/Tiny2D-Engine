@@ -1,44 +1,48 @@
-Test project build/m112-san
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m112-san
+      Start  1: M3CPUTests
+ 1/20 Test  #1: M3CPUTests .......................   Passed    0.40 sec
       Start 24: M91_MapGenerationCPU
- 1/18 Test #24: M91_MapGenerationCPU .............   Passed    0.95 sec
+ 2/20 Test #24: M91_MapGenerationCPU .............   Passed    0.91 sec
       Start 25: M91_TileCollisionCPU
- 2/18 Test #25: M91_TileCollisionCPU .............   Passed    0.51 sec
+ 3/20 Test #25: M91_TileCollisionCPU .............   Passed    0.43 sec
       Start 26: M91_MapSessionCPU
- 3/18 Test #26: M91_MapSessionCPU ................   Passed    0.68 sec
+ 4/20 Test #26: M91_MapSessionCPU ................   Passed    0.42 sec
       Start 27: M92_NavigationCPU
- 4/18 Test #27: M92_NavigationCPU ................   Passed    1.22 sec
+ 5/20 Test #27: M92_NavigationCPU ................   Passed    0.94 sec
       Start 28: M92_EnemyMotionCPU
- 5/18 Test #28: M92_EnemyMotionCPU ...............   Passed    1.05 sec
+ 6/20 Test #28: M92_EnemyMotionCPU ...............   Passed    0.99 sec
       Start 29: M92_UpgradeCPU
- 6/18 Test #29: M92_UpgradeCPU ...................   Passed    0.43 sec
+ 7/20 Test #29: M92_UpgradeCPU ...................   Passed    0.39 sec
       Start 30: M92_NavigationSessionCPU
- 7/18 Test #30: M92_NavigationSessionCPU .........   Passed    1.59 sec
+ 8/20 Test #30: M92_NavigationSessionCPU .........   Passed    1.28 sec
+      Start 33: M72CPU
+ 9/20 Test #33: M72CPU ...........................   Passed    0.43 sec
       Start 38: M101_SnapshotCPU
- 8/18 Test #38: M101_SnapshotCPU .................   Passed    1.33 sec
+10/20 Test #38: M101_SnapshotCPU .................   Passed    1.27 sec
       Start 39: M101_SnapshotCodecCPU
- 9/18 Test #39: M101_SnapshotCodecCPU ............   Passed    0.67 sec
+11/20 Test #39: M101_SnapshotCodecCPU ............   Passed    0.55 sec
       Start 40: M101_EventDispatchCPU
-10/18 Test #40: M101_EventDispatchCPU ............   Passed    0.61 sec
+12/20 Test #40: M101_EventDispatchCPU ............   Passed    0.47 sec
       Start 41: M101_ReplayCPU
-11/18 Test #41: M101_ReplayCPU ...................   Passed    7.34 sec
+13/20 Test #41: M101_ReplayCPU ...................   Passed    7.55 sec
       Start 42: M101_ReplayCodecCPU
-12/18 Test #42: M101_ReplayCodecCPU ..............   Passed    2.39 sec
+14/20 Test #42: M101_ReplayCodecCPU ..............   Passed    2.50 sec
       Start 43: M101_CrossProcessCPU
-13/18 Test #43: M101_CrossProcessCPU .............   Passed    5.44 sec
+15/20 Test #43: M101_CrossProcessCPU .............   Passed    5.42 sec
       Start 44: M102_TimelineCPU
-14/18 Test #44: M102_TimelineCPU .................   Passed   30.98 sec
+16/20 Test #44: M102_TimelineCPU .................   Passed   31.28 sec
       Start 45: M102_BranchCPU
-15/18 Test #45: M102_BranchCPU ...................   Passed    3.82 sec
+17/20 Test #45: M102_BranchCPU ...................   Passed    3.77 sec
       Start 46: M111_ShowcaseProcessCPU
-16/18 Test #46: M111_ShowcaseProcessCPU ..........   Passed    0.69 sec
+18/20 Test #46: M111_ShowcaseProcessCPU ..........   Passed    0.70 sec
       Start 47: M111_SurvivorCPU
-17/18 Test #47: M111_SurvivorCPU .................   Passed    0.77 sec
+19/20 Test #47: M111_SurvivorCPU .................   Passed    0.77 sec
       Start 48: M112_ShaderWorkspaceCPU
-18/18 Test #48: M112_ShaderWorkspaceCPU ..........   Passed    0.45 sec
+20/20 Test #48: M112_ShaderWorkspaceCPU ..........   Passed    0.45 sec
 
-100% tests passed out of 18
+100% tests passed out of 20
 
 Label Time Summary:
-cpu    =  60.92 sec*proc (18 tests)
+cpu    =  60.53 sec*proc (19 tests)
 
 Total Test time (real) =  60.94 sec
