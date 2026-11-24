@@ -329,7 +329,10 @@ add_library(tiny2d_world STATIC
     engine/src/World/TileMap.cpp
     engine/src/World/MapGenerator.cpp
     engine/src/World/TileCollision.cpp
-    engine/src/World/MapSession.cpp)
+    engine/src/World/MapSession.cpp
+    engine/src/World/NavigationGrid.cpp
+    engine/src/World/DistanceField.cpp
+    engine/src/World/GridNavigator.cpp)
 target_include_directories(tiny2d_world PUBLIC engine/include)
 target_compile_features(tiny2d_world PUBLIC cxx_std_17)
 set_target_properties(tiny2d_world PROPERTIES CXX_EXTENSIONS OFF)
@@ -345,6 +348,13 @@ if(BUILD_TESTING)
     add_test(NAME M91_TileCollisionCPU COMMAND tiny2d_m91_collision)
     add_test(NAME M91_MapSessionCPU COMMAND tiny2d_m91_session)
     set_tests_properties(M91_TileCollisionCPU M91_MapSessionCPU PROPERTIES LABELS "cpu")
+    add_executable(tiny2d_m92_navigation tests/m92_navigation.cpp)
+    add_executable(tiny2d_m92_motion tests/m92_enemy_motion.cpp)
+    target_link_libraries(tiny2d_m92_navigation PRIVATE tiny2d_world)
+    target_link_libraries(tiny2d_m92_motion PRIVATE tiny2d_world)
+    add_test(NAME M92_NavigationCPU COMMAND tiny2d_m92_navigation)
+    add_test(NAME M92_EnemyMotionCPU COMMAND tiny2d_m92_motion)
+    set_tests_properties(M92_NavigationCPU M92_EnemyMotionCPU PROPERTIES LABELS "cpu")
 endif()
 
 # Particle simulation and its tests have no platform, renderer or ImGui link dependencies.
