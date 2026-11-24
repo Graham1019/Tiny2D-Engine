@@ -22,6 +22,10 @@ struct FrameInfo {
     bool mapWalk=false, navigation=false, replay=false;
     std::uint64_t revision=0, eventSequence=0, recordedEvents=0, verifiedEvents=0, simulationHash=0;
     const char* replayMode="";
+    bool timeline=false;
+    std::uint64_t branchId=0, checkpointCount=0, checkpointBytes=0;
+    std::optional<std::uint64_t> parentBranch, forkCursor;
+    const char* eventType="";
 };
 using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
 struct MapFrameSample {

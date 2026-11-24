@@ -44,7 +44,10 @@ struct Options {
     Display display;
     bool inspector = true, timing = true, previews = false;
     std::string capture, metrics;
-    std::string snapshotIn, snapshotOut, recordPath, replayPath;
+    std::string snapshotIn, snapshotOut, recordPath, replayPath, branchIn, branchOut;
+    std::optional<std::uint32_t> seekEvent, forkAt;
+    std::uint32_t branchId=0;
+    bool timelineView=false;
 };
 Options parse(int argc, const char* const* argv);
 

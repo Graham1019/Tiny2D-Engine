@@ -59,7 +59,7 @@ Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
     bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
-    bool seedOption=false, enemyOption=false, inputOption=false;
+    bool seedOption=false, enemyOption=false, inputOption=false, timelineOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -113,12 +113,24 @@ Options parse(int argc, const char* const* argv) {
         } else if (key == "--seed") {
             seedOption=true;
             o.seed=number(value,key);
-        } else if (key=="--snapshot-in" || key=="--snapshot-out" || key=="--record" || key=="--replay") {
+        } else if (key=="--snapshot-in" || key=="--snapshot-out" || key=="--record" || key=="--replay" || key=="--branch-in" || key=="--branch-out") {
             if (value.empty()) throw std::invalid_argument(std::string(key)+" requires a path");
             if (key=="--snapshot-in") o.snapshotIn=value;
             if (key=="--snapshot-out") o.snapshotOut=value;
             if (key=="--record") o.recordPath=value;
             if (key=="--replay") o.replayPath=value;
+            if (key=="--branch-in") o.branchIn=value;
+            if (key=="--branch-out") o.branchOut=value;
+        } else if (key=="--seek-event" || key=="--fork-at") {
+            timelineOption=true;
+            (key=="--seek-event"?o.seekEvent:o.forkAt)=number(value,key);
+        } else if (key=="--branch-id") {
+            timelineOption=true;
+            o.branchId=number(value,key);
+            if (!o.branchId) throw std::invalid_argument("--branch-id must be positive");
+        } else if (key=="--timeline-view" && (value=="on" || value=="off")) {
+            timelineOption=true;
+            o.timelineView=value=="on";
         }
         else if (key == "--frames") {
             o.frames = number(value,key);
@@ -175,21 +187,28 @@ Options parse(int argc, const char* const* argv) {
     const bool map=o.scene==LabScene::Map;
     const bool replay=o.scene==LabScene::Replay;
     const bool navigation=o.scene==LabScene::Navigation || replay;
-    const bool load=!o.snapshotIn.empty() || !o.replayPath.empty();
-    if (!replay && (load || !o.snapshotOut.empty() || !o.recordPath.empty()))
+    const bool history=!o.replayPath.empty() || !o.branchIn.empty();
+    const bool load=!o.snapshotIn.empty() || history;
+    if (!replay && (load || !o.snapshotOut.empty() || !o.recordPath.empty() || timelineOption || !o.branchOut.empty()))
         throw std::invalid_argument("snapshot and replay file options require --scene replay");
     if (load && (mapSize || seedOption || enemyOption))
         throw std::invalid_argument("file supplies seed, map parameters and enemy count");
-    if (!o.replayPath.empty() && (inputOption || !o.snapshotIn.empty() || !o.recordPath.empty()))
+    if (!o.replayPath.empty() && !o.branchIn.empty())
+        throw std::invalid_argument("choose one input history");
+    if ((o.seekEvent || o.forkAt) && (!history || (o.seekEvent && o.forkAt)))
+        throw std::invalid_argument("choose one seek or fork cursor with an input history");
+    if ((!o.branchOut.empty() || o.branchId) && !o.forkAt)
+        throw std::invalid_argument("--branch-out and --branch-id require --fork-at");
+    if (history && ((inputOption && !o.forkAt) || !o.snapshotIn.empty() || !o.recordPath.empty()))
         throw std::invalid_argument("--replay supplies the base snapshot and all input events");
     if (replay) {
-        for (const auto* output:{&o.snapshotOut,&o.recordPath}) {
+        for (const auto* output:{&o.snapshotOut,&o.recordPath,&o.branchOut}) {
             if (!output->empty() && std::filesystem::exists(std::filesystem::symlink_status(*output)))
                 throw std::invalid_argument("output already exists: "+*output);
         }
         // Capture and Metrics historically replace their targets. Never allow those
         // output paths to alias an input snapshot, replay, or another output.
-        const std::string* paths[]={&o.snapshotIn,&o.replayPath,&o.recordPath,&o.snapshotOut,&o.capture,&o.metrics};
+        const std::string* paths[]={&o.snapshotIn,&o.replayPath,&o.recordPath,&o.snapshotOut,&o.capture,&o.metrics,&o.branchIn,&o.branchOut};
         for (std::size_t i=0;i<std::size(paths);++i) {
             if (paths[i]->empty()) continue;
             for (std::size_t j=0;j<i;++j) {

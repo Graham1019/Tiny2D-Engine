@@ -43,12 +43,13 @@ void inspectPath(NavigationView& view,const NavigationSession& session) {
 
 void navigationPanel(ToolState& tools,MapEditor& edit,NavigationView& view,Commands& cmd,
                      const NavigationSession& session,bool finite,const History& history,
-                     const tiny2d::TimestampQueries* queries,const std::function<void()>& replayPanel,bool playback) {
+                     const tiny2d::TimestampQueries* queries,const std::function<void()>& replayPanel,bool playback,
+                     const std::function<void()>& timelinePanel,bool selectTimeline) {
     using namespace ImGui;
     const auto& world=session.world();
     const auto& upgrades=session.upgrades();
     const auto size=GetIO().DisplaySize;
-    const float width=std::min(350.f,std::max(1.f,size.x-12.f));
+    const float width=std::min(timelinePanel?404.f:350.f,std::max(1.f,size.x-12.f));
     SetNextWindowPos({std::max(0.f,size.x-width-8),8},ImGuiCond_FirstUseEver);
     SetNextWindowSize({width,std::min(replayPanel?444.f:340.f,std::max(32.f,size.y-16))},ImGuiCond_FirstUseEver);
     if (Begin(replayPanel?"Replay Inspector":"Navigation Inspector",nullptr,finite?ImGuiWindowFlags_NoInputs:0)) {
@@ -61,6 +62,10 @@ void navigationPanel(ToolState& tools,MapEditor& edit,NavigationView& view,Comma
         EndDisabled();
         if (BeginTabBar("Navigation panels")) {
             if (replayPanel && BeginTabItem("Replay")) { replayPanel(); EndTabItem(); }
+            if (timelinePanel && BeginTabItem("Timeline",nullptr,selectTimeline?ImGuiTabItemFlags_SetSelected:0)) {
+                timelinePanel();
+                EndTabItem();
+            }
             if (BeginTabItem("World")) {
                 Text("Seed %u    Epoch %llu",world.seed(),U64(world.epoch()));
                 Text("%d x %d tiles   %.0f units/tile",world.map().width(),world.map().height(),world.map().tileSize());
@@ -112,7 +117,7 @@ void navigationPanel(ToolState& tools,MapEditor& edit,NavigationView& view,Comma
     End();
 }
 
-std::optional<tiny2d_game::UpgradeChoice> navigationOffer(const NavigationSession& session,bool finite) {
+std::optional<tiny2d_game::UpgradeChoice> navigationOffer(const NavigationSession& session,bool finite,bool sidePanel) {
     using namespace ImGui;
     const auto& offer=session.upgrades().offer();
     if (!offer) return {};
@@ -120,7 +125,9 @@ std::optional<tiny2d_game::UpgradeChoice> navigationOffer(const NavigationSessio
     const float width=std::min(360.f,std::max(1.f,size.x-8));
     const float height=GetFrameHeightWithSpacing()*(offer->count+2)+2*GetStyle().WindowPadding.y;
     SetNextWindowSize({width,std::min(height,std::max(32.f,size.y-8))},ImGuiCond_Always);
-    SetNextWindowPos({size.x*.5f,size.y*.5f},ImGuiCond_Always,{.5f,.5f});
+    if (sidePanel && size.x>=780.f)
+        SetNextWindowPos({8.f,std::min(60.f,size.y*.15f)},ImGuiCond_Always);
+    else SetNextWindowPos({size.x*.5f,size.y*.5f},ImGuiCond_Always,{.5f,.5f});
     std::optional<UpgradeChoice> result;
     const auto flags=ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|
                      ImGuiWindowFlags_NoSavedSettings|(finite?ImGuiWindowFlags_NoInputs:0);
