@@ -701,3 +701,8 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_journey.py" "${CMAKE_BINARY_DIR}")
     set_tests_properties(M111_ShowcaseJourneyGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 240)
 endif()
+
+# Finder uses a small native launcher. The adjacent helper keeps the development CLI.
+add_executable(tiny2d_showcase_entry sandbox/src/ShowcaseMain.cpp)
+target_compile_features(tiny2d_showcase_entry PRIVATE cxx_std_17)
+set_target_properties(tiny2d_showcase_entry PROPERTIES OUTPUT_NAME Tiny2DShowcase CXX_EXTENSIONS OFF)
