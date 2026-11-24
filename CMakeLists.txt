@@ -695,3 +695,9 @@ if(BUILD_TESTING)
         set_tests_properties(M111_SurvivorGL M111_SurvivorCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
     endif()
 endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_test(NAME M111_ShowcaseJourneyGL COMMAND /usr/bin/env python3
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_journey.py" "${CMAKE_BINARY_DIR}")
+    set_tests_properties(M111_ShowcaseJourneyGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 240)
+endif()

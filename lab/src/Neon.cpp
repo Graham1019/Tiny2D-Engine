@@ -199,10 +199,12 @@ Options parse(int argc, const char* const* argv) {
             throw std::invalid_argument("--child-frames and --showcase-output require --showcase-tour");
         if (!o.showcaseTour.empty() && o.frames)
             throw std::invalid_argument("tour duration is controlled by --child-frames");
-        if (!o.capture.empty() && !o.metrics.empty() &&
-            std::filesystem::weakly_canonical(std::filesystem::absolute(o.capture))==
-            std::filesystem::weakly_canonical(std::filesystem::absolute(o.metrics)))
-            throw std::invalid_argument("capture and metrics paths must differ");
+        if (!o.capture.empty() && !o.metrics.empty()) {
+            namespace fs=std::filesystem;
+            if (fs::weakly_canonical(fs::absolute(o.capture))==fs::weakly_canonical(fs::absolute(o.metrics)) ||
+                (fs::exists(o.capture) && fs::exists(o.metrics) && fs::equivalent(o.capture,o.metrics)))
+                throw std::invalid_argument("capture and metrics paths must differ");
+        }
     }
     if (!o.capture.empty() && !o.frames && o.showcaseTour.empty()) throw std::invalid_argument("--capture requires --frames");
     o.inspector=inspector.value_or(!o.frames);

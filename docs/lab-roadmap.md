@@ -12,11 +12,11 @@
 | M9.1 | [种子地图、连通性、Tilemap 与地图碰撞](milestone-09-1.md) | PR #18 已合并，ChatGPT 源码 Review 与六项 Mac 主设备人工验收通过 |
 | M9.2 | [敌人导航与随机增益](milestone-09-2.md) | [PR #19](https://github.com/Graham1019/Tiny2D-Engine/pull/19) 已合并，ChatGPT 源码 Review 与七项 Mac 主设备人工验收通过 |
 | M10.1 | [完整快照、输入记录与确定性回放](milestone-10-1.md) | [PR #20](https://github.com/Graham1019/Tiny2D-Engine/pull/20) Open，等待源码 Review 与 Mac 主设备人工验收 |
-| M10.2 | [有界时间轴、事件定位与分支继续](milestone-10-2.md) | 依赖 PR #20，等待源码 Review 与 Mac 主设备人工验收 |
-| M11.1 | 统一展厅及 Survivor 精选整合 | 规划中 |
+| M10.2 | [有界时间轴、事件定位与分支继续](milestone-10-2.md) | [PR #21](https://github.com/Graham1019/Tiny2D-Engine/pull/21) 依赖 #20，等待源码 Review 与 Mac 主设备人工验收 |
+| M11.1 | [统一展厅及 Survivor 增强显示](milestone-11-1.md) | 依赖 PR #21，等待源码 Review 与 Mac 主设备人工验收 |
 | M11.2 | 候选包、真实演示与作品集 | 规划中 |
 
-每阶段经过实现、源码 Review、人工试玩、合并后再进入下一阶段。M7.2 的观察面板通过当前帧需求读取亮部与模糊结果。M7.1 的用户反馈涵盖已试玩环境中的交互与视觉，跨显示器和其他系统的覆盖仍以各阶段的实测记录为准。
+M7 至 M9.2 经逐阶段源码 Review 和主设备试玩后合并。M10.1 至 M11.2 采用依赖式 Open PR，前一阶段通过自动化验收后继续下一阶段，四阶段提交一起等待最终审查与主设备验收。M7.2 的观察面板通过当前帧需求读取亮部与模糊结果。M7.1 的用户反馈涵盖已试玩环境中的交互与视觉，跨显示器和其他系统的覆盖仍以各阶段的实测记录为准。
 
 ## 接口边界
 

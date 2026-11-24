@@ -33,11 +33,14 @@ struct ExhibitPreview {
     }
     void draw(float width,float height) const {
         if (!texture) { TextWrapped("%s",error.c_str()); return; }
-        const float source=float(texture->width())/texture->height(), target=width/height;
-        const auto u=std::min(1.f,target/source),v=std::min(1.f,source/target);
+        const float scale=std::min(width/texture->width(),height/texture->height());
+        const float imageW=texture->width()*scale,imageH=texture->height()*scale;
         const auto p=GetCursorScreenPos();
-        GetWindowDrawList()->AddImageRounded(ImTextureRef(ImTextureID(texture->nativeHandle())),p,
-            {p.x+width,p.y+height},{(1-u)*.5f,(1-v)*.5f},{(1+u)*.5f,(1+v)*.5f},IM_COL32_WHITE,6);
+        const ImVec2 image{p.x+(width-imageW)*.5f,p.y+(height-imageH)*.5f};
+        auto* draw=GetWindowDrawList();
+        draw->AddRectFilled(p,{p.x+width,p.y+height},IM_COL32(7,12,15,255),6);
+        draw->AddImageRounded(ImTextureRef(ImTextureID(texture->nativeHandle())),image,
+            {image.x+imageW,image.y+imageH},{0,0},{1,1},IM_COL32_WHITE,6);
         Dummy({width,height});
     }
 };
@@ -142,6 +145,8 @@ void runShowcase(const Options& options) {
     ToolState tools{true,false,false};
     ExhibitPreview preview;
     ExhibitProcess process;
+    Controls controls;
+    Display display;
     std::optional<ExhibitId> active;
     std::string status;
     std::size_t launched=0,reaped=0,frames=0;
@@ -181,6 +186,7 @@ void runShowcase(const Options& options) {
         if (autoOpen) selected=visits[launched];
         bool open=false;
         const bool focused=glfwGetWindowAttrib(window.nativeHandle(),GLFW_FOCUSED);
+        if (window.takeFocusLoss()) controls.poll({},false,0,display);
         const auto begin=Clock::now();
         const auto input=gui.buildPanel(tools,focused,[&](Commands&) {
             open=panel(selected,active,status,preview);
@@ -188,7 +194,8 @@ void runShowcase(const Options& options) {
         gui.finishPanelOnly();
         const auto buildUs=micros(begin);
         if (finite && !preview.error.empty()) throw std::runtime_error(preview.error);
-        if (!finite && focused && input.keys[Escape]) break;
+        if (returned) controls.replaceInstance(input.keys,false);
+        if (!finite && controls.poll(input.keys,focused,0,display,input.captureKeyboard,{},input.freshFocus).exit) break;
         window.clear(.047f,.065f,.077f);
         Stats stats;
         const auto submit=Clock::now();
