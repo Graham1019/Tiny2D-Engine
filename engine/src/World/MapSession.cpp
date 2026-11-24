@@ -4,6 +4,7 @@
 
 #include <array>
 #include <chrono>
+#include <cmath>
 #include <limits>
 #include <stdexcept>
 #include <utility>
@@ -37,15 +38,21 @@ void MapSession::fixedUpdate(MapInput input) {
 }
 
 void MapSession::step(MapInput input) {
+    step(input, moveSpeed);
+}
+
+void MapSession::step(MapInput input, float unitsPerSecond) {
     using Clock = std::chrono::steady_clock;
     using Microseconds = std::chrono::duration<double, std::micro>;
     const auto start = Clock::now();
     if (input.x < -1 || input.x > 1 || input.y < -1 || input.y > 1)
         throw std::invalid_argument("map input axes must be -1, 0, or 1");
+    if (!std::isfinite(unitsPerSecond) || unitsPerSecond < 0.f || unitsPerSecond > 100000.f)
+        throw std::invalid_argument("map movement speed must be within 0..100000");
     if (tick_ == std::numeric_limits<std::uint64_t>::max())
         throw std::overflow_error("map tick exhausted");
     constexpr double diagonalFactor = 0.70710678118654752440;
-    const double stride = moveSpeed * FixedTimestep::step *
+    const double stride = unitsPerSecond * FixedTimestep::step *
         (input.x != 0 && input.y != 0 ? diagonalFactor : 1.);
     const Vector2 delta{static_cast<float>(input.x*stride), static_cast<float>(input.y*stride)};
     const auto collisionStart = Clock::now();
