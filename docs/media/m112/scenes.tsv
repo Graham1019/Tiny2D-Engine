@@ -1,0 +1,13 @@
+8	docs/media/m111/showcase.png	Tiny2D Showcase	One native launcher opens eight exhibits on macOS.
+8	docs/media/m111/neon.png	Lighting and shadows	Point lights, normal-mapped surfaces and occlusion feed the HDR scene.
+8	docs/media/m111/particles.png	8,192 particles	One instanced draw submits the active particles. Each instance uses 32 bytes.
+6	docs/media/m111/reload-failed.png	Shader reload	The driver rejects the edited shader. The last working program continues drawing.
+6	docs/media/m111/reload-recovered.png	Recovery	A valid program replaces the old program at a frame boundary.
+8	docs/media/m111/map-71.png	Seeded world	Floor, walls, spawn and exit are reproducible from the seed and rules.
+8	docs/media/m111/navigation.png	Navigation	Enemies share a distance field and finish their committed movement segments.
+8	docs/media/m101/verified.png	Snapshot and replay	An independent process restores the exact positions, random streams and waypoints.
+8	docs/media/m102/seek-before-choice.png	Seek to the offer	Cursor 600 restores the three pending choices at the same simulation tick.
+8	docs/media/m102/child-fleet.png	Fork the history	The new branch chooses Fleet. The original history keeps Vitality.
+7	docs/media/m111/survivor-classic.png	Survivor Classic	At Tick 87 the original game records its first kill at normal difficulty.
+9	docs/media/m111/survivor-enhanced.png	Survivor Enhanced	The same combat event drives HDR and bloom. The HUD draws after tone mapping.
+8	docs/media/m111/showcase-return.png	Return to the showcase	Each exhibit releases its own context and exits before the next launch.

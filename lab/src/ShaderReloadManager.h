@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <utility>
 
 namespace lab {
 
@@ -18,7 +19,9 @@ struct ShaderReloadStatus {
 // reload and destroy on the main thread, with the same live GL context current.
 class ShaderReloadManager {
 public:
-    ShaderReloadManager(std::filesystem::path vertexPath, std::filesystem::path fragmentPath);
+    using Sources=std::pair<std::filesystem::path,std::filesystem::path>;
+    ShaderReloadManager(std::filesystem::path vertexPath,std::filesystem::path fragmentPath,
+                        std::optional<Sources> startupFallback={});
     ShaderReloadManager(const ShaderReloadManager&) = delete;
     ShaderReloadManager& operator=(const ShaderReloadManager&) = delete;
 

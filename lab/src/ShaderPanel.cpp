@@ -4,13 +4,14 @@
 
 namespace lab {
 void shaderPanel(ToolState& tools, Commands& commands, GalleryEffect& effect, const ShaderReloadManager& shader,
-                 std::uint64_t tick, bool paused, const Display& display, bool finite) {
+                 std::uint64_t tick, bool paused, const Display& display,bool finite,const std::string& workspaceError) {
     using namespace ImGui;
     const auto viewport=GetIO().DisplaySize;
     const float width=std::min(342.f,std::max(1.f,viewport.x-12.f));
     SetNextWindowPos({std::max(0.f,viewport.x-width-8),8},ImGuiCond_FirstUseEver);
     SetNextWindowSize({width,std::min(490.f,std::max(32.f,viewport.y-16))},ImGuiCond_FirstUseEver);
     if (Begin("Shader Gallery",nullptr,finite ? ImGuiWindowFlags_NoInputs : 0)) {
+        if (!workspaceError.empty()) TextWrapped("%s",workspaceError.c_str());
         const auto shown=effect;
         SetNextItemWidth(-76);
         if (BeginCombo("Exhibit",galleryName(effect))) {

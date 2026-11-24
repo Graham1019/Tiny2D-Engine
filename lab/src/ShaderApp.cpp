@@ -1,5 +1,7 @@
 #include "ShaderApp.h"
 #include "ShaderGallery.h"
+#include "ShaderWorkspace.h"
+#include "ShaderAssets.h"
 #include "ShaderPanel.h"
 #include "Capture.h"
 #include "Metrics.h"
@@ -8,9 +10,46 @@
 #include "tiny2d/Input.h"
 #include <cctype>
 #include <iostream>
+#include <cerrno>
+#include <poll.h>
+#include <unistd.h>
 
 namespace lab {
 namespace {
+struct ShaderFrameCommand { bool reload; std::filesystem::path output; };
+
+// Poll complete lines so the native window can process events while the editor
+// is changing an external file. Only this explicitly requested transport reads stdin.
+std::optional<ShaderFrameCommand> readCommand(std::string& pending) {
+    auto end=pending.find('\n');
+    if (end==std::string::npos) {
+        pollfd input{STDIN_FILENO,POLLIN,0};
+        const auto ready=::poll(&input,1,0);
+        if (!ready || (ready<0 && errno==EINTR)) return {};
+        if (ready<0) throw std::system_error(errno,std::generic_category(),"poll shader controls");
+        char buffer[1024];
+        const auto count=::read(STDIN_FILENO,buffer,sizeof(buffer));
+        if (count<0 && errno==EINTR) return {};
+        if (count<0) throw std::system_error(errno,std::generic_category(),"read shader controls");
+        if (!count) throw std::runtime_error("shader control input ended before the requested frames");
+        pending.append(buffer,std::size_t(count));
+        end=pending.find('\n');
+        if (end==std::string::npos && pending.size()<=4096) return {};
+    }
+    if (end>4096) throw std::invalid_argument("shader control line exceeds 4096 bytes");
+    auto line=pending.substr(0,end);
+    pending.erase(0,end+1);
+    if (!line.empty() && line.back()=='\r') line.pop_back();
+    const auto space=line.find(' ');
+    if (space==line.npos || space+1>=line.size() || line.find('\0')!=line.npos)
+        throw std::invalid_argument("shader command expects draw or reload followed by a new PNG path");
+    const auto verb=line.substr(0,space);
+    if (verb!="draw" && verb!="reload") throw std::invalid_argument("unknown shader control command");
+    ShaderFrameCommand cmd{verb=="reload",line.substr(space+1)};
+    requireExternalOutput(cmd.output);
+    return cmd;
+}
+
 void galleryHud(Picture& picture, const FrameInfo& info) {
     picture.hud.clear();
     if (!info.display.hud) return;
@@ -31,7 +70,21 @@ void runShaders(Options o) {
     if (finite) glfwSwapInterval(0);
     std::cout<<"opengl="<<glGetString(GL_VERSION)<<" renderer="<<glGetString(GL_RENDERER)<<'\n';
     Pipeline pipe;
-    ShaderGallery gallery;
+    std::filesystem::path workspace;
+    std::string workspaceError;
+    const auto defaults=assetPath("shaders/gallery/aurora.frag").parent_path();
+    if (!o.shaderWorkspace.empty()) workspace=prepareShaderWorkspace(o.shaderWorkspace,defaults);
+    else if (insideApplication(tiny2dExecutablePath())) {
+        try { workspace=prepareShaderWorkspace(defaultShaderWorkspace(),defaults); }
+        catch (const std::exception& error) {
+            workspaceError="Editable workspace unavailable. Bundled shaders active. "+std::string(error.what());
+            std::cerr<<workspaceError<<'\n';
+        }
+    }
+    ShaderGallery gallery(workspace);
+    if (!workspace.empty()) std::cout<<"shader_workspace="<<workspace.string()<<'\n';
+    std::string pending;
+    if (o.shaderControl) std::cout<<"shader_control_ready version="<<gallery.shader(o.effect).status().version<<std::endl;
     Controls controls;
     ToolState tools{o.inspector,o.timing,o.previews};
     std::unique_ptr<Inspector> gui;
@@ -85,6 +138,11 @@ void runShaders(Options o) {
         }
         if (suspended) { waited+=start-*suspended; suspended.reset(); }
 
+        std::optional<ShaderFrameCommand> frameCommand;
+        if (o.shaderControl) {
+            frameCommand=readCommand(pending);
+            if (!frameCommand) { glfwWaitEventsTimeout(.015); continue; }
+        }
         if (timer && timer->hasOutstanding()) {
             const auto poll=Clock::now();
             timer->poll([&](FrameInfo origin,tiny2d::QueryStatus status,const Timer::Durations& times) {
@@ -98,13 +156,15 @@ void runShaders(Options o) {
         if (gui) {
             const auto build=Clock::now();
             routed=gui->buildPanel(tools,focused,[&](Commands& cmd) {
-                shaderPanel(tools,cmd,o.effect,gallery.shader(o.effect),tick,controls.paused,o.display,finite);
+                shaderPanel(tools,cmd,o.effect,gallery.shader(o.effect),tick,controls.paused,o.display,finite,workspaceError);
             },true);
             cpu.build=micros(build);
         }
         const auto update=Clock::now();
-        if (finite) ++tick;
-        else {
+        bool reload=frameCommand && frameCommand->reload;
+        if (finite) {
+            if (!frameCommand) ++tick;
+        } else {
             for (auto key : {ToggleLighting,ToggleNormal,ToggleShadows,ShowLight,ShowNormal,ShowShadow})
                 routed.keys.reset(key);
             const auto action=controls.poll(routed.keys,focused,dt,o.display,routed.captureKeyboard,
@@ -112,10 +172,11 @@ void runShaders(Options o) {
             if (action.exit) break;
             if (action.reset) { ++epoch; tick=0; }
             tick+=action.steps;
-            if (action.pressed[ReloadShader]) {
-                auto& shader=gallery.shader(o.effect);
-                if (!shader.reload()) std::cerr<<shader.status().error<<'\n';
-            }
+            reload=action.pressed[ReloadShader];
+        }
+        if (reload) {
+            auto& shader=gallery.shader(o.effect);
+            if (!shader.reload()) std::cerr<<shader.status().error<<'\n';
         }
         cpu.update=micros(update);
         info.tick=tick; info.epoch=epoch; info.seed=o.seed;
@@ -156,6 +217,7 @@ void runShaders(Options o) {
             cpu.previewBytes=pipe.previewBytes();
             cpu.validGpuSamples=timer ? timer->counts.completed : 0;
             cpu.total=micros(start);
+            if (frameCommand) captureNew(frameCommand->output.string(),info.pixels);
             if (finite && info.id==*o.frames && !o.capture.empty()) capture(o.capture,info.pixels);
             window.swapBuffers();
             const char* error=nullptr;
@@ -173,6 +235,11 @@ void runShaders(Options o) {
         csv.record(cpu);
         if (finite && info.measurement) samples.push_back(cpu);
         ++frames;
+        if (frameCommand) {
+            const auto& state=gallery.shader(o.effect).status();
+            std::cout<<"shader_control frame="<<frames<<" tick="<<tick<<" version="<<state.version
+                     <<" result="<<(state.success?"ok":"failed")<<std::endl;
+        }
     }
     csv.close();
     report(samples);

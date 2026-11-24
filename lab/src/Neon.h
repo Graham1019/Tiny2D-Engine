@@ -50,6 +50,8 @@ struct Options {
     bool timelineView=false;
     std::string showcaseExhibit="neon",showcaseTour,showcaseOutput;
     std::uint32_t childFrames=40;
+    std::string shaderWorkspace;
+    bool shaderControl=false;
 };
 Options parse(int argc, const char* const* argv);
 

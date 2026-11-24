@@ -59,7 +59,7 @@ Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
     bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
-    bool showcaseOption=false,childFramesOption=false,explicitSize=false;
+    bool showcaseOption=false,childFramesOption=false,explicitSize=false,shaderControlOption=false;
     bool seedOption=false, enemyOption=false, inputOption=false, timelineOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
@@ -80,6 +80,11 @@ Options parse(int argc, const char* const* argv) {
             if (key=="--showcase-exhibit") o.showcaseExhibit=value;
             else if (key=="--showcase-tour") o.showcaseTour=value;
             else o.showcaseOutput=value;
+        } else if (key=="--shader-workspace" && !value.empty()) {
+            o.shaderWorkspace=value;
+        } else if (key=="--shader-control-stdin" && (value=="on" || value=="off")) {
+            shaderControlOption=true;
+            o.shaderControl=value=="on";
         } else if (key=="--child-frames") {
             showcaseOption=childFramesOption=true;
             o.childFrames=number(value,key);
@@ -191,6 +196,12 @@ Options parse(int argc, const char* const* argv) {
         } else if (key == "--capture" && !value.empty()) o.capture = value;
         else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
     }
+    if (!o.shaderWorkspace.empty() && o.scene!=LabScene::Shaders && o.scene!=LabScene::Showcase)
+        throw std::invalid_argument("--shader-workspace requires shaders or showcase");
+    if (shaderControlOption && o.scene!=LabScene::Shaders)
+        throw std::invalid_argument("--shader-control-stdin requires shaders");
+    if (o.shaderControl && (!o.frames || *o.frames>3600 || o.shaderWorkspace.empty() || !o.capture.empty()))
+        throw std::invalid_argument("shader stdin control requires 1..3600 frames, explicit workspace and per-command captures");
     if (showcaseOption && o.scene!=LabScene::Showcase)
         throw std::invalid_argument("showcase options require --scene showcase");
     if (o.scene==LabScene::Showcase) {
