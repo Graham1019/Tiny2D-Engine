@@ -1,0 +1,14 @@
+run,scene,seed,epoch,tick,width,height,view,lighting,shadows,particle_capacity,active_particles,active_instances,particle_draw_calls,gallery_effect,shader_version,map_width,map_height,nav_phase,nav_hp,nav_last_choice,nav_player_speed,event_sequence,recorded_events,verified_events,branch_id,parent_branch_id,fork_cursor,state_hash,checkpoint_count,replay_mode
+tour-1-neon,neon,71,1,24,1600,900,final,1,1,,,,,,,,,,,,,,,,,,,,,
+tour-2-particles,particles,71,1,24,1600,900,final,1,0,8192,8192,8192,1,,,,,,,,,,,,,,,,,
+tour-3-shaders,shaders,71,1,24,1600,900,final,0,0,,,,,aurora,1,,,,,,,,,,,,,,,
+tour-4-map,map,71,1,24,1600,900,final,0,0,,,,,,,64,40,,,,,,,,,,,,,
+tour-5-navigation,navigation,71,1,24,1600,900,final,0,0,,,,,,,64,40,Playing,5,,120,,,,,,,,,
+tour-6-replay,replay,71,1,600,1600,900,final,0,0,,,,,,,64,40,AwaitingUpgrade,5,,120,600,626,600,8663573909429406300,,,14af145719a79472,6,Playback paused
+tour-9-neon,neon,71,1,24,1600,900,final,1,1,,,,,,,,,,,,,,,,,,,,,
+map-71,map,71,1,24,1280,720,final,0,0,,,,,,,21,13,,,,,,,,,,,,,
+map-72,map,72,1,24,1280,720,final,0,0,,,,,,,21,13,,,,,,,,,,,,,
+navigation-offer,navigation,71,1,600,1280,720,final,0,0,,,,,,,64,40,AwaitingUpgrade,5,,120,,,,,,,,,
+timeline-offer,replay,71,1,600,1280,720,final,0,0,,,,,,,64,40,AwaitingUpgrade,5,,120,600,626,600,8663573909429406300,,,14af145719a79472,6,Playback paused
+timeline-forked,replay,71,1,602,1280,720,final,0,0,,,,,,,64,40,Playing,5,Fleet,132,3,3,0,111,8663573909429406300,600,cbace48703c392,6,Branch live
+timeline-child,replay,71,1,600,1280,720,final,0,0,,,,,,,64,40,Playing,5,Fleet,132,1,3,1,111,8663573909429406300,600,f19dc3e4f2e1970c,1,Playback paused

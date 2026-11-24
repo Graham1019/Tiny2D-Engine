@@ -27,7 +27,7 @@ struct Display {
     unsigned shadowLights = 4;
     void validate() const;
 };
-enum class LabScene { Neon, Particles, Shaders, Map, Navigation, Replay };
+enum class LabScene { Neon, Particles, Shaders, Map, Navigation, Replay, Showcase };
 struct Options {
     LabScene scene = LabScene::Neon;
     GalleryEffect effect = GalleryEffect::Aurora;
@@ -48,6 +48,8 @@ struct Options {
     std::optional<std::uint32_t> seekEvent, forkAt;
     std::uint32_t branchId=0;
     bool timelineView=false;
+    std::string showcaseExhibit="neon",showcaseTour,showcaseOutput;
+    std::uint32_t childFrames=40;
 };
 Options parse(int argc, const char* const* argv);
 

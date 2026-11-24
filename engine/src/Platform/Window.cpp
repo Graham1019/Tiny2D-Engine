@@ -24,6 +24,9 @@ std::runtime_error glfwError(const char* operation) {
 
 struct Window::Runtime {
     Runtime() {
+        // Bundle assets use the executable location. CLI files keep the caller's
+        // working directory, including after launching an App's Cocoa window.
+        glfwInitHint(GLFW_COCOA_CHDIR_RESOURCES, GLFW_FALSE);
         if (glfwInit() != GLFW_TRUE) {
             throw glfwError("GLFW initialization failed");
         }

@@ -70,11 +70,16 @@ set_target_properties(tiny2d_sandbox PROPERTIES
     CXX_EXTENSIONS OFF
 )
 
+set(survivor_post_shaders fullscreen.vert bright.frag blur.frag display.frag light.frag compose.frag)
+list(TRANSFORM survivor_post_shaders PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/lab/assets/shaders/")
+
 # Runs on every build so editing only a shader still refreshes runtime assets.
 add_custom_target(tiny2d_shader_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/sandbox/assets"
         "$<TARGET_FILE_DIR:tiny2d_sandbox>/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${survivor_post_shaders}
+        "$<TARGET_FILE_DIR:tiny2d_sandbox>/assets/shaders"
     VERBATIM
 )
 add_dependencies(tiny2d_sandbox tiny2d_shader_assets)
@@ -315,6 +320,8 @@ add_custom_target(tiny2d_app_resources ALL
     COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/licenses"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/sandbox/assets"
         "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${survivor_post_shaders}
+        "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/assets/shaders"
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/docs/third-party"
         "$<TARGET_BUNDLE_CONTENT_DIR:Tiny2DSurvivor>/Resources/licenses"
     VERBATIM)
@@ -394,7 +401,7 @@ target_compile_definitions(tiny2d_lab_imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_CUS
 target_compile_features(tiny2d_lab_imgui PRIVATE cxx_std_17)
 target_link_libraries(tiny2d_lab_imgui PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspector.cpp lab/src/ShaderPanel.cpp
-    lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
+    lab/src/ParticlePresentation.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
 add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp
@@ -405,8 +412,12 @@ set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BI
 add_custom_target(tiny2d_lab_assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/lab/assets"
         "$<TARGET_FILE_DIR:tiny2d_lab>/assets"
+    COMMAND ${CMAKE_COMMAND}
+        "-DSOURCE=${CMAKE_CURRENT_SOURCE_DIR}"
+        "-DDEST=$<TARGET_FILE_DIR:tiny2d_lab>/assets/showcase"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/StageShowcaseAssets.cmake"
     VERBATIM)
-add_dependencies(tiny2d_lab tiny2d_lab_assets)
+add_dependencies(tiny2d_lab tiny2d_lab_assets Tiny2DSurvivor)
 if(BUILD_TESTING)
     add_executable(tiny2d_m71_cpu tests/test_m71_cpu.cpp)
     target_link_libraries(tiny2d_m71_cpu PRIVATE tiny2d_lab_core)
@@ -641,4 +652,52 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_dependencies(tiny2d_m102_gl tiny2d_lab_assets)
     add_test(NAME M102_TimelineGL COMMAND tiny2d_m102_gl)
     set_tests_properties(M102_TimelineGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
+endif()
+
+target_sources(tiny2d_lab PRIVATE lab/src/ShowcaseApp.cpp lab/src/ShowcaseProcess.cpp)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m111_showcase_process tests/m111_showcase_process.cpp lab/src/ShowcaseProcess.cpp)
+    target_include_directories(tiny2d_m111_showcase_process PRIVATE lab/src)
+    target_compile_features(tiny2d_m111_showcase_process PRIVATE cxx_std_17)
+    add_test(NAME M111_ShowcaseProcessCPU COMMAND tiny2d_m111_showcase_process)
+    set_tests_properties(M111_ShowcaseProcessCPU PROPERTIES LABELS cpu)
+    if(TINY2D_OPENGL_TESTS)
+        add_test(NAME M111_ShowcaseGL COMMAND /usr/bin/env python3
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_showcase.py" "$<TARGET_FILE:tiny2d_lab>")
+        set_tests_properties(M111_ShowcaseGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
+    endif()
+endif()
+
+add_library(tiny2d_capture STATIC lab/src/Capture.cpp)
+target_include_directories(tiny2d_capture PUBLIC lab/src PRIVATE engine/src/Renderer)
+target_link_libraries(tiny2d_capture PRIVATE tiny2d_engine glfw PNG::PNG OpenGL::GL)
+target_link_libraries(tiny2d_inspector PRIVATE tiny2d_capture)
+
+add_library(tiny2d_survivor_view STATIC sandbox/src/EnhancedSurvivor.cpp sandbox/src/SurvivorTrace.cpp)
+target_include_directories(tiny2d_survivor_view PUBLIC sandbox/src PRIVATE engine/src/Renderer)
+target_link_libraries(tiny2d_survivor_view PUBLIC tiny2d_lab_core tiny2d_game PRIVATE tiny2d_capture glfw OpenGL::GL)
+target_link_libraries(tiny2d_sandbox PRIVATE tiny2d_survivor_view glfw)
+target_link_libraries(Tiny2DSurvivor PRIVATE tiny2d_survivor_view glfw)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m111_survivor_cpu tests/m111_survivor_cpu.cpp)
+    target_link_libraries(tiny2d_m111_survivor_cpu PRIVATE tiny2d_survivor_view)
+    add_test(NAME M111_SurvivorCPU COMMAND tiny2d_m111_survivor_cpu)
+    set_tests_properties(M111_SurvivorCPU PROPERTIES LABELS cpu)
+    if(TINY2D_OPENGL_TESTS)
+        add_executable(tiny2d_m111_survivor_gl tests/m111_survivor_gl.cpp)
+        target_include_directories(tiny2d_m111_survivor_gl PRIVATE engine/src/Renderer)
+        target_link_libraries(tiny2d_m111_survivor_gl PRIVATE tiny2d_survivor_view glfw OpenGL::GL)
+        set_target_properties(tiny2d_m111_survivor_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+        add_dependencies(tiny2d_m111_survivor_gl tiny2d_lab_assets)
+        add_test(NAME M111_SurvivorGL COMMAND tiny2d_m111_survivor_gl)
+        add_test(NAME M111_SurvivorCLI COMMAND /usr/bin/env python3
+            "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_survivor_finite.py" "$<TARGET_FILE:Tiny2DSurvivor>")
+        set_tests_properties(M111_SurvivorGL M111_SurvivorCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 180)
+    endif()
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_test(NAME M111_ShowcaseJourneyGL COMMAND /usr/bin/env python3
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_journey.py" "${CMAKE_BINARY_DIR}")
+    set_tests_properties(M111_ShowcaseJourneyGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 240)
 endif()

@@ -59,6 +59,7 @@ Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
     bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
+    bool showcaseOption=false,childFramesOption=false,explicitSize=false;
     bool seedOption=false, enemyOption=false, inputOption=false, timelineOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
@@ -71,7 +72,18 @@ Options parse(int argc, const char* const* argv) {
             else if (value=="map") o.scene=LabScene::Map;
             else if (value=="navigation") o.scene=LabScene::Navigation;
             else if (value=="replay") o.scene=LabScene::Replay;
-            else throw std::invalid_argument("--scene expects neon, particles, shaders, map, navigation or replay");
+            else if (value=="showcase") o.scene=LabScene::Showcase;
+            else throw std::invalid_argument("--scene expects neon, particles, shaders, map, navigation, replay or showcase");
+        } else if (key=="--showcase-exhibit" || key=="--showcase-tour" || key=="--showcase-output") {
+            if (value.empty()) throw std::invalid_argument(std::string(key)+" requires a value");
+            showcaseOption=true;
+            if (key=="--showcase-exhibit") o.showcaseExhibit=value;
+            else if (key=="--showcase-tour") o.showcaseTour=value;
+            else o.showcaseOutput=value;
+        } else if (key=="--child-frames") {
+            showcaseOption=childFramesOption=true;
+            o.childFrames=number(value,key);
+            if (!o.childFrames || o.childFrames>3600) throw std::invalid_argument("--child-frames expects 1..3600");
         } else if (key=="--map-script") {
             if (value!="none" && value!="walk") throw std::invalid_argument("--map-script expects none or walk");
             mapOption=true;
@@ -173,12 +185,28 @@ Options parse(int argc, const char* const* argv) {
                 o.mapWidth=int(w); o.mapHeight=int(h);
             } else {
                 if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
+                explicitSize=true;
                 o.width = int(w); o.height = int(h);
             }
         } else if (key == "--capture" && !value.empty()) o.capture = value;
         else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
     }
-    if (!o.capture.empty() && !o.frames) throw std::invalid_argument("--capture requires --frames");
+    if (showcaseOption && o.scene!=LabScene::Showcase)
+        throw std::invalid_argument("showcase options require --scene showcase");
+    if (o.scene==LabScene::Showcase) {
+        if (!explicitSize) { o.width=960; o.height=580; }
+        if (o.showcaseTour.empty() && (!o.showcaseOutput.empty() || childFramesOption))
+            throw std::invalid_argument("--child-frames and --showcase-output require --showcase-tour");
+        if (!o.showcaseTour.empty() && o.frames)
+            throw std::invalid_argument("tour duration is controlled by --child-frames");
+        if (!o.capture.empty() && !o.metrics.empty()) {
+            namespace fs=std::filesystem;
+            if (fs::weakly_canonical(fs::absolute(o.capture))==fs::weakly_canonical(fs::absolute(o.metrics)) ||
+                (fs::exists(o.capture) && fs::exists(o.metrics) && fs::equivalent(o.capture,o.metrics)))
+                throw std::invalid_argument("capture and metrics paths must differ");
+        }
+    }
+    if (!o.capture.empty() && !o.frames && o.showcaseTour.empty()) throw std::invalid_argument("--capture requires --frames");
     o.inspector=inspector.value_or(!o.frames);
     o.timing=timing.value_or(!o.frames);
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");

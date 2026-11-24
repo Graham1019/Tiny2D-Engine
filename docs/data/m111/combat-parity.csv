@@ -1,0 +1,3 @@
+difficulty,ticks,final_tick,hp,kills,phase,events,bytes,sha256_classic,sha256_enhanced,ProjectileHit,EnemyKilled,PlayerDamaged,legacy_draws,capture_tick
+3,383,383,0,5,GameOver,21,250294,ff1477b0a4d762c3eac88a44b7e8bb3511d312c8360bddecdf7e6db52b3fd1e1,ff1477b0a4d762c3eac88a44b7e8bb3511d312c8360bddecdf7e6db52b3fd1e1,11,5,5,3,87
+5,338,338,0,6,GameOver,23,228934,db1f1b24795c6edd749b31b67e074ecc510cd63f4dae3bb9f24ccae9c8557e11,db1f1b24795c6edd749b31b67e074ecc510cd63f4dae3bb9f24ccae9c8557e11,12,6,5,3,

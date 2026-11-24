@@ -42,6 +42,8 @@ public:
     int playerMaxHealth() const { return config_.playerMaxHealth; }
     bool playerAlive() const { return playerHealth()>0; }
     uint64_t tickCount() const { return tick_; }
+    struct Schedule { uint64_t nextFire, nextSpawn, vulnerableAt, nextEntitySerial; };
+    Schedule schedule() const { return {nextFire_, nextSpawn_, vulnerableAt_, serial_}; }
     double elapsedSimulationTime() const;
     uint64_t killCount() const { return kills_; }
     uint64_t enemyCount() const;

@@ -37,7 +37,8 @@ public:
                       const History&,const tiny2d::QueryCounts&,const std::string& capability,bool focused);
     // Uses the same ImGui frame, focus callbacks and release gates as the Neon panels.
     RoutedInput buildPanel(ToolState&,bool focused,const std::function<void(Commands&)>& panel,
-                           bool galleryKeys=false,bool overlay=false);
+                           bool galleryKeys=false,bool overlay=false,bool allowHide=true);
+    void finishPanelOnly();
     unsigned finish(ToolState&,Pipeline&,const FrameInfo&,const Picture&,const ShadowCasters& = {},
                     bool overlay=false);
     void submit(Stats&);
@@ -56,7 +57,7 @@ private:
     static void keyAfterFocus(GLFWwindow*,int key,int scancode,int action,int mods);
     char filter_[64]{};
     struct InputGates { bool mouse, keyboard; };
-    InputGates beginInput(ToolState&,bool focused,RoutedInput&);
+    InputGates beginInput(ToolState&,bool focused,RoutedInput&,bool allowHide=true);
     void routeInput(bool hasWidgets,bool focused,InputGates,RoutedInput&);
     void requireOwner() const;
     std::string renderer_,version_;
