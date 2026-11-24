@@ -1,0 +1,161 @@
+Archive Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip SHA-256 6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5; source 4dff8ddabfd6aa902f0310e55b90eed1c11764c4; fresh extraction /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装
+Checking both strict signatures and the complete distribution inventory before negative cases
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: satisfies its Designated Requirement
+
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: satisfies its Designated Requirement
+
+Verified 77 manifest entries; manifest SHA-256 9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-capture'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-capture
+
+PASS Survivor --capture own-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-capture'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-capture
+
+PASS Survivor --capture sibling-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 目录链接/rejected-Survivor-capture'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-capture
+
+PASS Survivor --capture linked-directory (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接'
+Tiny2D Survivor: output already exists: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接
+
+PASS Survivor --capture hardlink (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --trace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-trace'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-trace
+
+PASS Survivor --trace own-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --trace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-trace'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-trace
+
+PASS Survivor --trace sibling-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --trace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 目录链接/rejected-Survivor-trace'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-trace
+
+PASS Survivor --trace linked-directory (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --trace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接'
+Tiny2D Survivor: output already exists: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接
+
+PASS Survivor --trace hardlink (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-metrics'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-metrics
+
+PASS Survivor --metrics own-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-metrics'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Survivor-metrics
+
+PASS Survivor --metrics sibling-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 目录链接/rejected-Survivor-metrics'
+Tiny2D Survivor: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Survivor-metrics
+
+PASS Survivor --metrics linked-directory (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接'
+Tiny2D Survivor: output already exists: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Survivor 硬链接
+
+PASS Survivor --metrics hardlink (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-capture'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-capture
+
+PASS Lab --capture own-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Lab-capture'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Lab-capture
+
+PASS Lab --capture sibling-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 目录链接/rejected-Lab-capture'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-capture
+
+PASS Lab --capture linked-directory (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 硬链接'
+Tiny2D Lab: output already exists: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 硬链接
+
+PASS Lab --capture hardlink (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-metrics'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-metrics
+
+PASS Lab --metrics own-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Lab-metrics'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/rejected-Lab-metrics
+
+PASS Lab --metrics sibling-app (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 目录链接/rejected-Lab-metrics'
+Tiny2D Lab: choose an output path outside the application: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Resources/rejected-Lab-metrics
+
+PASS Lab --metrics linked-directory (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --capture '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 未完成输出' --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 硬链接'
+Tiny2D Lab: output already exists: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/Lab 硬链接
+
+PASS Lab --metrics hardlink (no partial output)
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --scene shaders --shader-workspace '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/late-link workspace' --shader-control-stdin on --frames 1 --size 384x216 --inspector off --gpu-timing off --metrics '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/late metrics.csv'
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+shader_workspace=/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/late-link workspace
+shader_control_ready version=1
+Added hard link to /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Resources/assets/shaders/triangle.vert at /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/late metrics.csv after shader_control_ready
+shader_control frame=1 tick=0 version=1 result=ok
+status=ok scene=shaders frames=1 ticks=0 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
+Tiny2D Lab: filesystem error: in create_hard_link: File exists ["/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/.tiny2d-output-9eqfYO/output"] ["/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/output protection/other cwd 无源码/late metrics.csv"]
+PASS Lab --metrics hardlink after CLI preflight (resource unchanged, staging cleaned)
+Checking both strict signatures and the complete distribution inventory after negative cases
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: satisfies its Designated Requirement
+
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: satisfies its Designated Requirement
+
+Verified 77 manifest entries; manifest SHA-256 9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor' --frames 2 --capture 'Survivor 外部输出/画面 capture.png' --metrics 'Survivor 外部输出/指标 metrics.csv' --trace 'Survivor 外部输出/轨迹 trace.csv'
+Survivor frames=2 difficulty=3 ticks=2 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.9667 draws_world=1 draws_ui=1 draws_total=2
+
+PASS Survivor relative external PNG and CSV output(s) in path with spaces and Chinese
+$ '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab' --frames 2 --capture 'Lab 外部输出/画面 capture.png' --metrics 'Lab 外部输出/指标 metrics.csv'
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=2 ticks=2 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=968 upload_bytes=139392 lighting=off active_lights=0 light_uniform_bytes=0 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=139392 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+
+PASS Lab relative external PNG and CSV output(s) in path with spaces and Chinese
+Checking both strict signatures and the complete distribution inventory after positive cases and exhibit tour
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Showcase.app: satisfies its Designated Requirement
+
+$ /usr/bin/codesign --verify --deep --strict --verbose=2 '/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app'
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--prepared:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib
+--validated:/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: valid on disk
+/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/隔离 安装/Tiny2D-Showcase-0.6.0-rc1-macos-arm64/Tiny2D Survivor.app: satisfies its Designated Requirement
+
+Verified 77 manifest entries; manifest SHA-256 9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd

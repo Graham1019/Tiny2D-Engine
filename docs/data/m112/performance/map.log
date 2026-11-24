@@ -1,0 +1,16 @@
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0
+warmup=120 samples=240 clock=steady units=us
+metric=frame n=240 p50=89.875 p95=121.833 p99=158.791
+metric=fixed_update n=240 p50=0.375 p95=1.75 p99=2.375
+metric=prepare n=240 p50=3.75 p95=6.875 p99=8.333
+metric=draw_calls n=240 p50=7 p95=7 p99=7
+metric=sprites n=240 p50=504 p95=510 p99=512
+metric=uploaded_bytes n=240 p50=72576 p95=73440 p99=73728
+metric=world n=240 p50=40.875 p95=59.833 p99=83
+metric=bright n=240 p50=7.708 p95=10.125 p99=12.334
+metric=horizontal n=240 p50=6.917 p95=8.792 p99=9.791
+metric=vertical n=240 p50=6.416 p95=7.583 p99=8.708
+metric=output n=240 p50=10.208 p95=14.083 p99=15.416
+metric=hud n=240 p50=8.625 p95=10.416 p99=11.417
+status=ok scene=map frames=360 ticks=360 seed=71 epoch=1 map_size=128x96 script=walk shortest_path=1250 timestamp_bits=0 valid_gpu_samples=0

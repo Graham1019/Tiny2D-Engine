@@ -1,5 +1,6 @@
 #pragma once
 
+#include "tiny2d/BoundedFile.h"
 #include "tiny2d_game/NavigationSnapshot.h"
 #include <filesystem>
 #include <string>
@@ -16,8 +17,8 @@ NavigationSnapshot decodeSnapshot(const std::vector<std::uint8_t>&);
 std::uint64_t stateHash(const NavigationSnapshot&);
 std::string firstDifference(const NavigationSnapshot&, const NavigationSnapshot&);
 
+using tiny2d::readBoundedFile;
 // Disk writes publish a verified sibling temporary file only to a new name.
-std::vector<std::uint8_t> readBoundedFile(const std::filesystem::path&, std::size_t limit);
 void writeNewFile(const std::filesystem::path&, const std::vector<std::uint8_t>&);
 
 } // namespace tiny2d_game

@@ -1,0 +1,14 @@
+M11.2 retained-data audit. All paths below are relative to the repository root or to docs/data/m112/performance as indicated.
+Recomputed from retained CSV bytes. The checked-in CSV summaries were only read. No benchmark, rendering or new timing collection was invoked.
+snapshot.csv.gz -> docs/data/m101/quantiles.py -> snapshot-quantiles.csv: 1920 raw rows, 16 groups, 288 metric rows, ['120'] samples/group. Byte-identical including p50/p95/p99. SHA-256 27bbc4256734c80846393958b2c0e3413038ba4cabd4d5c921f6af30f6f5ee5e.
+seek.csv.gz -> docs/data/m102/quantiles.py -> seek-quantiles.csv: 1280 raw rows, 10 groups, 90 metric rows, ['128'] samples/group. Byte-identical including p50/p95/p99. SHA-256 07c6589f134127c640bec8aa2c419b4bb6c9088dbe0627300544ade3ef9a8ef8.
+docs/data/m112/measure.py -> render-quantiles.csv: 27 metric rows byte-identical including p50/p95/p99. SHA-256 4512c08067f42dc4d36ce4cfd198ec8b82b18fce595e8a5d671816488c9fe30b.
+scripts/measure_showcase.py -> presentation/quantiles.csv: 20 metric rows byte-identical including p50/p95/p99. SHA-256 98326bd83a1ab69303c29f7af7e535ddc4c34924972f020177bc2a9277faee16.
+render input: lighting.csv.gz, particles.csv.gz, map.csv.gz, navigation.csv.gz. Each 360 submitted frames, select measured 121..360 (240), framebuffer 1600x900.
+All four scene logs report GL_TIMESTAMP counter bits = 0; their GPU quantiles have 0 completed measured rows and N/A. presentation/{showcase,classic,enhanced}.csv.gz: 180 frames each, 150 retained per metric (31..180).
+m4-gpu-frames.csv.gz: 3200 positive gpu_us samples across 80 trials; distinct frames 0..39 in every trial. All 80 p50 and p95 pairs match sprite-trials.csv under the M4 trial rank floor((n-1)*q).
+m4-frames.csv.gz: 3200 positive cpu_us samples across 80 trials; distinct frames 0..39 in every trial. All 80 p50 and p95 pairs match sprite-trials.csv under the M4 trial rank floor((n-1)*q).
+M4 GL_TIME_ELAPSED source: sandbox/src/benchmark.cpp; query result nanoseconds / 1000.0 = microseconds. Environment: sprite-environment.log; trials: sprite-trials.csv. CPU/pixel x 100/500/1000/5000 sprites x immediate/batch x 5 repeats x 40 frames.
+500 sprites, CPU-oriented workload, immediate: median-of-five trial GPU elapsed p50/p95 = 247.21/297.12 us (scripts/summarize_m4.py).
+500 sprites, CPU-oriented workload, batch: median-of-five trial GPU elapsed p50/p95 = 173.67/211.88 us (scripts/summarize_m4.py).
+M112 render-quantiles.csv pools the 200 CPU submission frames per 500-sprite renderer using nearest-rank; this is a separate statistic from the median of five trial percentiles. No GPU FPS derived.

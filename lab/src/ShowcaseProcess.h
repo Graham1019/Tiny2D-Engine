@@ -28,7 +28,8 @@ struct LaunchCommand {
 };
 // actualLab is the executable resolved by dyld; argv entries are never shell text.
 LaunchCommand exhibitCommand(ExhibitId,const std::filesystem::path& actualLab,
-    const std::filesystem::path& replayFile,unsigned childFrames=0,const std::filesystem::path& outputStem={});
+    const std::filesystem::path& replayFile,unsigned childFrames=0,const std::filesystem::path& outputStem={},
+    const std::filesystem::path& shaderWorkspace={});
 
 struct ChildExit { int code; int signal; };
 class ExhibitProcess {

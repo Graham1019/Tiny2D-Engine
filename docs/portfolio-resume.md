@@ -1,35 +1,47 @@
-# Portfolio / resume material
+# Tiny2D · 作品集与简历 / Portfolio and résumé
 
-## 中文项目经历（3 条）
+**一句话。** 用 C++17 与 macOS OpenGL 制作一个可玩的 2D 引擎作品集，让读者能从同一个展厅观察 HDR 渲染、重现一局确定性模拟，并从一次升级选择分出另一条时间线。
 
-- 使用 C++17 与 macOS OpenGL 构建轻量 2D 引擎，以 RAII 和 Context 校验管理 GPU 资源，实现 Scene 代际句柄、相机、纹理与异常安全渲染通道。
-- 实现动态 VBO / 静态 EBO 多纹理批渲染；500 Sprite 测试中 Draw Calls 从 500 降为 1（99.8%），M4.1 指定 CPU 提交场景 p50 为 489.92 对 90.67 µs，约 5.40× 比值，不代表整体 FPS。
-- 将 CPU GameSession 与事件驱动 VFX/HUD 解耦，支持 60 Hz 固定 Tick、五档难度、90 秒生存与重开；完成 Debug/Release 各 40 项、Headless 23 项回归及 macOS arm64 RC 打包。
+**One-line pitch.** A C++17 and OpenGL engine for macOS with eight native exhibits, including a playable arena survivor and a deterministic replay lab where the viewer can rewind an upgrade choice and play out a different outcome.
 
-## English project bullets (3)
+[实际展厅与操作](milestone-11-1.md) · [100 秒运行画面与演示顺序](media/m112/storyboard.md) · [架构与源码入口](project-architecture-overview.md)
 
-- Built a C++17 macOS OpenGL 2D engine with RAII GPU ownership, context validation, generation-based scene handles and exception-safe rendering passes.
-- Implemented multi-texture batching with a dynamic VBO and static EBO, reducing 500-sprite draw calls from 500 to 1; measured a 5.40× CPU submission p50 ratio in the specified M4.1 fixture, not a whole-game FPS gain.
-- Separated CPU gameplay from bounded event-driven VFX and HUD, delivered five difficulty levels with 60 Hz simulation, and validated 40 Debug, 40 Release and 23 headless tests before packaging an arm64 macOS release candidate.
+## 中文简历项目经历
 
-## 中文简介（约 80 字）
+**Tiny2D Engine / C++17 · OpenGL · GLSL · CMake · macOS arm64**
 
-Tiny2D 是基于 C++17 与 macOS OpenGL 的轻量二维引擎作品，实现批渲染、固定步长战斗、代际场景句柄和事件特效，以可玩生存 Demo、回归测试及独立 App 打包展示资源管理与工程交付能力。
+- 实现多纹理精灵批渲染、粒子实例化和 HDR 光照管线。在相同 500 精灵夹具中，批处理将提交从 500 Draw 降至 1 Draw；8,192 个活动粒子也可一次实例化绘制。[精灵基准](performance-m41.md) · [原生展厅记录](data/m111/frames.csv)
+- 实现从任意合法事件边界保存与事务式恢复导航世界，记录实际消费的输入和控制操作并逐事件验证。三个独立进程实验共核对 1,929 个事件后的完整状态，覆盖同 Tick 选卡与跨地图 Epoch。[格式、事务与实验](milestone-10-1.md)
+- 构建有界 Checkpoint、随机定位与可导出的独立分支，使同一份 Seed 71 记录可演示 Vitality 和 Fleet 两种未来；为 Classic/Enhanced Survivor 接入共享战斗模拟，以完整 CombatEvent 轨迹对照呈现改造前后的规则。[分支边界](data/m102/boundaries.csv) · [战斗轨迹](data/m111/combat-parity.csv)
 
-## English overview (119 words)
+## English project bullets
 
-Tiny2D is a lightweight C++17 engine and playable arena-survival demonstration for macOS.
-Its renderer combines explicit GPU ownership with multi-texture batching, while its CPU
-gameplay layer handles fixed-step simulation, collision and difficulty independently of
-OpenGL. Generation-based scene handles reject stale references, and render-pass guards
-recover pending work after exceptions. A bounded combat-event stream drives hit and death
-feedback without changing gameplay rules. The project includes reproducible performance
-fixtures, CPU and real-context GPU regression tests, and a standalone arm64 macOS app
-with bundled third-party libraries and documented asset resolution. The release candidate
-is ad-hoc signed for local validation, with public distribution, notarization and the
-repository source-license decision still subject to owner review. It demonstrates focused
-engine design rather than commercial engine completeness.
+**Tiny2D Engine / C++17 · OpenGL · GLSL · CMake · macOS arm64**
 
-Evidence: [M4.1 performance](performance-m41.md), [M6.3b.1](m63b1-review-fixes.md),
-[M6.3c tests and distribution](milestone-06-3c.md). Do not claim cross-platform,
-Metal/Vulkan implementation, multithreaded rendering or certified leak freedom.
+- Built multi-texture sprite batching, GPU-instanced particles and an HDR lighting pipeline. Reduced 500 immediate sprite draws to one batch in a controlled fixture and rendered 8,192 live particle instances in a single draw. [Sprite fixture](performance-m41.md) · [Native frame evidence](data/m111/frames.csv)
+- Implemented versioned binary snapshots, transactional restore and deterministic replay of consumed gameplay commands. Compared the complete canonical state after each of 1,929 events across three independent record/replay experiments. [Cross-process evidence](data/m101/cross-process/cross-process.log)
+- Added a bounded checkpoint index and independently playable branches. Forked the same recorded offer into two outcomes at Tick 600 while preserving the parent, and validated Classic and Enhanced Survivor against identical combat traces at two difficulties. [Branch boundaries](data/m102/boundaries.csv) · [Combat parity](data/m111/combat-parity.csv)
+
+## 图形渲染岗位 / Rendering focus
+
+**中文。** 将 2D 渲染器从立即式精灵绘制扩展到批处理、实例化粒子和浮点 HDR 帧图，提供可检查的 Albedo、Emission、法线、阴影和 Bloom 中间结果。通过真实 OpenGL 像素回读、状态恢复测试和同条件 CPU 提交分位数验证取舍。[渲染与性能](performance-m41.md) · [光照](milestone-07-3.md) · [硬阴影](milestone-07-4b.md) · [粒子](milestone-08-1.md)
+
+**English.** Extended an immediate-mode sprite path with batching and instancing, then built inspectable HDR, normal-mapped lighting, hard shadows and Bloom. Verified pass behavior with native GL pixel readback and measured CPU submission under controlled workloads. [Renderer](../engine/src/Renderer/BatchRenderer.cpp) · [HDR pipeline](../lab/src/Pipeline.cpp) · [Rendering evidence](milestone-11-1.md)
+
+## 引擎与工具岗位 / Engine and tools focus
+
+**中文。** 为固定步长模拟定义状态所有权与文件格式，按事件序列验证录制、按有界索引回到任意合法边界，并以独立子记录试验新的输入。将规则状态、渲染缓存和运行实例身份分开，使回放结果可以在无窗口进程中检查。[快照恢复](../game/src/NavigationSnapshot.cpp) · [验证与检查点](milestone-10-2.md)
+
+**English.** Designed the ownership and persistence boundaries of a fixed-step simulation. Implemented verified event replay, memory-bounded checkpoints and standalone branches, with headless tools to locate the first mismatching event and reproduce a saved state in a fresh process. [Dispatcher and player](../game/src/Replay.cpp) · [Timeline](../game/src/Timeline.cpp) · [Branches](../game/src/ReplayBranch.cpp)
+
+## 五项可复核结果 / Five reproducible results
+
+| 实验 / Fixture | 结果、条件与证据 / Result and evidence |
+|---|---|
+| 500 sprites / 8,192 particles | M4.1 的 500 精灵单纹理提交从 500 Draw 变成 1 Draw，CPU 提交 p50 从 489.92 µs 变成 90.67 µs。M11.1 粒子展品实际记录 8,192 个实例、1 个实例化 Draw。两种夹具分别计量。[M4.1](performance-m41.md) · [Showcase 帧记录](data/m111/frames.csv) |
+| Movement / pathfinding | 历史构建对照匹配 32,400 条地图运动记录、11,319 个导航边界。独立正向 BFS 在每个测试地图尺寸匹配 4,096/4,096 个反向场首步。[Movement](data/m111/map-regression.log) · [Navigation](data/m111/navigation-regression.log) · [BFS](data/m111/bfs.csv) |
+| Snapshot / Replay | 三组跨进程实验逐事件比较字段与规范字节，共 1,929 个事件。真实 OpenGL 固定显示条件下，对照截图与最终 Snapshot 文件分别逐字节一致。[CPU 实验](data/m101/cross-process/cross-process.log) · [原生 GL](data/m101/gl.log) |
+| Checkpoint / Seek | 单机 Release、64×40、16 敌人、2,400 事件、每策略 128 次随机 Seek。仅保留 Base 时 p50 11.48 ms；间隔 120 个事件时为 0.91 ms，共保留 21 项、69,005 B。[M10.2 原始样本](data/m102/seek.csv) · [各地图与分位数](data/m102/quantiles.csv) |
+| Showcase / Survivor | 八个真实展品及两次重开共拉起、回收 10 个子进程。普通/极端难度分别逐 Tick 核对 383/338 行记录，Classic 与 Enhanced 的 21/23 个有序战斗事件及完整状态轨迹逐字节一致。[端到端验收](milestone-11-1.md) · [每档轨迹摘要](data/m111/combat-parity.csv) |
+
+所有时间数字均附夹具与测量设备。当前可分发形态为需目标 Mac 验收的 arm64 本地候选包。演示范围、CPU/GPU 计时可用性、签名方式和手工检查见候选说明。[最终验证与数据](milestone-11-2.md) · [候选包与验收](releases/v0.6.0-rc1.md)

@@ -19,6 +19,10 @@ endif()
 find_package(OpenGL REQUIRED)
 find_package(PNG REQUIRED) # Local libpng; brew install libpng. No configure-time downloads.
 
+add_library(tiny2d_files STATIC engine/src/Platform/OutputFiles.cpp engine/src/Platform/BoundedFile.cpp)
+target_include_directories(tiny2d_files PUBLIC engine/include)
+target_compile_features(tiny2d_files PUBLIC cxx_std_17)
+
 # 引擎静态库
 add_library(tiny2d_engine STATIC
     engine/src/Renderer/DebugDraw.cpp
@@ -48,7 +52,7 @@ target_include_directories(tiny2d_engine PUBLIC
 )
 
 target_compile_features(tiny2d_engine PUBLIC cxx_std_17)
-target_link_libraries(tiny2d_engine PRIVATE glfw OpenGL::GL PNG::PNG)
+target_link_libraries(tiny2d_engine PUBLIC tiny2d_files PRIVATE glfw OpenGL::GL PNG::PNG)
 
 set_target_properties(tiny2d_engine PROPERTIES
     CXX_EXTENSIONS OFF
@@ -572,6 +576,7 @@ endif()
 target_sources(tiny2d_game PRIVATE
     game/src/NavigationSnapshot.cpp game/src/SnapshotCodec.cpp
     game/src/SnapshotCompare.cpp game/src/SnapshotFile.cpp)
+target_link_libraries(tiny2d_game PUBLIC tiny2d_files)
 if(BUILD_TESTING)
     add_executable(tiny2d_m101_snapshot tests/m101_snapshot.cpp)
     add_executable(tiny2d_m101_snapshot_codec tests/m101_snapshot_codec.cpp)
@@ -700,4 +705,24 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_test(NAME M111_ShowcaseJourneyGL COMMAND /usr/bin/env python3
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/m111_journey.py" "${CMAKE_BINARY_DIR}")
     set_tests_properties(M111_ShowcaseJourneyGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 240)
+endif()
+
+# Finder uses a small native launcher. The adjacent helper keeps the development CLI.
+add_executable(tiny2d_showcase_entry sandbox/src/ShowcaseMain.cpp)
+target_compile_features(tiny2d_showcase_entry PRIVATE cxx_std_17)
+set_target_properties(tiny2d_showcase_entry PROPERTIES OUTPUT_NAME Tiny2DShowcase CXX_EXTENSIONS OFF)
+
+target_sources(tiny2d_lab_core PRIVATE lab/src/ShaderWorkspace.cpp)
+target_link_libraries(tiny2d_lab_core PRIVATE tiny2d_game)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m112_shader_workspace tests/m112_shader_workspace.cpp lab/src/ShaderWorkspace.cpp)
+    target_link_libraries(tiny2d_m112_shader_workspace PRIVATE tiny2d_game tiny2d_files)
+    target_include_directories(tiny2d_m112_shader_workspace PRIVATE lab/src sandbox/src)
+    add_test(NAME M112_ShaderWorkspaceCPU COMMAND tiny2d_m112_shader_workspace)
+    set_tests_properties(M112_ShaderWorkspaceCPU PROPERTIES LABELS cpu)
+    if(TINY2D_OPENGL_TESTS)
+        add_test(NAME M112_ShaderWorkspaceGL COMMAND /usr/bin/env python3
+            "${CMAKE_CURRENT_SOURCE_DIR}/scripts/smoke_showcase_candidate.py" --shader-only "$<TARGET_FILE:tiny2d_lab>")
+        set_tests_properties(M112_ShaderWorkspaceGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 120)
+    endif()
 endif()

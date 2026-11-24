@@ -1,3 +1,26 @@
+# Development history
+
+The milestones below identify the implementation, its evidence and the engineering question that motivated the next change. The original M0–M6.3b README follows the timeline as a historical record. Its commands, version numbers and acceptance notes describe that period.
+
+| Stage | What changed | Evidence / engineering consequence |
+|---|---|---|
+| M0–M2 | Window, input, application loop, GL object wrappers and shader compilation. | Context lifetime and error diagnostics became explicit engine contracts. [M1](milestone-01.md) · [M2](milestone-02.md) |
+| M3–M4.1 | Orthographic sprites, textures, dynamic batch vertices, fixed indices and bounded texture slots. | The 500-sprite fixture went from 500 draw calls to one. Follow-up tests verified cross-slot pixels and state restoration. [M3](milestone-03.md) · [Batching](milestone-04.md) · [Measured comparisons](performance-m41.md) |
+| M5–M5.1 | Scene-scoped handles, entity generations, AABB/circle collisions, render queue, exception recovery. | CPU rules could use stable identities, and the GPU path could reject foreign resources. [M5](milestone-05.md) · [Review fixes](m51-review-fixes.md) |
+| M6.1–M6.3c | Arena combat, survival timer, difficulty, HUD, combat-event feedback, restart and the first standalone macOS RC. | A 60 Hz CPU GameSession drove a playable game and bounded VFX. [Combat](milestone-06-1.md) · [Loop](milestone-06-2.md) · [Difficulty](milestone-06-3a.md) · [VFX](milestone-06-3b.md) · [Original RC](milestone-06-3c.md) |
+| M7.1–M7.2 | Independent Neon Lab, floating-point render targets, Bloom and an Inspector for buffers, inputs and timing. | Native framebuffer captures expose intermediate and final images. [HDR](milestone-07-1.md) · [Inspection](milestone-07-2.md) |
+| M7.3–M7.4b | Dynamic lights, world-space normal materials and per-light hard shadows. | Tests distinguish direct light, occlusion, emissive surfaces and unaffected ambient light. [Lights](milestone-07-3.md) · [Normals](milestone-07-4a.md) · [Shadows](milestone-07-4b.md) |
+| M8.1–M8.2 | Deterministic CPU particle forces, instanced HDR drawing, three shader exhibits and transactional reload. | The actual GL suites measure instance uploads, compare shader pixels and exercise failed edits. [Particles](milestone-08-1.md) · [Shader Gallery](milestone-08-2.md) |
+| M9.1–M9.2 | Seeded connected tiles, AABB sweeps, reverse BFS, committed enemy paths and ordered upgrade offers. | The complete NavigationSession provided a bounded authoritative simulation for recording. [Maps](milestone-09-1.md) · [Navigation](milestone-09-2.md) |
+| M10.1 | Versioned binary state, validated direct restore, consumed input events and per-event replay checks. | Independent processes reproduced canonical snapshots and final GL pixels. [Snapshot & Replay](milestone-10-1.md) |
+| M10.2 | Budgeted checkpoint indexing, event-cursor seeks and independent branches. | A historical Tick 600 can lead to Vitality in the parent or Fleet in a child, with both histories independently verifiable. [Timeline & Time Travel](milestone-10-2.md) |
+| M11.1 | Native Showcase launcher, actual exhibit processes, Classic/Enhanced Survivor and a common rules trace. | Ten launches/exits across eight exhibits, plus byte-for-byte parity of combat state and events at two difficulties. [Showcase integration](milestone-11-1.md) |
+| M11.2 | Paired application candidate, offline assets/examples, native closure checks, a real demonstration reel and portfolio handoff. | Candidate acceptance, measurements and known hardware/distribution boundaries are recorded separately. [M11.2 validation](milestone-11-2.md) · [Candidate notes](releases/v0.6.0-rc1.md) |
+
+Current source and primary-Mac acceptance states are tracked in the [Lab roadmap](lab-roadmap.md). The supported execution environment and packaging commands are in the [current README](../README.md).
+
+---
+
 > Historical README snapshot before M6.3c; versions, commands and pending items below describe that period.
 
 # Tiny2D Engine

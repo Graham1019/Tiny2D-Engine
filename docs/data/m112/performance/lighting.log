@@ -1,0 +1,24 @@
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 capacity=304
+warmup=120 samples=240 clock=steady units=us
+metric=frame n=240 p50=379.708 p95=494.584 p99=535.75
+metric=fixed_update n=240 p50=0.084 p95=0.416 p99=2
+metric=prepare n=240 p50=9.375 p95=15.293 p99=21.209
+metric=light_extract n=240 p50=0.292 p95=1.958 p99=2.916
+metric=draw_calls n=240 p50=16 p95=16 p99=16
+metric=sprites n=240 p50=1061 p95=1067 p99=1069
+metric=uploaded_bytes n=240 p50=153176 p95=154040 p99=154328
+metric=bright n=240 p50=7.625 p95=13.417 p99=15.875
+metric=horizontal n=240 p50=7.375 p95=12.375 p99=16.125
+metric=vertical n=240 p50=6.709 p95=9.708 p99=14.458
+metric=output n=240 p50=12.167 p95=26.833 p99=34.666
+metric=hud n=240 p50=37.084 p95=50.417 p99=63.167
+metric=albedo n=240 p50=31.708 p95=52.708 p99=60.458
+metric=emission n=240 p50=12.917 p95=20.458 p99=25.75
+metric=light n=240 p50=8.084 p95=13.459 p99=16.208
+metric=scene_compose n=240 p50=8.792 p95=16.125 p99=19.75
+metric=normal n=240 p50=8.25 p95=15 p99=18.375
+metric=shadow_batch n=240 p50=199.5 p95=301.458 p99=355.334
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=N/A: GL_TIMESTAMP counter bits = 0
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=360 ticks=360 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=10 draws=16 sprites=1045 upload_bytes=150872 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=on shadow_bytes=5760000 shadow_casters=4 shadow_skipped=3 shadow_vertex_bytes=168 batch_vertex_bytes=150480 rgba16f_attachment_bytes=66240000 attempt_passes=11 attempt_draws=16 attempt_complete=1

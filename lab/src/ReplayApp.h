@@ -55,7 +55,7 @@ private:
     bool forward_=false, failed_=false, initialTab_=false, dragging_=false;
     std::uint64_t revision_=0;
     int seekTarget_=0;
-    bool recording_=false,watching_=false;
+    bool recording_=false,watching_=false,packaged_=false;
     std::string diagnostic_;
     std::array<char,1024> snapshotPath_{},replayPath_{},branchPath_{};
 };

@@ -1,4 +1,6 @@
 #include "ReplayApp.h"
+#include "tiny2d/OutputFiles.h"
+#include "ShaderAssets.h"
 #include "tiny2d_game/SnapshotCodec.h"
 #include <imgui.h>
 #include <iomanip>
@@ -9,6 +11,7 @@ namespace lab {
 using namespace tiny2d_game;
 
 ReplayApp::ReplayApp(const Options& options,NavigationSession& live) {
+    packaged_=tiny2d::insideApplication(tiny2dExecutablePath());
     initialTab_=options.timelineView;
     if (!options.snapshotIn.empty()) loadSnapshot(options.snapshotIn,live);
     if (!options.replayPath.empty()) loadReplay(options.replayPath);
@@ -98,6 +101,7 @@ void ReplayApp::loadSnapshot(const std::filesystem::path& path,NavigationSession
 }
 
 void ReplayApp::saveSnapshot(const std::filesystem::path& path,const NavigationSession& live) const {
+    if (packaged_) tiny2d::requireExternalOutput(path);
     writeNewFile(path,encodeSnapshot(displayed(live).captureSnapshot()));
 }
 
@@ -120,6 +124,7 @@ void ReplayApp::loadBranch(const std::filesystem::path& path) {
 
 void ReplayApp::saveReplay(const std::filesystem::path& path) const {
     if (!tape()) throw std::logic_error("no recording to save");
+    if (packaged_) tiny2d::requireExternalOutput(path);
     writeNewFile(path,encodeReplay(*tape()));
 }
 
@@ -178,12 +183,12 @@ bool ReplayApp::perform(ReplayAction action,NavigationSession& live) {
         case ReplayAction::LoadSnapshot: loadSnapshot(snapshotPath_.data(),live); return true;
         case ReplayAction::SaveSnapshot:
             saveSnapshot(snapshotPath_.data(),live);
-            diagnostic_="Snapshot saved.";
+            diagnostic_="Saved snapshot to "+std::filesystem::absolute(snapshotPath_.data()).string();
             break;
         case ReplayAction::LoadReplay: loadReplay(replayPath_.data()); return true;
         case ReplayAction::SaveReplay:
             saveReplay(replayPath_.data());
-            diagnostic_="Replay saved.";
+            diagnostic_="Saved replay to "+std::filesystem::absolute(replayPath_.data()).string();
             break;
         case ReplayAction::PlayFromBase: startPlayback(true); return true;
         case ReplayAction::Restart: startPlayback(false); return true;
@@ -207,8 +212,9 @@ bool ReplayApp::perform(ReplayAction action,NavigationSession& live) {
         case ReplayAction::LoadBranch: loadBranch(branchPath_.data()); return true;
         case ReplayAction::SaveBranch:
             if (const auto* child=timeline_->selectedBranch()) {
+                if (packaged_) tiny2d::requireExternalOutput(branchPath_.data());
                 writeNewFile(branchPath_.data(),encodeBranch(*child));
-                diagnostic_="Branch saved.";
+                diagnostic_="Saved branch to "+std::filesystem::absolute(branchPath_.data()).string();
             }
             break;
         case ReplayAction::ReturnLive: watching_=false; break;

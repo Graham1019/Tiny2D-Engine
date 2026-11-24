@@ -217,7 +217,7 @@ void runShowcase(const Options& options) {
                 fs::path stem;
                 if (!output.empty()) stem=output/(std::to_string(launched+1)+"-"+entry.key);
                 const auto demo=selected==ExhibitId::Replay?assetPath("showcase/timeline.replay"):fs::path{};
-                const auto command=exhibitCommand(selected,actualLab,demo,tour?options.childFrames:0,stem);
+                const auto command=exhibitCommand(selected,actualLab,demo,tour?options.childFrames:0,stem,options.shaderWorkspace);
                 const auto pid=process.start(command);
                 active=selected;
                 ++launched;

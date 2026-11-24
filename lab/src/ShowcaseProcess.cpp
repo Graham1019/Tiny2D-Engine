@@ -56,7 +56,7 @@ std::vector<ExhibitId> tourVisits(std::string_view list) {
 }
 
 LaunchCommand exhibitCommand(ExhibitId id,const fs::path& actualLab,const fs::path& replayFile,
-                             unsigned childFrames,const fs::path& outputStem) {
+                             unsigned childFrames,const fs::path& outputStem,const fs::path& shaderWorkspace) {
     LaunchCommand launch{actualLab,{}};
     auto& args=launch.arguments;
     const bool survivor=id==ExhibitId::Classic || id==ExhibitId::Enhanced;
@@ -68,7 +68,10 @@ LaunchCommand exhibitCommand(ExhibitId id,const fs::path& actualLab,const fs::pa
         args={"--scene","particles","--particle-capacity","8192","--particle-steady","8192"};
         if (childFrames) args.insert(args.end(),{"--particle-script","demo"});
         break;
-    case ExhibitId::Shaders: args={"--scene","shaders","--effect","aurora"}; break;
+    case ExhibitId::Shaders:
+        args={"--scene","shaders","--effect","aurora"};
+        if (!shaderWorkspace.empty()) args.insert(args.end(),{"--shader-workspace",fs::absolute(shaderWorkspace).string()});
+        break;
     case ExhibitId::Map:
         args={"--scene","map"};
         if (childFrames) args.insert(args.end(),{"--map-script","walk"});

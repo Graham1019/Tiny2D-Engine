@@ -64,15 +64,27 @@ void validateGalleryProgram(GLuint program) {
 }
 
 ShaderReloadManager::ShaderReloadManager(std::filesystem::path vertexPath,
-                                         std::filesystem::path fragmentPath)
+                                         std::filesystem::path fragmentPath,std::optional<Sources> startupFallback)
     : vertexPath_(std::move(vertexPath)), fragmentPath_(std::move(fragmentPath)) {
     tiny2d::detail::requireContext("ShaderReloadManager initialization");
     context_ = glfwGetCurrentContext();
     if (!vertexPath_.is_absolute() || !fragmentPath_.is_absolute())
         throw std::invalid_argument("Gallery shader paths must be absolute");
-    if (!reload())
-        throw std::runtime_error("Gallery initialization [" + vertexPath_.string() + " + " +
-                                 fragmentPath_.string() + "]: " + status_.error);
+    if (reload()) return;
+    const auto editError=status_.error;
+    if (startupFallback) {
+        vertexPath_.swap(startupFallback->first);
+        fragmentPath_.swap(startupFallback->second);
+        const bool loaded=reload();
+        vertexPath_.swap(startupFallback->first);
+        fragmentPath_.swap(startupFallback->second);
+        if (loaded) {
+            status_.success=false;
+            status_.error="External shader rejected; bundled version active. "+editError;
+            return;
+        }
+    }
+    throw std::runtime_error("Gallery initialization ["+vertexPath_.string()+" + "+fragmentPath_.string()+"]: "+editError);
 }
 
 bool ShaderReloadManager::reload() {

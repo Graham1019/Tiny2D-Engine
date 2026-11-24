@@ -1,0 +1,10 @@
+5x5 seeds=32 distinct=1 mean cell difference vs seed 0=0.00%
+6x7 seeds=32 distinct=3 mean cell difference vs seed 0=0.38%
+17x25 seeds=32 distinct=32 mean cell difference vs seed 0=21.15%
+64x40 seeds=32 distinct=32 mean cell difference vs seed 0=24.82%
+96x64 seeds=32 distinct=32 mean cell difference vs seed 0=24.34%
+128x96 seeds=32 distinct=32 mean cell difference vs seed 0=24.15%
+seed 71 default tile FNV-1a=de25ba54c55fec8b
+14 golden choices, 4 caps, 3/2/1/0 eligible choices and atomic rejection passed
+verified=666 final epoch=1 tick=702 seed=71 phase=GameOver manual_paused=0 hp=0/6 enemies=16 waypoints=15 offer=0 last_choice=Vitality hash=a83ea20adfe7606c
+256-enemy walking shared/forward BFS {('64', '40'): [4096, 4096], ('128', '96'): [4096, 4096]}

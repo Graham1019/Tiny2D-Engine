@@ -1,9 +1,9 @@
 #include "SurvivorDemo.h"
 #include "ShaderAssets.h"
+#include "tiny2d/OutputFiles.h"
 
 #include <algorithm>
 #include <charconv>
-#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -35,18 +35,8 @@ SurvivorOptions parse(int argc,char** argv) {
         else throw std::invalid_argument("unsupported argument "+key+" "+value);
     }
     if (bloomSet && !o.enhanced) throw std::invalid_argument("--bloom requires enhanced presentation");
-    std::vector<std::filesystem::path> paths;
-    for (auto* field:{&o.capture,&o.trace,&o.metrics}) {
-        auto& path=*field;
-        if (path.empty()) continue;
-        if (!o.frames) throw std::invalid_argument("file outputs require --frames");
-        const auto absolute=std::filesystem::weakly_canonical(std::filesystem::absolute(path));
-        if (std::find(paths.begin(),paths.end(),absolute)!=paths.end() ||
-            std::filesystem::exists(std::filesystem::symlink_status(path)))
-            throw std::invalid_argument("outputs require distinct new paths: "+path);
-        paths.push_back(absolute);
-        path=absolute.string(); // GLFW can change cwd to the bundle Resources directory.
-    }
+    if (!o.frames && (!o.capture.empty() || !o.trace.empty() || !o.metrics.empty()))
+        throw std::invalid_argument("file outputs require --frames");
     return o;
 }
 }
@@ -57,11 +47,16 @@ int main(int argc,char** argv) {
                         "[--difficulty 1..5] [--frames N] [--capture NEW.png] [--trace NEW.csv] [--metrics NEW.csv]\n";
             return 0;
         }
-        const auto options=parse(argc,argv);
+        auto options=parse(argc,argv);
+        tiny2d::PackagedOutputs outputs;
+        const auto files={&options.capture, &options.trace, &options.metrics};
+        if (tiny2d::insideApplication(tiny2dExecutablePath())) outputs.prepare(files);
+        else tiny2d::resolveNewOutputFiles(files);
         for (const char* asset : {"shaders/triangle.vert", "shaders/triangle.frag",
                 "textures/sprite.png", "textures/red.png", "textures/green.png", "textures/blue.png"})
             (void)assetPath(asset);
         runSurvivor(options);
+        outputs.publish();
     } catch (const std::exception& error) {
         std::cerr << "Tiny2D Survivor: " << error.what() << '\n';
         return 1;
