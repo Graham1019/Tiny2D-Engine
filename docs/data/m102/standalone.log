@@ -1,0 +1,3 @@
+branch_id=102 parent_id=8663573909429406300 parent_recording_id=8663573909429406300 fork_cursor=600
+verified=26 recording_id=864260525823951295 cursor=26 epoch=1 tick=625 phase=Playing manual_paused=0 hp=5/5 player_speed=132 checkpoint=0 replayed=26 hash=b3f962030b4e57d7
+verified=626 recording_id=8663573909429406300 cursor=600 epoch=1 tick=600 phase=AwaitingUpgrade manual_paused=0 hp=5/5 player_speed=120 checkpoint=600 replayed=0 hash=14af145719a79472
