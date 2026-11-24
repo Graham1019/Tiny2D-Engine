@@ -203,6 +203,10 @@ class Probe:
         showcase = apps[0]
         survivor = showcase.parent/"Tiny2D Survivor.app"
         require(survivor.is_dir(), "sibling Survivor app missing")
+        manifest = json.loads((showcase.parent/"manifest.json").read_text(encoding="utf-8"))
+        revision = manifest["source_commit"]
+        require(re.fullmatch(r"[0-9a-f]{40}", revision) and int(revision, 16) != 0,
+                "candidate must identify a real source revision")
         def entry(app):
             with (app/"Contents/Info.plist").open("rb") as f:
                 return app/"Contents/MacOS"/plistlib.load(f)["CFBundleExecutable"]
@@ -242,7 +246,8 @@ class Probe:
         self.gallery(lab)
         require(before == sealed(), "signed app contents changed during native exercise")
         require(digest == sha(archive), "ZIP changed during acceptance")
-        return {"archive": archive.name, "zip_sha256": digest, "signed_entries_compared": len(before),
+        return {"archive": archive.name, "zip_sha256": digest, "source_commit": revision,
+                "signed_entries_compared": len(before),
                 "launch_services_entry": entry(showcase).name, "launched": len(visits), "reaped": len(visits)}
 
 
