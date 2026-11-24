@@ -27,13 +27,15 @@ struct Display {
     unsigned shadowLights = 4;
     void validate() const;
 };
-enum class LabScene { Neon, Particles, Shaders };
+enum class LabScene { Neon, Particles, Shaders, Map };
 struct Options {
     LabScene scene = LabScene::Neon;
     GalleryEffect effect = GalleryEffect::Aurora;
     unsigned particleCapacity = 4096, particleRate = 720;
     std::optional<unsigned> particleSteady;
     bool particleDemo = false;
+    int mapWidth = 64, mapHeight = 40;
+    bool mapWalk = false;
     std::uint32_t seed = 71;
     std::optional<std::uint32_t> frames;
     int width = 800, height = 450;

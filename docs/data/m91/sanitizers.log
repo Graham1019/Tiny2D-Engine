@@ -1,0 +1,17 @@
+$ c++ -std=c++17 -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Iengine/include engine/src/Math/Vector2.cpp engine/src/World/TileMap.cpp engine/src/World/MapGenerator.cpp engine/src/World/TileCollision.cpp engine/src/World/MapSession.cpp tests/m91_map_generation.cpp -o build/m91-off/asan-map_generation
+$ build/m91-off/asan-map_generation
+5x5 seeds=32 distinct=1 mean cell difference vs seed 0=0.00%
+6x7 seeds=32 distinct=3 mean cell difference vs seed 0=0.38%
+17x25 seeds=32 distinct=32 mean cell difference vs seed 0=21.15%
+64x40 seeds=32 distinct=32 mean cell difference vs seed 0=24.82%
+96x64 seeds=32 distinct=32 mean cell difference vs seed 0=24.34%
+128x96 seeds=32 distinct=32 mean cell difference vs seed 0=24.15%
+seed 71 default tile FNV-1a=de25ba54c55fec8b
+$ c++ -std=c++17 -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Iengine/include engine/src/Math/Vector2.cpp engine/src/World/TileMap.cpp engine/src/World/MapGenerator.cpp engine/src/World/TileCollision.cpp engine/src/World/MapSession.cpp tests/m91_tile_collision.cpp -o build/m91-off/asan-tile_collision
+$ build/m91-off/asan-tile_collision
+1851 full-enumeration sweep comparisons at tile size 16
+1851 full-enumeration sweep comparisons at tile size 0.125
+1851 full-enumeration sweep comparisons at tile size 8.47033e-22
+$ c++ -std=c++17 -g -O1 -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -Iengine/include engine/src/Math/Vector2.cpp engine/src/World/TileMap.cpp engine/src/World/MapGenerator.cpp engine/src/World/TileCollision.cpp engine/src/World/MapSession.cpp tests/m91_map_session.cpp -o build/m91-off/asan-map_session
+$ build/m91-off/asan-map_session
+360 per-tick samples at 30/60/120 Hz; 80 replacement epochs

@@ -1,5 +1,6 @@
 #include "Neon.h"
 #include "ParticleSimulation.h"
+#include "tiny2d/MapGenerator.h"
 #include <algorithm>
 #include <charconv>
 #include <cmath>
@@ -56,7 +57,7 @@ void Display::validate() const {
 Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
-    bool particleOption=false, effectOption=false;
+    bool particleOption=false, effectOption=false, mapOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -65,7 +66,12 @@ Options parse(int argc, const char* const* argv) {
             if (value=="neon") o.scene=LabScene::Neon;
             else if (value=="particles") o.scene=LabScene::Particles;
             else if (value=="shaders") o.scene=LabScene::Shaders;
-            else throw std::invalid_argument("--scene expects neon, particles or shaders");
+            else if (value=="map") o.scene=LabScene::Map;
+            else throw std::invalid_argument("--scene expects neon, particles, shaders or map");
+        } else if (key=="--map-script") {
+            if (value!="none" && value!="walk") throw std::invalid_argument("--map-script expects none or walk");
+            mapOption=true;
+            o.mapWalk=value=="walk";
         } else if (key=="--effect") {
             effectOption=true;
             const auto effect=std::find_if(galleryEffects.begin(),galleryEffects.end(),
@@ -112,12 +118,20 @@ Options parse(int argc, const char* const* argv) {
             (key=="--inspector" ? inspector : timing) = value=="on";
         } else if (key=="--previews" && (value=="off" || value=="all")) o.previews=value=="all";
         else if (key=="--metrics" && !value.empty()) o.metrics=value;
-        else if (key == "--size") {
+        else if (key == "--size" || key == "--map-size") {
             const auto split = value.find('x');
-            if (split == value.npos) throw std::invalid_argument("--size expects WIDTHxHEIGHT");
+            if (split == value.npos) throw std::invalid_argument(std::string(key)+" expects WIDTHxHEIGHT");
             const auto w = number(value.substr(0,split),key), h = number(value.substr(split+1),key);
-            if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
-            o.width = int(w); o.height = int(h);
+            if (key=="--map-size") {
+                using Limits=tiny2d::MapParameters;
+                if (w<Limits::minWidth || w>Limits::maxWidth || h<Limits::minHeight || h>Limits::maxHeight)
+                    throw std::invalid_argument("--map-size expects 5..128 by 5..96 tiles");
+                mapOption=true;
+                o.mapWidth=int(w); o.mapHeight=int(h);
+            } else {
+                if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
+                o.width = int(w); o.height = int(h);
+            }
         } else if (key == "--capture" && !value.empty()) o.capture = value;
         else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
     }
@@ -127,13 +141,15 @@ Options parse(int argc, const char* const* argv) {
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
     const bool particles=o.scene==LabScene::Particles;
     const bool shaders=o.scene==LabScene::Shaders;
+    const bool map=o.scene==LabScene::Map;
+    if (mapOption && !map) throw std::invalid_argument("map options require --scene map");
     o.display.lighting=lighting.value_or(particles);
     if (effectOption && !shaders) throw std::invalid_argument("--effect requires --scene shaders");
-    if (shaders) {
+    if (shaders || map) {
         o.display.demoOccluders=false;
         if (o.display.lighting || o.display.normalMapping || o.display.shadows ||
             o.display.view==View::Light || o.display.view==View::Normal || o.display.view==View::Shadow)
-            throw std::invalid_argument("shader gallery supports unlit HDR views scene, bright, blur and final");
+            throw std::invalid_argument(std::string(map?"map":"shader gallery")+" supports unlit HDR views scene, bright, blur and final");
     }
     if (particleOption && !particles) throw std::invalid_argument("particle options require --scene particles");
     if (!o.particleCapacity || o.particleCapacity>ParticleSimulation::maxCapacity ||

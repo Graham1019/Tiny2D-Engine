@@ -1,0 +1,136 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m91-debug
+      Start  1: M3CPUTests
+ 1/63 Test  #1: M3CPUTests .......................   Passed    0.39 sec
+      Start  2: Vector2Tests
+ 2/63 Test  #2: Vector2Tests .....................   Passed    0.37 sec
+      Start  3: RenderFailureTests
+ 3/63 Test  #3: RenderFailureTests ...............   Passed    0.40 sec
+      Start  4: M3GPUTests
+ 4/63 Test  #4: M3GPUTests .......................   Passed    0.57 sec
+      Start  5: TriangleRegression
+ 5/63 Test  #5: TriangleRegression ...............   Passed    0.60 sec
+      Start  6: OpenGLResourceTests
+ 6/63 Test  #6: OpenGLResourceTests ..............   Passed    0.60 sec
+      Start  7: SandboxSmokeRoot
+ 7/63 Test  #7: SandboxSmokeRoot .................   Passed    0.20 sec
+      Start  8: SandboxSmokeBuild
+ 8/63 Test  #8: SandboxSmokeBuild ................   Passed    0.20 sec
+      Start  9: M4GPUTests
+ 9/63 Test  #9: M4GPUTests .......................   Passed    0.58 sec
+      Start 10: M41GPUTests
+10/63 Test #10: M41GPUTests ......................   Passed    0.62 sec
+      Start 11: M5_scene
+11/63 Test #11: M5_scene .........................   Passed    0.62 sec
+      Start 12: M5_collision
+12/63 Test #12: M5_collision .....................   Passed    0.38 sec
+      Start 13: M5_fixed_step
+13/63 Test #13: M5_fixed_step ....................   Passed    0.36 sec
+      Start 14: M5GPU
+14/63 Test #14: M5GPU ............................   Passed    0.60 sec
+      Start 15: M5Arena
+15/63 Test #15: M5Arena ..........................   Passed    1.19 sec
+      Start 16: M51GPU
+16/63 Test #16: M51GPU ...........................   Passed    0.65 sec
+      Start 17: M61_combat
+17/63 Test #17: M61_combat .......................   Passed    0.38 sec
+      Start 18: M61_projectiles
+18/63 Test #18: M61_projectiles ..................   Passed    0.46 sec
+      Start 19: M61_spawning
+19/63 Test #19: M61_spawning .....................   Passed    0.46 sec
+      Start 20: M61GPU
+20/63 Test #20: M61GPU ...........................   Passed    0.61 sec
+      Start 21: M61Survivor
+21/63 Test #21: M61Survivor ......................   Passed    5.20 sec
+      Start 22: M62_game_phase
+22/63 Test #22: M62_game_phase ...................   Passed    0.47 sec
+      Start 23: M62_restart
+23/63 Test #23: M62_restart ......................   Passed    0.39 sec
+      Start 24: M62_hud
+24/63 Test #24: M62_hud ..........................   Passed    0.38 sec
+      Start 25: M62GPU
+25/63 Test #25: M62GPU ...........................   Passed    0.68 sec
+      Start 26: M63a_difficulty
+26/63 Test #26: M63a_difficulty ..................   Passed    0.44 sec
+      Start 27: M63a_flow
+27/63 Test #27: M63a_flow ........................   Passed    0.53 sec
+      Start 28: M63a_pacing
+28/63 Test #28: M63a_pacing ......................   Passed    0.70 sec
+      Start 29: M63aGPU
+29/63 Test #29: M63aGPU ..........................   Passed    0.75 sec
+      Start 30: M63a_invalid_difficulty_0
+30/63 Test #30: M63a_invalid_difficulty_0 ........   Passed    0.01 sec
+      Start 31: M63a_invalid_difficulty_6
+31/63 Test #31: M63a_invalid_difficulty_6 ........   Passed    0.01 sec
+      Start 32: M63a_invalid_difficulty_-1
+32/63 Test #32: M63a_invalid_difficulty_-1 .......   Passed    0.01 sec
+      Start 33: M63a_invalid_difficulty_abc
+33/63 Test #33: M63a_invalid_difficulty_abc ......   Passed    0.01 sec
+      Start 34: M63aSurvivorExtreme
+34/63 Test #34: M63aSurvivorExtreme ..............   Passed    5.17 sec
+      Start 35: M63b_events
+35/63 Test #35: M63b_events ......................   Passed    0.42 sec
+      Start 36: M63b_vfx
+36/63 Test #36: M63b_vfx .........................   Passed    2.07 sec
+      Start 37: M63b_fps
+37/63 Test #37: M63b_fps .........................   Passed    0.38 sec
+      Start 38: M63bGPU
+38/63 Test #38: M63bGPU ..........................   Passed   12.09 sec
+      Start 39: M63b_priority
+39/63 Test #39: M63b_priority ....................   Passed    0.42 sec
+      Start 40: M63b_render_recovery
+40/63 Test #40: M63b_render_recovery .............   Passed    0.59 sec
+      Start 41: M91_MapGenerationCPU
+41/63 Test #41: M91_MapGenerationCPU .............   Passed    0.60 sec
+      Start 42: M91_TileCollisionCPU
+42/63 Test #42: M91_TileCollisionCPU .............   Passed    0.38 sec
+      Start 43: M91_MapSessionCPU
+43/63 Test #43: M91_MapSessionCPU ................   Passed    0.36 sec
+      Start 44: M81_ParticleSimulationCPU
+44/63 Test #44: M81_ParticleSimulationCPU ........   Passed    0.41 sec
+      Start 45: M71CPU
+45/63 Test #45: M71CPU ...........................   Passed    0.36 sec
+      Start 46: M71GPU
+46/63 Test #46: M71GPU ...........................   Passed    0.64 sec
+      Start 47: M71RelocatedCLI
+47/63 Test #47: M71RelocatedCLI ..................   Passed    1.84 sec
+      Start 48: M72CPU
+48/63 Test #48: M72CPU ...........................   Passed    0.38 sec
+      Start 49: M72InspectorGL
+49/63 Test #49: M72InspectorGL ...................   Passed    1.88 sec
+      Start 50: M73_cpu
+50/63 Test #50: M73_cpu ..........................   Passed    0.40 sec
+      Start 51: M73_controls
+51/63 Test #51: M73_controls .....................   Passed    0.39 sec
+      Start 52: M73_LightingGL
+52/63 Test #52: M73_LightingGL ...................   Passed    0.60 sec
+      Start 53: M74a_NormalMaterialsCPU
+53/63 Test #53: M74a_NormalMaterialsCPU ..........   Passed    0.41 sec
+      Start 54: M74a_NormalLightingGL
+54/63 Test #54: M74a_NormalLightingGL ............   Passed    0.64 sec
+      Start 55: M74b_OcclusionCPU
+55/63 Test #55: M74b_OcclusionCPU ................   Passed    0.41 sec
+      Start 56: M74b_OcclusionGL
+56/63 Test #56: M74b_OcclusionGL .................   Passed    0.66 sec
+      Start 57: M81_ParticleInstancingGL
+57/63 Test #57: M81_ParticleInstancingGL .........   Passed    0.63 sec
+      Start 58: M81_ParticleInspectorGL
+58/63 Test #58: M81_ParticleInspectorGL ..........   Passed    0.74 sec
+      Start 59: M81_ParticleFiniteCLI
+59/63 Test #59: M81_ParticleFiniteCLI ............   Passed    1.14 sec
+      Start 60: M82_ShaderGalleryGL
+60/63 Test #60: M82_ShaderGalleryGL ..............   Passed    0.59 sec
+      Start 61: M82_ShaderFiniteCLI
+61/63 Test #61: M82_ShaderFiniteCLI ..............   Passed    1.83 sec
+      Start 62: M91_TilemapGL
+62/63 Test #62: M91_TilemapGL ....................   Passed    0.64 sec
+      Start 63: M91_MapFiniteCLI
+63/63 Test #63: M91_MapFiniteCLI .................   Passed    2.58 sec
+
+100% tests passed out of 63
+
+Label Time Summary:
+cpu       =   6.77 sec*proc (16 tests)
+gui       =  45.31 sec*proc (30 tests)
+opengl    =  45.31 sec*proc (30 tests)
+
+Total Test time (real) =  59.50 sec

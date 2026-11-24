@@ -18,8 +18,16 @@ struct FrameInfo {
     std::optional<std::uint32_t> particleSteady;
     std::optional<GalleryEffect> galleryEffect;
     std::uint64_t shaderVersion=0;
+    int mapWidth=0,mapHeight=0;
+    bool mapWalk=false;
 };
 using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
+struct MapFrameSample {
+    double generationUs=0,validationUs=0,collisionUs=0,visiblePrepareUs=0;
+    std::uint64_t totalTiles=0,visibleTiles=0;
+    tiny2d::Vector2 camera{},player{};
+    bool hitX=false,hitY=false;
+};
 struct CpuSample {
     FrameInfo info;
     Stats stats;
@@ -33,6 +41,7 @@ struct CpuSample {
     unsigned activeParticles=0, activeFields=0;
     std::uint64_t droppedParticles=0, validGpuSamples=0;
     double forceUpdateUs=0, snapshotPrepareUs=0;
+    MapFrameSample map;
     tiny2d::QueryStatus status=tiny2d::QueryStatus::Off;
 };
 struct GpuSample {

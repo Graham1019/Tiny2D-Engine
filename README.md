@@ -110,6 +110,15 @@ cmake --build build/m74b-release --parallel
 
 ![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
 
+## Tiny2D Lab · Seeded Tilemap
+
+Run `build/m91-release/lab/tiny2d_lab --scene map --seed 71` to explore a
+64×40 maze. Move with **WASD**, pause with **P**, advance one tick with **.**,
+and restart the same seed with **R**. The **F2** Inspector shows connectivity,
+the shortest route length, wall contact and tile batch counts. Enter a seed
+and click **Regenerate** to start another map.
+[Build, native captures, measurements and Mac checklist](docs/milestone-09-1.md)
+
 ## Tiny2D Lab · Shader Gallery
 
 Run `build/m82-release/lab/tiny2d_lab --scene shaders --effect aurora` to open the

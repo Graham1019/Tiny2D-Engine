@@ -351,6 +351,13 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
                 t.scene.bindDraw();
                 constexpr GLfloat background[]={.002f,.004f,.008f,1};
                 glClearBufferfv(GL_COLOR,0,background);
+                if (!picture.tiles.empty()) {
+                    sprites(picture.tiles,picture.worldCamera,s);
+                    const auto& batch=batch_.stats();
+                    s.submittedTiles=batch.submittedSprites;
+                    s.tileDrawCalls=batch.drawCalls;
+                    s.tileVertexBytes=batch.uploadedVertexBytes;
+                }
                 sprites(picture.world,picture.worldCamera,s);
                 s.worldSprites=s.sprites;
             });

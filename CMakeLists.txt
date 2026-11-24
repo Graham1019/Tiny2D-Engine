@@ -323,6 +323,30 @@ add_custom_target(package_macos
     COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/scripts/package_macos.sh" "${CMAKE_BINARY_DIR}"
     DEPENDS Tiny2DSurvivor VERBATIM)
 
+# Seeded world data can be used without a renderer, window or graphics context.
+add_library(tiny2d_world STATIC
+    engine/src/Math/Vector2.cpp
+    engine/src/World/TileMap.cpp
+    engine/src/World/MapGenerator.cpp
+    engine/src/World/TileCollision.cpp
+    engine/src/World/MapSession.cpp)
+target_include_directories(tiny2d_world PUBLIC engine/include)
+target_compile_features(tiny2d_world PUBLIC cxx_std_17)
+set_target_properties(tiny2d_world PROPERTIES CXX_EXTENSIONS OFF)
+if(BUILD_TESTING)
+    add_executable(tiny2d_m91_generation tests/m91_map_generation.cpp)
+    target_link_libraries(tiny2d_m91_generation PRIVATE tiny2d_world)
+    add_test(NAME M91_MapGenerationCPU COMMAND tiny2d_m91_generation)
+    set_tests_properties(M91_MapGenerationCPU PROPERTIES LABELS "cpu")
+    add_executable(tiny2d_m91_collision tests/m91_tile_collision.cpp)
+    add_executable(tiny2d_m91_session tests/m91_map_session.cpp)
+    target_link_libraries(tiny2d_m91_collision PRIVATE tiny2d_world)
+    target_link_libraries(tiny2d_m91_session PRIVATE tiny2d_world)
+    add_test(NAME M91_TileCollisionCPU COMMAND tiny2d_m91_collision)
+    add_test(NAME M91_MapSessionCPU COMMAND tiny2d_m91_session)
+    set_tests_properties(M91_TileCollisionCPU M91_MapSessionCPU PROPERTIES LABELS "cpu")
+endif()
+
 # Particle simulation and its tests have no platform, renderer or ImGui link dependencies.
 add_library(tiny2d_particles STATIC lab/src/ParticleSimulation.cpp engine/src/Math/Vector2.cpp)
 target_include_directories(tiny2d_particles PUBLIC lab/src engine/include)
@@ -338,10 +362,10 @@ endif()
 
 # Lab has its own executable-adjacent asset tree and reuses the macOS locator.
 add_library(tiny2d_lab_core STATIC lab/src/Neon.cpp lab/src/Selection.cpp lab/src/Lighting.cpp lab/src/NormalMaterial.cpp lab/src/Occlusion.cpp lab/src/Presentation.cpp
-    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp
+    lab/src/FrameState.cpp lab/src/Pipeline.cpp lab/src/ParticleRenderer.cpp lab/src/MapPresentation.cpp
     lab/src/ShaderReloadManager.cpp lab/src/ShaderGallery.cpp sandbox/src/ShaderAssets.cpp)
 target_include_directories(tiny2d_lab_core PUBLIC lab/src PRIVATE engine/src/Renderer)
-target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles PRIVATE glfw OpenGL::GL)
+target_link_libraries(tiny2d_lab_core PUBLIC tiny2d_engine tiny2d_ui tiny2d_particles tiny2d_world PRIVATE glfw OpenGL::GL)
 add_library(tiny2d_lab_imgui STATIC
     third_party/imgui/imgui.cpp third_party/imgui/imgui_draw.cpp
     third_party/imgui/imgui_widgets.cpp third_party/imgui/imgui_tables.cpp
@@ -354,7 +378,8 @@ add_library(tiny2d_inspector STATIC lab/src/Inspector.cpp lab/src/ParticleInspec
     lab/src/ParticlePresentation.cpp lab/src/Capture.cpp lab/src/CocoaKeyEvent.mm)
 target_link_libraries(tiny2d_inspector PUBLIC tiny2d_lab_core tiny2d_lab_imgui PRIVATE glfw OpenGL::GL PNG::PNG ${TINY2D_APPKIT})
 target_include_directories(tiny2d_inspector PRIVATE engine/src/Renderer)
-add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp lab/src/Metrics.cpp)
+add_executable(tiny2d_lab lab/src/main.cpp lab/src/ParticleApp.cpp lab/src/ShaderApp.cpp
+    lab/src/MapApp.cpp lab/src/MapInspector.cpp lab/src/Metrics.cpp)
 target_include_directories(tiny2d_lab PRIVATE engine/src/Renderer)
 target_link_libraries(tiny2d_lab PRIVATE tiny2d_inspector glfw OpenGL::GL PNG::PNG)
 set_target_properties(tiny2d_lab PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
@@ -477,4 +502,17 @@ if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
     add_test(NAME M82_ShaderFiniteCLI COMMAND /usr/bin/env python3
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/m82_finite.py" "$<TARGET_FILE:tiny2d_lab>" "${CMAKE_BINARY_DIR}/m82-finite")
     set_tests_properties(M82_ShaderGalleryGL M82_ShaderFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 90)
+endif()
+
+if(BUILD_TESTING AND TINY2D_OPENGL_TESTS)
+    add_executable(tiny2d_m91_gl tests/m91_map_gpu.cpp)
+    target_include_directories(tiny2d_m91_gl PRIVATE engine/src/Renderer)
+    target_link_libraries(tiny2d_m91_gl PRIVATE tiny2d_lab_core glfw OpenGL::GL)
+    set_target_properties(tiny2d_m91_gl PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lab")
+    add_dependencies(tiny2d_m91_gl tiny2d_lab_assets)
+    add_test(NAME M91_TilemapGL COMMAND tiny2d_m91_gl)
+    set_tests_properties(M91_TilemapGL PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 60)
+    add_test(NAME M91_MapFiniteCLI COMMAND /usr/bin/env python3
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/m91_finite.py" "$<TARGET_FILE:tiny2d_lab>")
+    set_tests_properties(M91_MapFiniteCLI PROPERTIES LABELS "opengl;gui" RUN_SERIAL TRUE TIMEOUT 120)
 endif()

@@ -1,0 +1,98 @@
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=scene bloom=on strength=1.2 last_passes=3 fullscreen=1 draws=3 sprites=960 upload_bytes=138240 lighting=off active_lights=0 light_uniform_bytes=0 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=138240 rgba16f_attachment_bytes=20160000 attempt_passes=3 attempt_draws=3 attempt_complete=1
+0138da8f2b53ca47b6588dcf3eb29f44d139a16a56344f0c15f3af74da0632c9  build/m91-release/m81-history.CzJb7J/scene.png
+0138da8f2b53ca47b6588dcf3eb29f44d139a16a56344f0c15f3af74da0632c9  docs/media/m71-scene.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=bright bloom=on strength=1.2 last_passes=4 fullscreen=2 draws=4 sprites=981 upload_bytes=141264 lighting=off active_lights=0 light_uniform_bytes=0 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=141264 rgba16f_attachment_bytes=20160000 attempt_passes=4 attempt_draws=4 attempt_complete=1
+1d1df3824e231f75fc3e3a9dad1cc560af59f6a348960d47891e403865372fce  build/m91-release/m81-history.CzJb7J/bright.png
+1d1df3824e231f75fc3e3a9dad1cc560af59f6a348960d47891e403865372fce  docs/media/m71-bright.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=blur bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=964 upload_bytes=138816 lighting=off active_lights=0 light_uniform_bytes=0 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=138816 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+e9b4de01f5c755b0e7871f0ccd57f5f8be1753665cd102024352ee81da26a994  build/m91-release/m81-history.CzJb7J/blur.png
+e9b4de01f5c755b0e7871f0ccd57f5f8be1753665cd102024352ee81da26a994  docs/media/m71-blur.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=6 fullscreen=4 draws=6 sprites=969 upload_bytes=139536 lighting=off active_lights=0 light_uniform_bytes=0 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=139536 rgba16f_attachment_bytes=20160000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+696428a736ac1208c8ba8331778217020f49f6b26dfbc864b7004a1568a1e1cd  build/m91-release/m81-history.CzJb7J/final.png
+696428a736ac1208c8ba8331778217020f49f6b26dfbc864b7004a1568a1e1cd  docs/media/m71-final.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=9 fullscreen=6 draws=9 sprites=1020 upload_bytes=147104 lighting=on active_lights=7 light_uniform_bytes=224 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=146880 rgba16f_attachment_bytes=54720000 attempt_passes=9 attempt_draws=9 attempt_complete=1
+ebf2ceae7576564068acd5957b937fb7b641c0b4e9bd98909c98235c8d0872d3  build/m91-release/m81-history.CzJb7J/lighting-on.png
+ebf2ceae7576564068acd5957b937fb7b641c0b4e9bd98909c98235c8d0872d3  docs/media/m73/lighting-on.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=light bloom=on strength=1.2 last_passes=6 fullscreen=3 draws=6 sprites=1015 upload_bytes=146384 lighting=on active_lights=7 light_uniform_bytes=224 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=146160 rgba16f_attachment_bytes=54720000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+c21015dc07f99125970c93b40eaa63a67dd36e7e75018e46b6a19c319d2bf166  build/m91-release/m81-history.CzJb7J/light-buffer.png
+c21015dc07f99125970c93b40eaa63a67dd36e7e75018e46b6a19c319d2bf166  docs/media/m73/light-buffer.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=off strength=1.2 last_passes=6 fullscreen=3 draws=6 sprites=1017 upload_bytes=146672 lighting=on active_lights=7 light_uniform_bytes=224 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=146448 rgba16f_attachment_bytes=54720000 attempt_passes=6 attempt_draws=6 attempt_complete=1
+4decbcce07a4cf63f08dbc4e42320c9381e3511e1aa0d766e42f8d038f7dbac1  build/m91-release/m81-history.CzJb7J/bloom-off.png
+4decbcce07a4cf63f08dbc4e42320c9381e3511e1aa0d766e42f8d038f7dbac1  docs/media/m73/bloom-off.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=18 ticks=18 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=9 fullscreen=6 draws=9 sprites=1029 upload_bytes=148400 lighting=on active_lights=7 light_uniform_bytes=224 normals=off material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=148176 rgba16f_attachment_bytes=54720000 attempt_passes=9 attempt_draws=9 attempt_complete=1
+3d71bc614c67268042447d4eb751d8f6f3afd46d48d06d42717e2898fc33446d  build/m91-release/m81-history.CzJb7J/moving-bolt.png
+3d71bc614c67268042447d4eb751d8f6f3afd46d48d06d42717e2898fc33446d  docs/media/m73/moving-bolt.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=10 fullscreen=6 draws=9 sprites=1031 upload_bytes=148688 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=148464 rgba16f_attachment_bytes=66240000 attempt_passes=10 attempt_draws=9 attempt_complete=1
+1a375bf5785ddb2b2277311dcd7004bc34f2c02ed229c5ad41dbba881f4c15fa  build/m91-release/m81-history.CzJb7J/flat.png
+1a375bf5785ddb2b2277311dcd7004bc34f2c02ed229c5ad41dbba881f4c15fa  docs/media/m74a/flat.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=normal bloom=on strength=1.2 last_passes=7 fullscreen=3 draws=6 sprites=1042 upload_bytes=150272 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=150048 rgba16f_attachment_bytes=66240000 attempt_passes=7 attempt_draws=6 attempt_complete=1
+643783f0ecb04b200e0962b4f949dd2890e4f6197bbf0c876f9668d2cd728de1  build/m91-release/m81-history.CzJb7J/flat-buffer.png
+643783f0ecb04b200e0962b4f949dd2890e4f6197bbf0c876f9668d2cd728de1  docs/media/m74a/flat-buffer.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=10 fullscreen=6 draws=10 sprites=1042 upload_bytes=150272 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=150048 rgba16f_attachment_bytes=66240000 attempt_passes=10 attempt_draws=10 attempt_complete=1
+fbccc0c7ff7a78b4c053f55d26f68eaa121c1a9cb17cb4f250432a7b626bec5c  build/m91-release/m81-history.CzJb7J/procedural.png
+fbccc0c7ff7a78b4c053f55d26f68eaa121c1a9cb17cb4f250432a7b626bec5c  docs/media/m74a/procedural.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=normal bloom=on strength=1.2 last_passes=7 fullscreen=3 draws=7 sprites=1040 upload_bytes=149984 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=149760 rgba16f_attachment_bytes=66240000 attempt_passes=7 attempt_draws=7 attempt_complete=1
+77bccd4b98f0e7e839314fb7f489970f218234abf7945b4a7601c093014b4ae8  build/m91-release/m81-history.CzJb7J/normal-buffer.png
+77bccd4b98f0e7e839314fb7f489970f218234abf7945b4a7601c093014b4ae8  docs/media/m74a/normal-buffer.png
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=4 ticks=4 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=17 fullscreen=12 draws=32 sprites=1037 upload_bytes=200704 lighting=on active_lights=7 light_uniform_bytes=224 normals=on material_upload_bytes=0 shadows=off shadow_bytes=0 shadow_casters=0 shadow_skipped=0 shadow_vertex_bytes=0 batch_vertex_bytes=149328 rgba16f_attachment_bytes=66240000 attempt_passes=17 attempt_draws=32 attempt_complete=1
+abb56ce4dcfc6212d2df029fc1db011ad0d74884a16da7d57030fb5b8c6fd434  build/m91-release/m81-history.CzJb7J/inspector.png
+abb56ce4dcfc6212d2df029fc1db011ad0d74884a16da7d57030fb5b8c6fd434  docs/media/m74a/inspector.png
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=-12 height=5 factor=0.956055 light_red=6.92188 expected_red=6.92226 scene_red=6.46094
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=12 height=5 factor=0 light_red=0.199951 expected_red=0.2 scene_red=3.09961
+bevel world=(2.75,14.25) N=(-0.77002,5.96046e-08,0.637695) light_dx=12 height=32 factor=0.326721 light_red=2.49609 expected_red=2.49726 scene_red=4.24609
+neon_same_floor side=left tick=16 player=(-100.4,12) pixel=(800,450) N=(-0.769043,5.96046e-08,0.638672) scene_blue=0.49292
+neon_same_floor side=right tick=16 player=(-23.6,12) pixel=(800,450) N=(-0.769043,5.96046e-08,0.638672) scene_blue=0.06073
+3a05ed7ef31ac4e698ece4393a227a9ebcff7db97e8a529c073626c48ade94f0  build/m91-release/m81-history.CzJb7J/direction-left.png
+3a05ed7ef31ac4e698ece4393a227a9ebcff7db97e8a529c073626c48ade94f0  docs/media/m74a/direction-left.png
+f7e657054980a1f37d004627d54208a5e522ec43ba4226c125151ff63ed0744e  build/m91-release/m81-history.CzJb7J/direction-right.png
+f7e657054980a1f37d004627d54208a5e522ec43ba4226c125151ff63ed0744e  docs/media/m74a/direction-right.png
+Passed all 15 M7 PNG byte comparisons.
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 500
+Frames: 4 | Draw calls in final frame: 1
+Frames: 4 | Draw calls in final frame: 5
+Visible Survivor window for PID 32931 {
+    Height = 626;
+    Width = 792;
+    X = 360;
+    Y = 103;
+}

@@ -1,0 +1,37 @@
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m91-release/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m91-release/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m91-release
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 62
+    Start 62: M91_TilemapGL
+
+62: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m91-release/lab/tiny2d_m91_gl
+62: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m91-release
+62: Test timeout computed to be: 60
+62: map_window=192x128 framebuffer=384x256
+1/2 Test #62: M91_TilemapGL ....................   Passed    0.20 sec
+test 63
+    Start 63: M91_MapFiniteCLI
+
+63: Test command: /usr/bin/env "python3" "/Users/grahm/Desktop/Tiny2D-Engine/tests/m91_finite.py" "/Users/grahm/Desktop/Tiny2D-Engine/build/m91-release/lab/tiny2d_lab"
+63: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m91-release
+63: Test timeout computed to be: 120
+63: 96-tick state/PNG repeat, scripted contact, idle, different seed, HDR views and M8.2 CSV prefix passed
+2/2 Test #63: M91_MapFiniteCLI .................   Passed    2.08 sec
+
+The following tests passed:
+	M91_TilemapGL
+	M91_MapFiniteCLI
+
+100% tests passed out of 2
+
+Label Time Summary:
+gui       =   2.28 sec*proc (2 tests)
+opengl    =   2.28 sec*proc (2 tests)
+
+Total Test time (real) =   2.28 sec
