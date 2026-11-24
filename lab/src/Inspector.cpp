@@ -417,22 +417,22 @@ RoutedInput Inspector::build(ToolState& tools,const Neon& n,std::uint64_t epoch,
         }
         End();
     }
-    routeInput(tools,focused,gates,input);
+    routeInput(tools.visible,focused,gates,input);
     return input;
 }
 RoutedInput Inspector::buildPanel(ToolState& tools,bool focused,const std::function<void(Commands&)>& panel,
-                                  bool galleryKeys) {
+                                  bool galleryKeys,bool overlay) {
     RoutedInput input;
     auto gates=beginInput(tools,focused,input);
     if (galleryKeys) input.keys[ReloadShader]=rawDown(ImGuiKey_F5);
     if (tools.visible) panel(input.commands);
-    routeInput(tools,focused,gates,input);
+    routeInput(tools.visible || overlay,focused,gates,input);
     return input;
 }
-void Inspector::routeInput(ToolState& tools,bool focused,InputGates gates,RoutedInput& input) {
+void Inspector::routeInput(bool hasWidgets,bool focused,InputGates gates,RoutedInput& input) {
     auto& io=ImGui::GetIO();
-    input.captureKeyboard=gates.keyboard || (tools.visible && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
-    const bool captured=gates.mouse || !focused || (tools.visible && (io.WantCaptureMouse || IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopup)));
+    input.captureKeyboard=gates.keyboard || (hasWidgets && (io.WantCaptureKeyboard || ImGui::IsAnyItemActive()));
+    const bool captured=gates.mouse || !focused || (hasWidgets && (io.WantCaptureMouse || IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopup)));
     if (!io.MouseDown[0]) mouseBlocked_=false;
     if (captured && io.MouseDown[0]) mouseBlocked_=true;
     if (!finite_ && !captured && !mouseBlocked_ && io.MouseClicked[0])
@@ -441,7 +441,7 @@ void Inspector::routeInput(ToolState& tools,bool focused,InputGates gates,Routed
         input.heldCursor=tiny2d::Vector2{io.MousePos.x,io.MousePos.y};
 }
 unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,const FrameInfo& info,
-                           const Picture& picture,const ShadowCasters& casters) {
+                           const Picture& picture,const ShadowCasters& casters,bool overlay) {
     requireOwner();
     unsigned mask=0;
     const auto frame=info.id,tick=info.tick;
@@ -516,7 +516,7 @@ unsigned Inspector::finish(ToolState& tools,Pipeline& pipe,const FrameInfo& info
         }
         End();
     }
-    if (tools.visible) { ImGui::Render(); ready_=true; } else ImGui::EndFrame();
+    if (tools.visible || overlay) { ImGui::Render(); ready_=true; } else ImGui::EndFrame();
     active_=false;
     return mask;
 }

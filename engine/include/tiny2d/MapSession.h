@@ -36,6 +36,7 @@ public:
     void setPaused(bool paused) { paused_ = paused; }
     void fixedUpdate(MapInput input = {});
     void step(MapInput input = {});
+    void step(MapInput input, float unitsPerSecond);
     void reset();
     void regenerate(std::uint32_t seed);
     void regenerate(std::uint32_t seed, const MapParameters& parameters);

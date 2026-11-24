@@ -32,11 +32,16 @@ constexpr std::string_view particleCounters =
 constexpr std::string_view mapCounters =
     ",map_generation_us,bfs_validation_us,collision_us,visible_tile_prepare_us,total_tiles,visible_tiles"
     ",submitted_tile_quads,tile_draw_calls,tile_vertex_upload_bytes,camera_x,camera_y,player_x,player_y,hit_x,hit_y";
+constexpr std::string_view navCounters =
+    ",nav_requested_enemies,nav_active_enemies,nav_phase,nav_hp,nav_max_hp,nav_player_speed,nav_enemy_speed,nav_guard_ticks"
+    ",nav_offer_serial,nav_choice_serial,nav_last_choice,nav_target_x,nav_target_y,nav_field_rebuild_count,nav_cache_reuse_count"
+    ",nav_visited_nodes,nav_expanded_nodes,nav_graph_build_events,nav_field_build_events,nav_graph_build_us,nav_field_build_us"
+    ",nav_enemy_update_us,nav_enemy_collision_us,nav_upgrade_update_us,submitted_enemy_quads,enemy_draw_calls,enemy_vertex_upload_bytes";
 std::string blanks(std::string_view header) {
     return std::string(std::count(header.begin(),header.end(),','),',');
 }
 void runConfig(std::ostream& out,const FrameInfo& f) {
-    out<<','<<f.seed<<','<<(f.mapWidth?"map":f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
+    out<<','<<f.seed<<','<<(f.navigation?"navigation":f.mapWidth?"map":f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
     if (f.particles) {
         out<<(f.demoScript?"demo":"none")<<','<<f.particleCapacity<<','<<f.particleRate<<',';
         if (f.particleSteady) out<<*f.particleSteady;
@@ -74,7 +79,7 @@ Metrics::Metrics(const std::string& path) {
     out_<<legacyCpuColumns()
         <<",particle_emission_us,seed,scene,particle_script,particle_capacity,particle_rate,particle_steady"
         <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version,map_width,map_height,map_script"
-        <<mapCounters<<'\n';
+        <<mapCounters<<navCounters<<'\n';
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
@@ -137,6 +142,22 @@ void Metrics::record(const CpuSample& c) {
         static const auto emptyMap=blanks(mapCounters);
         out_<<emptyMap;
     }
+    if (c.info.navigation) {
+        const auto& n=c.nav;
+        out_<<','<<n.requested<<','<<n.active<<','<<n.phase<<','<<n.hp<<','<<n.maxHP
+            <<','<<n.playerSpeed<<','<<n.enemySpeed<<','<<n.guardTicks<<','<<n.offerSerial
+            <<','<<n.choiceSerial<<','<<n.lastChoice<<','<<n.targetX<<','<<n.targetY
+            <<','<<n.fieldRebuilds<<','<<n.cacheReuses<<','<<n.visited<<','<<n.expanded
+            <<','<<n.graphEvents<<','<<n.fieldEvents<<',';
+        if (n.graphEvents) out_<<n.graphUs;
+        out_<<',';
+        if (n.fieldEvents) out_<<n.fieldUs;
+        out_<<','<<n.enemyUpdateUs<<','<<n.enemyCollisionUs<<','<<n.upgradeUs
+            <<','<<s.submittedEnemies<<','<<s.enemyDrawCalls<<','<<s.enemyVertexBytes;
+    } else {
+        static const auto empty=blanks(navCounters);
+        out_<<empty;
+    }
     out_<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
@@ -157,7 +178,8 @@ void Metrics::write(const GpuSample& g) {
     galleryConfig(out_,g.info);
     mapConfig(out_,g.info);
     static const auto emptyMap=blanks(mapCounters);
-    out_<<emptyMap;
+    static const auto emptyNav=blanks(navCounters);
+    out_<<emptyMap<<emptyNav;
     out_<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }

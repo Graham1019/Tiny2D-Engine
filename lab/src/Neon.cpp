@@ -57,7 +57,7 @@ void Display::validate() const {
 Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
-    bool particleOption=false, effectOption=false, mapOption=false;
+    bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -67,11 +67,30 @@ Options parse(int argc, const char* const* argv) {
             else if (value=="particles") o.scene=LabScene::Particles;
             else if (value=="shaders") o.scene=LabScene::Shaders;
             else if (value=="map") o.scene=LabScene::Map;
-            else throw std::invalid_argument("--scene expects neon, particles, shaders or map");
+            else if (value=="navigation") o.scene=LabScene::Navigation;
+            else throw std::invalid_argument("--scene expects neon, particles, shaders, map or navigation");
         } else if (key=="--map-script") {
             if (value!="none" && value!="walk") throw std::invalid_argument("--map-script expects none or walk");
             mapOption=true;
             o.mapWalk=value=="walk";
+        } else if (key=="--nav-enemies") {
+            navOption=true;
+            o.navEnemies=number(value,key);
+            if (o.navEnemies>256) throw std::invalid_argument("--nav-enemies expects 0..256");
+        } else if (key=="--nav-script") {
+            navOption=true;
+            if (value!="none" && value!="walk") throw std::invalid_argument("--nav-script expects none or walk");
+            o.navWalk=value=="walk";
+        } else if (key=="--nav-choice") {
+            navOption=true;
+            if (value!="first" && value!="last") throw std::invalid_argument("--nav-choice expects first or last");
+            o.navChooseLast=value=="last";
+        } else if (key=="--nav-debug") {
+            navOption=true;
+            if (value!="off" && value!="path" && value!="field" && value!="all")
+                throw std::invalid_argument("--nav-debug expects off, path, field or all");
+            o.navField=value=="field" || value=="all";
+            o.navPath=value=="path" || value=="all";
         } else if (key=="--effect") {
             effectOption=true;
             const auto effect=std::find_if(galleryEffects.begin(),galleryEffects.end(),
@@ -126,7 +145,7 @@ Options parse(int argc, const char* const* argv) {
                 using Limits=tiny2d::MapParameters;
                 if (w<Limits::minWidth || w>Limits::maxWidth || h<Limits::minHeight || h>Limits::maxHeight)
                     throw std::invalid_argument("--map-size expects 5..128 by 5..96 tiles");
-                mapOption=true;
+                mapSize=true;
                 o.mapWidth=int(w); o.mapHeight=int(h);
             } else {
                 if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
@@ -142,14 +161,17 @@ Options parse(int argc, const char* const* argv) {
     const bool particles=o.scene==LabScene::Particles;
     const bool shaders=o.scene==LabScene::Shaders;
     const bool map=o.scene==LabScene::Map;
+    const bool navigation=o.scene==LabScene::Navigation;
+    if (mapSize && !map && !navigation) throw std::invalid_argument("--map-size requires --scene map or navigation");
+    if (navOption && !navigation) throw std::invalid_argument("navigation options require --scene navigation");
     if (mapOption && !map) throw std::invalid_argument("map options require --scene map");
     o.display.lighting=lighting.value_or(particles);
     if (effectOption && !shaders) throw std::invalid_argument("--effect requires --scene shaders");
-    if (shaders || map) {
+    if (shaders || map || navigation) {
         o.display.demoOccluders=false;
         if (o.display.lighting || o.display.normalMapping || o.display.shadows ||
             o.display.view==View::Light || o.display.view==View::Normal || o.display.view==View::Shadow)
-            throw std::invalid_argument(std::string(map?"map":"shader gallery")+" supports unlit HDR views scene, bright, blur and final");
+            throw std::invalid_argument(std::string(navigation?"navigation":map?"map":"shader gallery")+" supports unlit HDR views scene, bright, blur and final");
     }
     if (particleOption && !particles) throw std::invalid_argument("particle options require --scene particles");
     if (!o.particleCapacity || o.particleCapacity>ParticleSimulation::maxCapacity ||

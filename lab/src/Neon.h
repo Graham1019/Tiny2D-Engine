@@ -27,7 +27,7 @@ struct Display {
     unsigned shadowLights = 4;
     void validate() const;
 };
-enum class LabScene { Neon, Particles, Shaders, Map };
+enum class LabScene { Neon, Particles, Shaders, Map, Navigation };
 struct Options {
     LabScene scene = LabScene::Neon;
     GalleryEffect effect = GalleryEffect::Aurora;
@@ -36,6 +36,8 @@ struct Options {
     bool particleDemo = false;
     int mapWidth = 64, mapHeight = 40;
     bool mapWalk = false;
+    unsigned navEnemies = 16;
+    bool navWalk = false, navChooseLast = false, navField = false, navPath = false;
     std::uint32_t seed = 71;
     std::optional<std::uint32_t> frames;
     int width = 800, height = 450;
@@ -63,6 +65,7 @@ struct Commands {
 class Controls {
 public:
     bool paused = false;
+    void clearElapsed() { clock_.reset(); }
     Action poll(Keys keys, bool active, double elapsed, Display& display, bool captured=false, Commands ui={},
                 bool freshFocus=false);
 private:

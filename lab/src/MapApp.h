@@ -2,5 +2,5 @@
 #include "Neon.h"
 
 namespace lab {
-void runMap(Options);
+void runTileLab(Options);
 }

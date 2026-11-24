@@ -289,7 +289,7 @@ void run(Options o) {
 }
 int main(int argc,char** argv) {
     if (argc==2 && std::string_view(argv[1])=="--help") {
-        std::cout<<"tiny2d_lab [--scene neon|particles|shaders|map] [--effect aurora|orbitals|contours] [--particle-capacity 1..8192] [--particle-rate 0..60000] [--particle-steady N] [--particle-script none|demo] [--map-size WxH] [--map-script none|walk] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal|shadow] "
+        std::cout<<"tiny2d_lab [--scene neon|particles|shaders|map|navigation] [--effect aurora|orbitals|contours] [--particle-capacity 1..8192] [--particle-rate 0..60000] [--particle-steady N] [--particle-script none|demo] [--map-size WxH] [--map-script none|walk] [--nav-enemies 0..256] [--nav-script none|walk] [--nav-choice first|last] [--nav-debug off|path|field|all] [--seed N] [--frames N] [--size WxH] [--view scene|bright|blur|final|light|normal|shadow] "
                  <<"[--lighting on|off] [--ambient 0..2] "
                  <<"[--normal-mapping on|off] [--normal-material flat|tile] [--normal-strength 0..2] "
                  <<"[--shadows on|off] [--shadow-lights 1..8] [--occluders none|demo] "
@@ -301,7 +301,7 @@ int main(int argc,char** argv) {
         auto options=lab::parse(argc,argv);
         if (options.scene==lab::LabScene::Particles) lab::runParticles(options);
         else if (options.scene==lab::LabScene::Shaders) lab::runShaders(options);
-        else if (options.scene==lab::LabScene::Map) lab::runMap(options);
+        else if (options.scene==lab::LabScene::Map || options.scene==lab::LabScene::Navigation) lab::runTileLab(options);
         else lab::run(options);
     }
     catch (const std::exception& e) { std::cerr<<"Tiny2D Lab: "<<e.what()<<'\n'; return 1; }
