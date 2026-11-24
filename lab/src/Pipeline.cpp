@@ -358,6 +358,13 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
                     s.tileDrawCalls=batch.drawCalls;
                     s.tileVertexBytes=batch.uploadedVertexBytes;
                 }
+                if (!picture.enemies.empty()) {
+                    sprites(picture.enemies,picture.worldCamera,s);
+                    const auto& batch=batch_.stats();
+                    s.submittedEnemies=batch.submittedSprites;
+                    s.enemyDrawCalls=batch.drawCalls;
+                    s.enemyVertexBytes=batch.uploadedVertexBytes;
+                }
                 sprites(picture.world,picture.worldCamera,s);
                 s.worldSprites=s.sprites;
             });

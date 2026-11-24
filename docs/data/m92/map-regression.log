@@ -1,0 +1,6 @@
+base 6ccc811d8255e383fc80942b374fd5ce0f9d2279
+compiler Apple clang version 21.0.0 (clang-2100.1.1.101)
+sizes 17x25 64x40 128x96; seeds 0 71 4294967295; ticks per world 3600
+compared dimensions, seed, epoch, tick, exact x/y float bits, hitX/hitY and tilesQueried
+identical records 32400
+trace SHA256 b4f91d355270fe5e55b1774da4fbc82c231e5f8d8e13141d9b533c47c92c9f1b

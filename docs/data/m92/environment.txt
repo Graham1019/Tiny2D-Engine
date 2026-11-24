@@ -1,0 +1,33 @@
+$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.7.3
+BuildVersion:		25G342
+$ uname -m
+arm64
+$ sysctl -n machdep.cpu.brand_string
+Apple M5 Pro
+$ c++ --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ cmake --version
+cmake version 4.4.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+$ otool -L build/m92-release/tiny2d_m92_session
+build/m92-release/tiny2d_m92_session:
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+build/m92-debug/CMakeCache.txt
+CMAKE_BUILD_TYPE:STRING=Debug
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=ON
+build/m92-release/CMakeCache.txt
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=ON
+build/m92-off/CMakeCache.txt
+CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=26.0
+TINY2D_OPENGL_TESTS:BOOL=OFF

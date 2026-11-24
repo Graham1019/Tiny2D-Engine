@@ -110,6 +110,14 @@ cmake --build build/m74b-release --parallel
 
 ![Cyan player moving past a wall while the amber relay continues to illuminate the floor](docs/media/m74b/player-motion.webp)
 
+## Tiny2D Lab · Enemy Navigation and Random Upgrades
+
+Run `build/m92-release/lab/tiny2d_lab --scene navigation --seed 71`. Survive
+60 seconds as 16 enemies follow you through the maze. Move with **WASD** and
+choose an upgrade every 10 seconds of simulation. Open the **F2** Inspector
+to see the shared distance field and the route for an individual enemy.
+[Controls, captures, CPU measurements and Mac checklist](docs/milestone-09-2.md)
+
 ## Tiny2D Lab · Seeded Tilemap
 
 Run `build/m91-release/lab/tiny2d_lab --scene map --seed 71` to explore a

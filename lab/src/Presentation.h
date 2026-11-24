@@ -32,8 +32,8 @@ struct Stats {
     std::optional<ShadowMaskStamp> shadowMask; // Only an explicitly rebuilt inspection mask has provenance.
     std::array<double,PassCount> cpuUs{};
     unsigned activeInstances=0, particleDrawCalls=0;
-    unsigned tileDrawCalls=0;
-    std::uint64_t submittedTiles=0, tileVertexBytes=0;
+    unsigned tileDrawCalls=0, enemyDrawCalls=0;
+    std::uint64_t submittedTiles=0, tileVertexBytes=0, submittedEnemies=0, enemyVertexBytes=0;
     std::uint64_t instanceUploadBytes=0;
     double instanceUploadUs=0;
     bool complete = false;
@@ -41,7 +41,7 @@ struct Stats {
 struct Quad { tiny2d::Vector2 position, size; float angle; tiny2d::Color color; };
 struct Picture {
     inline static const tiny2d::Vector2 floorOrigin{-320,-144}, floorSize{640,288};
-    std::vector<Quad> world, albedo, emission, hud, debug, tiles;
+    std::vector<Quad> world, albedo, emission, hud, debug, tiles, enemies;
     LightList lights;
     OccluderList occluders;
     double lightExtractUs=0;

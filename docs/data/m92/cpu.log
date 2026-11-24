@@ -1,0 +1,22 @@
+$ build/m92-release/tiny2d_m91_generation
+5x5 seeds=32 distinct=1 mean cell difference vs seed 0=0.00%
+6x7 seeds=32 distinct=3 mean cell difference vs seed 0=0.38%
+17x25 seeds=32 distinct=32 mean cell difference vs seed 0=21.15%
+64x40 seeds=32 distinct=32 mean cell difference vs seed 0=24.82%
+96x64 seeds=32 distinct=32 mean cell difference vs seed 0=24.34%
+128x96 seeds=32 distinct=32 mean cell difference vs seed 0=24.15%
+seed 71 default tile FNV-1a=de25ba54c55fec8b
+$ build/m92-release/tiny2d_m91_collision
+1851 full-enumeration sweep comparisons at tile size 16
+1851 full-enumeration sweep comparisons at tile size 0.125
+1851 full-enumeration sweep comparisons at tile size 8.47033e-22
+$ build/m92-release/tiny2d_m91_session
+360 per-tick samples at 30/60/120 Hz; 80 replacement epochs
+$ build/m92-release/tiny2d_m92_navigation
+Known matrix, clearance, epochs and 72 independent swept-volume BFS comparisons passed
+$ build/m92-release/tiny2d_m92_motion
+28-edge switchback arrival; invalidation, off-center/oversized stride, up to 256 agents passed
+$ build/m92-release/tiny2d_m92_upgrade
+14 golden choices, 4 caps, 3/2/1/0 eligible choices and atomic rejection passed
+$ build/m92-release/tiny2d_m92_session
+complete per-tick authority at 30/60/120 Hz, spawn loads 0/16/256, replacement, four applied upgrades, cooldown, terminal precedence and map regression passed

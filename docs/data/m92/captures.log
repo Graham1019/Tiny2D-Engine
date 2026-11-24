@@ -1,0 +1,59 @@
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=navigation frames=40 ticks=40 seed=71 epoch=1 map_size=21x13 script=none shortest_path=28 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+003cb330f905ee5f70bc9c7cdc3eff47c28c4d8fad6eac23aa9c7274b6698893  docs/media/m92/pursuit.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=navigation frames=40 ticks=40 seed=71 epoch=1 map_size=21x13 script=none shortest_path=28 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+aef17118013f10a5e4c37dfc12c6d979d06e4eb737d2d94515bd8ce0d501903f  docs/media/m92/path.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=480 clock=steady units=us
+metric=frame n=480 p50=94.042 p95=119.125 p99=158.583
+metric=fixed_update n=480 p50=0.416 p95=3.459 p99=5.084
+metric=prepare n=480 p50=4.833 p95=6.625 p99=10.125
+metric=draw_calls n=480 p50=7 p95=7 p99=7
+metric=sprites n=480 p50=599 p95=604 p99=607
+metric=uploaded_bytes n=480 p50=86256 p95=86976 p99=87408
+metric=world n=480 p50=34.5 p95=45.625 p99=57.25
+metric=bright n=480 p50=7 p95=11.125 p99=13.875
+metric=horizontal n=480 p50=6.541 p95=10.625 p99=13.208
+metric=vertical n=480 p50=6.208 p95=9.667 p99=12.25
+metric=output n=480 p50=9.167 p95=13.917 p99=17.792
+metric=hud n=480 p50=15.917 p95=20.417 p99=24.333
+metric=gui n=1 p50=372.25 p95=372.25 p99=372.25
+status=ok scene=navigation frames=600 ticks=600 seed=71 epoch=1 map_size=21x13 script=walk shortest_path=28 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+6564be27b2edf0ef069fae69790488ad44b961aa32b92b44440243134bcafe64  docs/media/m92/offer.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+upgrade_choice=Vitality serial=1 epoch=1 tick=600
+warmup=120 samples=481 clock=steady units=us
+metric=frame n=481 p50=104.584 p95=146.375 p99=187.166
+metric=fixed_update n=481 p50=0.459 p95=4.083 p99=6
+metric=prepare n=481 p50=5.292 p95=9.042 p99=12
+metric=draw_calls n=481 p50=7 p95=7 p99=7
+metric=sprites n=481 p50=599 p95=604 p99=607
+metric=uploaded_bytes n=481 p50=86256 p95=86976 p99=87408
+metric=world n=481 p50=37.459 p95=58 p99=71.25
+metric=bright n=481 p50=7.584 p95=10.833 p99=12.917
+metric=horizontal n=481 p50=7.208 p95=9.625 p99=11.833
+metric=vertical n=481 p50=6.333 p95=7.75 p99=9.292
+metric=output n=481 p50=10.167 p95=14.083 p99=17.25
+metric=hud n=481 p50=16.334 p95=19.125 p99=22.916
+metric=gui n=1 p50=396.167 p95=396.167 p99=396.167
+status=ok scene=navigation frames=601 ticks=601 seed=71 epoch=1 map_size=21x13 script=walk shortest_path=28 phase=Playing hp=6 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Vitality timestamp_bits=-1 valid_gpu_samples=0
+b37fa4c0861637961f8a0d425b03ef3a892c28373fb918657167528843f28507  docs/media/m92/applied.png
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0
+upgrade_choice=Vitality serial=1 epoch=1 tick=600
+warmup=120 samples=1200 clock=steady units=us
+metric=frame n=1200 p50=108.125 p95=140.958 p99=175.667
+metric=fixed_update n=1200 p50=0 p95=4 p99=24.709
+metric=prepare n=1200 p50=5.792 p95=8.791 p99=11.5
+metric=draw_calls n=1200 p50=8 p95=8 p99=8
+metric=sprites n=1200 p50=855 p95=855 p99=855
+metric=uploaded_bytes n=1200 p50=123120 p95=123120 p99=123120
+metric=world n=1200 p50=41.958 p95=57.334 p99=67.042
+metric=bright n=1200 p50=7.458 p95=11.416 p99=15.209
+metric=horizontal n=1200 p50=6.916 p95=10.584 p99=14.208
+metric=vertical n=1200 p50=6.333 p95=8.334 p99=13.291
+metric=output n=1200 p50=9.666 p95=14.041 p99=19.583
+metric=hud n=1200 p50=20.25 p95=28.834 p99=37.834
+metric=gui n=1 p50=373.625 p95=373.625 p99=373.625
+status=ok scene=navigation frames=1320 ticks=702 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=GameOver hp=0 enemies=16 requested_enemies=16 offer_serial=1 last_choice=Vitality timestamp_bits=0 valid_gpu_samples=0

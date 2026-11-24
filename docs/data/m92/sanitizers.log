@@ -1,0 +1,123 @@
+$ cmake -S . -B build/m92-san -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTINY2D_OPENGL_TESTS=OFF '-DCMAKE_CXX_FLAGS=-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer'
+-- Configuring done (0.1s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+$ cmake --build build/m92-san --target tiny2d_m91_generation tiny2d_m91_collision tiny2d_m91_session tiny2d_m92_navigation tiny2d_m92_motion tiny2d_m92_upgrade tiny2d_m92_session --parallel 6
+[ 83%] Built target tiny2d_world
+[100%] Built target tiny2d_m91_generation
+[ 83%] Built target tiny2d_world
+[100%] Built target tiny2d_m91_collision
+[ 83%] Built target tiny2d_world
+[100%] Built target tiny2d_m91_session
+[ 83%] Built target tiny2d_world
+[100%] Built target tiny2d_m92_navigation
+[ 83%] Built target tiny2d_world
+[100%] Built target tiny2d_m92_motion
+[ 50%] Built target tiny2d_world
+[ 90%] Built target tiny2d_game
+[100%] Built target tiny2d_m92_upgrade
+[ 50%] Built target tiny2d_world
+[ 90%] Built target tiny2d_game
+[100%] Building CXX object CMakeFiles/tiny2d_m92_session.dir/tests/m92_navigation_session.cpp.o
+[100%] Linking CXX executable tiny2d_m92_session
+[100%] Built target tiny2d_m92_session
+$ c++ --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ otool -L build/m92-san/tiny2d_m92_session
+build/m92-san/tiny2d_m92_session:
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	@rpath/libclang_rt.asan_osx_dynamic.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+$ ctest --test-dir build/m92-san -R 'M9[12]_.*CPU$' --output-on-failure -V
+UpdateCTestConfiguration  from :/Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/DartConfiguration.tcl
+Parse Config file:/Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/DartConfiguration.tcl
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 24
+    Start 24: M91_MapGenerationCPU
+
+24: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m91_generation
+24: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+24: Test timeout computed to be: 1500
+24: 5x5 seeds=32 distinct=1 mean cell difference vs seed 0=0.00%
+24: 6x7 seeds=32 distinct=3 mean cell difference vs seed 0=0.38%
+24: 17x25 seeds=32 distinct=32 mean cell difference vs seed 0=21.15%
+24: 64x40 seeds=32 distinct=32 mean cell difference vs seed 0=24.82%
+24: 96x64 seeds=32 distinct=32 mean cell difference vs seed 0=24.34%
+24: 128x96 seeds=32 distinct=32 mean cell difference vs seed 0=24.15%
+24: seed 71 default tile FNV-1a=de25ba54c55fec8b
+1/7 Test #24: M91_MapGenerationCPU .............   Passed    0.13 sec
+test 25
+    Start 25: M91_TileCollisionCPU
+
+25: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m91_collision
+25: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+25: Test timeout computed to be: 1500
+25: 1851 full-enumeration sweep comparisons at tile size 16
+25: 1851 full-enumeration sweep comparisons at tile size 0.125
+25: 1851 full-enumeration sweep comparisons at tile size 8.47033e-22
+2/7 Test #25: M91_TileCollisionCPU .............   Passed    0.05 sec
+test 26
+    Start 26: M91_MapSessionCPU
+
+26: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m91_session
+26: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+26: Test timeout computed to be: 1500
+26: 360 per-tick samples at 30/60/120 Hz; 80 replacement epochs
+3/7 Test #26: M91_MapSessionCPU ................   Passed    0.05 sec
+test 27
+    Start 27: M92_NavigationCPU
+
+27: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m92_navigation
+27: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+27: Test timeout computed to be: 1500
+27: Known matrix, clearance, epochs and 72 independent swept-volume BFS comparisons passed
+4/7 Test #27: M92_NavigationCPU ................   Passed    0.15 sec
+test 28
+    Start 28: M92_EnemyMotionCPU
+
+28: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m92_motion
+28: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+28: Test timeout computed to be: 1500
+28: 28-edge switchback arrival; invalidation, off-center/oversized stride, up to 256 agents passed
+5/7 Test #28: M92_EnemyMotionCPU ...............   Passed    0.11 sec
+test 29
+    Start 29: M92_UpgradeCPU
+
+29: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m92_upgrade
+29: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+29: Test timeout computed to be: 1500
+29: 14 golden choices, 4 caps, 3/2/1/0 eligible choices and atomic rejection passed
+6/7 Test #29: M92_UpgradeCPU ...................   Passed    0.05 sec
+test 30
+    Start 30: M92_NavigationSessionCPU
+
+30: Test command: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san/tiny2d_m92_session
+30: Working Directory: /Users/grahm/Desktop/Tiny2D-Engine/build/m92-san
+30: Test timeout computed to be: 1500
+30: complete per-tick authority at 30/60/120 Hz, spawn loads 0/16/256, replacement, four applied upgrades, cooldown, terminal precedence and map regression passed
+7/7 Test #30: M92_NavigationSessionCPU .........   Passed    0.54 sec
+
+The following tests passed:
+	M91_MapGenerationCPU
+	M91_TileCollisionCPU
+	M91_MapSessionCPU
+	M92_NavigationCPU
+	M92_EnemyMotionCPU
+	M92_UpgradeCPU
+	M92_NavigationSessionCPU
+
+100% tests passed out of 7
+
+Label Time Summary:
+cpu    =   1.07 sec*proc (7 tests)
+
+Total Test time (real) =   1.08 sec
