@@ -10,8 +10,8 @@
 | M8.1 | [确定性粒子力场、HDR 实例化与性能测量](milestone-08-1.md) | PR #16 已合并，源码 Review 与七项 Mac 人工验收通过 |
 | M8.2 | [Shader 展厅、手动安全重载与像素验证](milestone-08-2.md) | PR #17 已合并，源码 Review 与六项 Mac 主设备人工验收通过 |
 | M9.1 | [种子地图、连通性、Tilemap 与地图碰撞](milestone-09-1.md) | PR #18 已合并，ChatGPT 源码 Review 与六项 Mac 主设备人工验收通过 |
-| M9.2 | [敌人导航与随机增益](milestone-09-2.md) | 等待 ChatGPT 源码 Review 与 Mac 主设备人工验收 |
-| M10.1 | 状态快照、输入记录与回放 | 规划中 |
+| M9.2 | [敌人导航与随机增益](milestone-09-2.md) | [PR #19](https://github.com/Graham1019/Tiny2D-Engine/pull/19) 已合并，ChatGPT 源码 Review 与七项 Mac 主设备人工验收通过 |
+| M10.1 | [完整快照、输入记录与确定性回放](milestone-10-1.md) | 等待 ChatGPT 源码 Review 与 Mac 主设备人工验收 |
 | M10.2 | 时间轴、倒带与分支继续 | 规划中 |
 | M11.1 | 统一展厅及 Survivor 精选整合 | 规划中 |
 | M11.2 | 候选包、真实演示与作品集 | 规划中 |

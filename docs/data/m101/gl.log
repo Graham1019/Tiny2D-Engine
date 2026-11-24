@@ -1,0 +1,91 @@
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m101-release/lab/tiny2d_lab --scene replay --size 800x450 --view final --bloom on --frames 417 --gpu-timing off --inspector off --capture /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/checkpoint.png --metrics /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/checkpoint.csv --nav-script walk --nav-choice first --snapshot-out /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/mid.snap
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Live" event_sequence=0 recorded_events=0 verified_events=0 state_hash=488c5f6e47091086
+warmup=120 samples=297 clock=steady units=us
+metric=frame n=297 p50=117.083 p95=160.958 p99=174.75
+metric=fixed_update n=297 p50=2.458 p95=22.792 p99=29.708
+metric=prepare n=297 p50=5.666 p95=8.709 p99=12.5
+metric=draw_calls n=297 p50=8 p95=8 p99=8
+metric=sprites n=297 p50=720 p95=726 p99=729
+metric=uploaded_bytes n=297 p50=103680 p95=104544 p99=104976
+metric=world n=297 p50=42.375 p95=57.042 p99=66.334
+metric=bright n=297 p50=7.292 p95=10.208 p99=11.958
+metric=horizontal n=297 p50=6.791 p95=9.292 p99=11.041
+metric=vertical n=297 p50=6.167 p95=7.667 p99=11.25
+metric=output n=297 p50=10.042 p95=13.625 p99=16.125
+metric=hud n=297 p50=16.125 p95=19.416 p99=20.959
+status=ok scene=replay frames=417 ticks=417 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m101-release/lab/tiny2d_lab --scene replay --size 800x450 --view final --bloom on --frames 568 --gpu-timing off --inspector off --capture /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/continuous.png --metrics /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/continuous.csv --nav-script walk --nav-choice first --snapshot-out /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/continuous.snap
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Live" event_sequence=0 recorded_events=0 verified_events=0 state_hash=af5beffe7ad502e0
+warmup=120 samples=448 clock=steady units=us
+metric=frame n=448 p50=115.625 p95=146.917 p99=178.125
+metric=fixed_update n=448 p50=2.333 p95=24.417 p99=30.833
+metric=prepare n=448 p50=5.416 p95=9.041 p99=12.458
+metric=draw_calls n=448 p50=8 p95=8 p99=8
+metric=sprites n=448 p50=720 p95=726 p99=728
+metric=uploaded_bytes n=448 p50=103680 p95=104544 p99=104832
+metric=world n=448 p50=42.167 p95=55.583 p99=62.625
+metric=bright n=448 p50=7.292 p95=10.166 p99=11.917
+metric=horizontal n=448 p50=6.833 p95=9.083 p99=12.625
+metric=vertical n=448 p50=6.25 p95=7.875 p99=10.5
+metric=output n=448 p50=9.834 p95=13.541 p99=15.583
+metric=hud n=448 p50=16.125 p95=19.583 p99=23.75
+status=ok scene=replay frames=568 ticks=568 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=2 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m101-release/lab/tiny2d_lab --scene replay --size 800x450 --view final --bloom on --frames 151 --gpu-timing off --inspector off --capture /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/recorded.png --metrics /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/recorded.csv --snapshot-in /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/mid.snap --nav-script walk --nav-choice first --record /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/suffix.replay --snapshot-out /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/recorded.snap
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Recording" event_sequence=151 recorded_events=151 verified_events=0 state_hash=af5beffe7ad502e0
+warmup=120 samples=31 clock=steady units=us
+metric=frame n=31 p50=123.125 p95=157.25 p99=170.084
+metric=fixed_update n=31 p50=12.375 p95=34.5 p99=35.25
+metric=prepare n=31 p50=5.458 p95=9.459 p99=10.166
+metric=draw_calls n=31 p50=8 p95=8 p99=8
+metric=sprites n=31 p50=718 p95=723 p99=724
+metric=uploaded_bytes n=31 p50=103392 p95=104112 p99=104256
+metric=world n=31 p50=40.833 p95=53.583 p99=59.333
+metric=bright n=31 p50=7.292 p95=10.083 p99=10.5
+metric=horizontal n=31 p50=6.708 p95=9.208 p99=10.833
+metric=vertical n=31 p50=6.209 p95=7.875 p99=7.916
+metric=output n=31 p50=9.208 p95=12.542 p99=13.875
+metric=hud n=31 p50=15.542 p95=19.208 p99=20.5
+status=ok scene=replay frames=151 ticks=568 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=2 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m101-release/lab/tiny2d_lab --scene replay --size 800x450 --view final --bloom on --frames 151 --gpu-timing off --inspector off --capture /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/replayed.png --metrics /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/replayed.csv --replay /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/suffix.replay --snapshot-out /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/replayed.snap
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Playback finished" event_sequence=151 recorded_events=151 verified_events=151 state_hash=af5beffe7ad502e0
+warmup=120 samples=31 clock=steady units=us
+metric=frame n=31 p50=120 p95=136.334 p99=146.542
+metric=fixed_update n=31 p50=12.333 p95=32.5 p99=38.584
+metric=prepare n=31 p50=5.25 p95=10.334 p99=12.208
+metric=draw_calls n=31 p50=8 p95=8 p99=8
+metric=sprites n=31 p50=718 p95=723 p99=724
+metric=uploaded_bytes n=31 p50=103392 p95=104112 p99=104256
+metric=world n=31 p50=39.667 p95=47.625 p99=47.834
+metric=bright n=31 p50=6.542 p95=11.166 p99=14.75
+metric=horizontal n=31 p50=6.125 p95=8.209 p99=10.667
+metric=vertical n=31 p50=5.791 p95=9.833 p99=12.833
+metric=output n=31 p50=8.417 p95=13.875 p99=14.417
+metric=hud n=31 p50=15.625 p95=20.541 p99=23.208
+status=ok scene=replay frames=151 ticks=568 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=2 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+three independent final png files identical: bytes=18758 sha256=8cc94820e7c5d16a73d6e51a604d1c9e5af92e75aa0082693066f1cb87f50996
+three independent final snap files identical: bytes=3283 sha256=7719138bba673bdcd0c8d1072bc5bf6b860f6e390ef69a21fe251bf64f4f87b7
+matched all 151 event boundaries starting at tick 417
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m101-release/lab/tiny2d_lab --scene replay --size 800x450 --view final --bloom on --frames 152 --gpu-timing on --inspector on --capture /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/inspector.png --metrics /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/inspector.csv --replay /Users/grahm/Desktop/Tiny2D-Engine/build/m101-work/gl-final/suffix.replay --nav-debug path
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+timestamp=N/A: GL_TIMESTAMP counter bits = 0 bits=0
+replay_mode="Playback finished" event_sequence=151 recorded_events=151 verified_events=151 state_hash=af5beffe7ad502e0
+warmup=120 samples=32 clock=steady units=us
+metric=frame n=32 p50=140.834 p95=156.583 p99=158.291
+metric=fixed_update n=32 p50=11.542 p95=29.708 p99=37.75
+metric=prepare n=32 p50=4.5 p95=6.125 p99=7.25
+metric=draw_calls n=32 p50=11 p95=11 p99=11
+metric=sprites n=32 p50=726 p95=731 p99=734
+metric=uploaded_bytes n=32 p50=149818 p95=150722 p99=150970
+metric=world n=32 p50=38.125 p95=42.958 p99=49.5
+metric=bright n=32 p50=6.958 p95=8.25 p99=11
+metric=horizontal n=32 p50=7.083 p95=7.667 p99=7.833
+metric=vertical n=32 p50=6.792 p95=7.459 p99=11.334
+metric=output n=32 p50=10.25 p95=11.875 p99=13.667
+metric=hud n=32 p50=16.792 p95=18.417 p99=18.667
+metric=debug n=32 p50=4.084 p95=4.583 p99=4.583
+metric=gui n=32 p50=5.542 p95=8.167 p99=10.417
+status=ok scene=replay frames=152 ticks=568 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=2 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=0 valid_gpu_samples=0

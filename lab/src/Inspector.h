@@ -44,6 +44,7 @@ public:
     std::uint64_t atlasBytes() const { return atlasBytes_; }
     void discard();
     void suspend();
+    void invalidateSelection();
 private:
     GLFWwindow* window_;
     std::uint64_t atlasBytes_=0;

@@ -27,7 +27,7 @@ struct Display {
     unsigned shadowLights = 4;
     void validate() const;
 };
-enum class LabScene { Neon, Particles, Shaders, Map, Navigation };
+enum class LabScene { Neon, Particles, Shaders, Map, Navigation, Replay };
 struct Options {
     LabScene scene = LabScene::Neon;
     GalleryEffect effect = GalleryEffect::Aurora;
@@ -44,6 +44,7 @@ struct Options {
     Display display;
     bool inspector = true, timing = true, previews = false;
     std::string capture, metrics;
+    std::string snapshotIn, snapshotOut, recordPath, replayPath;
 };
 Options parse(int argc, const char* const* argv);
 
@@ -66,6 +67,11 @@ class Controls {
 public:
     bool paused = false;
     void clearElapsed() { clock_.reset(); }
+    void replaceInstance(Keys held,bool manualPause) {
+        blocked_ |= held;
+        paused=manualPause;
+        clock_.reset();
+    }
     Action poll(Keys keys, bool active, double elapsed, Display& display, bool captured=false, Commands ui={},
                 bool freshFocus=false);
 private:

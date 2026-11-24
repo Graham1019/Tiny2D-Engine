@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <charconv>
 #include <cmath>
+#include <filesystem>
 #include <stdexcept>
 #include <string_view>
 
@@ -58,6 +59,7 @@ Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
     bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
+    bool seedOption=false, enemyOption=false, inputOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -68,21 +70,22 @@ Options parse(int argc, const char* const* argv) {
             else if (value=="shaders") o.scene=LabScene::Shaders;
             else if (value=="map") o.scene=LabScene::Map;
             else if (value=="navigation") o.scene=LabScene::Navigation;
-            else throw std::invalid_argument("--scene expects neon, particles, shaders, map or navigation");
+            else if (value=="replay") o.scene=LabScene::Replay;
+            else throw std::invalid_argument("--scene expects neon, particles, shaders, map, navigation or replay");
         } else if (key=="--map-script") {
             if (value!="none" && value!="walk") throw std::invalid_argument("--map-script expects none or walk");
             mapOption=true;
             o.mapWalk=value=="walk";
         } else if (key=="--nav-enemies") {
-            navOption=true;
+            navOption=enemyOption=true;
             o.navEnemies=number(value,key);
             if (o.navEnemies>256) throw std::invalid_argument("--nav-enemies expects 0..256");
         } else if (key=="--nav-script") {
-            navOption=true;
+            navOption=inputOption=true;
             if (value!="none" && value!="walk") throw std::invalid_argument("--nav-script expects none or walk");
             o.navWalk=value=="walk";
         } else if (key=="--nav-choice") {
-            navOption=true;
+            navOption=inputOption=true;
             if (value!="first" && value!="last") throw std::invalid_argument("--nav-choice expects first or last");
             o.navChooseLast=value=="last";
         } else if (key=="--nav-debug") {
@@ -107,7 +110,16 @@ Options parse(int argc, const char* const* argv) {
             particleOption=true;
             if (value!="none" && value!="demo") throw std::invalid_argument("--particle-script expects none or demo");
             o.particleDemo=value=="demo";
-        } else if (key == "--seed") o.seed = number(value,key);
+        } else if (key == "--seed") {
+            seedOption=true;
+            o.seed=number(value,key);
+        } else if (key=="--snapshot-in" || key=="--snapshot-out" || key=="--record" || key=="--replay") {
+            if (value.empty()) throw std::invalid_argument(std::string(key)+" requires a path");
+            if (key=="--snapshot-in") o.snapshotIn=value;
+            if (key=="--snapshot-out") o.snapshotOut=value;
+            if (key=="--record") o.recordPath=value;
+            if (key=="--replay") o.replayPath=value;
+        }
         else if (key == "--frames") {
             o.frames = number(value,key);
             if (!*o.frames) throw std::invalid_argument("--frames must be positive");
@@ -161,9 +173,36 @@ Options parse(int argc, const char* const* argv) {
     const bool particles=o.scene==LabScene::Particles;
     const bool shaders=o.scene==LabScene::Shaders;
     const bool map=o.scene==LabScene::Map;
-    const bool navigation=o.scene==LabScene::Navigation;
-    if (mapSize && !map && !navigation) throw std::invalid_argument("--map-size requires --scene map or navigation");
-    if (navOption && !navigation) throw std::invalid_argument("navigation options require --scene navigation");
+    const bool replay=o.scene==LabScene::Replay;
+    const bool navigation=o.scene==LabScene::Navigation || replay;
+    const bool load=!o.snapshotIn.empty() || !o.replayPath.empty();
+    if (!replay && (load || !o.snapshotOut.empty() || !o.recordPath.empty()))
+        throw std::invalid_argument("snapshot and replay file options require --scene replay");
+    if (load && (mapSize || seedOption || enemyOption))
+        throw std::invalid_argument("file supplies seed, map parameters and enemy count");
+    if (!o.replayPath.empty() && (inputOption || !o.snapshotIn.empty() || !o.recordPath.empty()))
+        throw std::invalid_argument("--replay supplies the base snapshot and all input events");
+    if (replay) {
+        for (const auto* output:{&o.snapshotOut,&o.recordPath}) {
+            if (!output->empty() && std::filesystem::exists(std::filesystem::symlink_status(*output)))
+                throw std::invalid_argument("output already exists: "+*output);
+        }
+        // Capture and Metrics historically replace their targets. Never allow those
+        // output paths to alias an input snapshot, replay, or another output.
+        const std::string* paths[]={&o.snapshotIn,&o.replayPath,&o.recordPath,&o.snapshotOut,&o.capture,&o.metrics};
+        for (std::size_t i=0;i<std::size(paths);++i) {
+            if (paths[i]->empty()) continue;
+            for (std::size_t j=0;j<i;++j) {
+                if (paths[j]->empty()) continue;
+                namespace fs=std::filesystem;
+                if (fs::weakly_canonical(fs::absolute(*paths[i]))==fs::weakly_canonical(fs::absolute(*paths[j])) ||
+                    (fs::exists(*paths[i]) && fs::exists(*paths[j]) && fs::equivalent(*paths[i],*paths[j])))
+                    throw std::invalid_argument("snapshot, replay, capture and metrics paths must be distinct");
+            }
+        }
+    }
+    if (mapSize && !map && !navigation) throw std::invalid_argument("--map-size requires --scene map, navigation or replay");
+    if (navOption && !navigation) throw std::invalid_argument("navigation options require --scene navigation or replay");
     if (mapOption && !map) throw std::invalid_argument("map options require --scene map");
     o.display.lighting=lighting.value_or(particles);
     if (effectOption && !shaders) throw std::invalid_argument("--effect requires --scene shaders");

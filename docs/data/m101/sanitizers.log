@@ -1,0 +1,34 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m101-san
+      Start 24: M91_MapGenerationCPU
+ 1/13 Test #24: M91_MapGenerationCPU .............   Passed    0.57 sec
+      Start 25: M91_TileCollisionCPU
+ 2/13 Test #25: M91_TileCollisionCPU .............   Passed    0.08 sec
+      Start 26: M91_MapSessionCPU
+ 3/13 Test #26: M91_MapSessionCPU ................   Passed    0.08 sec
+      Start 27: M92_NavigationCPU
+ 4/13 Test #27: M92_NavigationCPU ................   Passed    0.63 sec
+      Start 28: M92_EnemyMotionCPU
+ 5/13 Test #28: M92_EnemyMotionCPU ...............   Passed    0.62 sec
+      Start 29: M92_UpgradeCPU
+ 6/13 Test #29: M92_UpgradeCPU ...................   Passed    0.26 sec
+      Start 30: M92_NavigationSessionCPU
+ 7/13 Test #30: M92_NavigationSessionCPU .........   Passed    1.24 sec
+      Start 38: M101_SnapshotCPU
+ 8/13 Test #38: M101_SnapshotCPU .................   Passed    1.75 sec
+      Start 39: M101_SnapshotCodecCPU
+ 9/13 Test #39: M101_SnapshotCodecCPU ............   Passed    0.66 sec
+      Start 40: M101_EventDispatchCPU
+10/13 Test #40: M101_EventDispatchCPU ............   Passed    0.64 sec
+      Start 41: M101_ReplayCPU
+11/13 Test #41: M101_ReplayCPU ...................   Passed    7.71 sec
+      Start 42: M101_ReplayCodecCPU
+12/13 Test #42: M101_ReplayCodecCPU ..............   Passed    2.55 sec
+      Start 43: M101_CrossProcessCPU
+13/13 Test #43: M101_CrossProcessCPU .............   Passed    5.65 sec
+
+100% tests passed out of 13
+
+Label Time Summary:
+cpu    =  22.43 sec*proc (13 tests)
+
+Total Test time (real) =  22.44 sec

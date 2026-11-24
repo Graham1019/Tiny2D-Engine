@@ -43,29 +43,34 @@ void inspectPath(NavigationView& view,const NavigationSession& session) {
 
 void navigationPanel(ToolState& tools,MapEditor& edit,NavigationView& view,Commands& cmd,
                      const NavigationSession& session,bool finite,const History& history,
-                     const tiny2d::TimestampQueries* queries) {
+                     const tiny2d::TimestampQueries* queries,const std::function<void()>& replayPanel,bool playback) {
     using namespace ImGui;
     const auto& world=session.world();
     const auto& upgrades=session.upgrades();
     const auto size=GetIO().DisplaySize;
     const float width=std::min(350.f,std::max(1.f,size.x-12.f));
     SetNextWindowPos({std::max(0.f,size.x-width-8),8},ImGuiCond_FirstUseEver);
-    SetNextWindowSize({width,std::min(340.f,std::max(32.f,size.y-16))},ImGuiCond_FirstUseEver);
-    if (Begin("Navigation Inspector",nullptr,finite?ImGuiWindowFlags_NoInputs:0)) {
-        Text("Tick %llu   %s%s",U64(world.tick()),phaseName(session.phase()),world.paused()?" / Paused":"");
+    SetNextWindowSize({width,std::min(replayPanel?444.f:340.f,std::max(32.f,size.y-16))},ImGuiCond_FirstUseEver);
+    if (Begin(replayPanel?"Replay Inspector":"Navigation Inspector",nullptr,finite?ImGuiWindowFlags_NoInputs:0)) {
+        if (!replayPanel) Text("Tick %llu   %s%s",U64(world.tick()),phaseName(session.phase()),world.paused()?" / Paused":"");
+        BeginDisabled(playback);
         if (Button(world.paused()?"Resume (P)":"Pause (P)")) cmd.edges.set(Pause);
         SameLine(); BeginDisabled(!world.paused() || session.phase()!=NavigationPhase::Playing);
         if (Button("Step (.)")) cmd.edges.set(Step);
         EndDisabled(); SameLine(); if (Button("Reset (R)")) cmd.edges.set(Reset);
+        EndDisabled();
         if (BeginTabBar("Navigation panels")) {
+            if (replayPanel && BeginTabItem("Replay")) { replayPanel(); EndTabItem(); }
             if (BeginTabItem("World")) {
                 Text("Seed %u    Epoch %llu",world.seed(),U64(world.epoch()));
                 Text("%d x %d tiles   %.0f units/tile",world.map().width(),world.map().height(),world.map().tileSize());
                 Text("Enemies %zu / %d requested",session.enemies().size(),session.requestedEnemies());
                 if (*session.spawnShortfallReason()) TextWrapped("%s",session.spawnShortfallReason());
+                BeginDisabled(playback);
                 SetNextItemWidth(-76);
                 InputScalar("Seed",ImGuiDataType_U32,&edit.seedInput);
                 if (Button("Regenerate")) edit.regenerate=true;
+                EndDisabled();
                 if (!edit.error.empty()) TextWrapped("%s",edit.error.c_str());
                 Checkbox("Buffer previews",&tools.previews);
                 EndTabItem();

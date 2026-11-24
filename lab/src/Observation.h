@@ -19,7 +19,9 @@ struct FrameInfo {
     std::optional<GalleryEffect> galleryEffect;
     std::uint64_t shaderVersion=0;
     int mapWidth=0,mapHeight=0;
-    bool mapWalk=false, navigation=false;
+    bool mapWalk=false, navigation=false, replay=false;
+    std::uint64_t revision=0, eventSequence=0, recordedEvents=0, verifiedEvents=0, simulationHash=0;
+    const char* replayMode="";
 };
 using Timer=tiny2d::TimestampRing<FrameInfo,PassCount+1>;
 struct MapFrameSample {
@@ -70,8 +72,8 @@ struct History {
         if (window.size()==capacity) window.pop_front();
         window.push_back(std::move(sample));
     }
-    void recordGpu(std::uint64_t currentEpoch,const GpuSample& sample) {
-        if (sample.info.epoch!=currentEpoch || sample.status!=tiny2d::QueryStatus::Complete) return;
+    void recordGpu(std::uint64_t currentEpoch,const GpuSample& sample,std::uint64_t currentRevision=0) {
+        if (sample.info.epoch!=currentEpoch || sample.info.revision!=currentRevision || sample.status!=tiny2d::QueryStatus::Complete) return;
         // A reused query slot can retire before an older slot, even across polls.
         auto pos=gpu.end();
         if (!gpu.empty() && sample.info.id<gpu.back().info.id)
