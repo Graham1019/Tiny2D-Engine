@@ -1,8 +1,7 @@
 #pragma once
 
-#include "tiny2d/GridNavigator.h"
+#include "tiny2d_game/NavigationSnapshot.h"
 #include "tiny2d/MapSession.h"
-#include "tiny2d_game/UpgradeSystem.h"
 
 #include <cstddef>
 #include <optional>
@@ -10,12 +9,7 @@
 
 namespace tiny2d_game {
 
-enum class NavigationPhase { Playing, AwaitingUpgrade, Victory, GameOver };
 const char* phaseName(NavigationPhase phase);
-
-struct NavigationEnemy : tiny2d::WaypointAgent {
-    std::size_t slot = 0; // (epoch, slot) is stable. Every occupied slot is active.
-};
 
 struct NavigationTimings {
     double enemyUpdateUs = 0;    // Entire stable-slot motion loop.
@@ -32,6 +26,10 @@ public:
 
     explicit NavigationSession(std::uint32_t seed = 71,
                                const tiny2d::MapParameters& parameters = {}, int enemyCount = 16);
+    NavigationSnapshot captureSnapshot() const;
+    static NavigationSession fromSnapshot(const NavigationSnapshot& snapshot, RestoreTimings* timings = nullptr);
+    void restoreSnapshot(const NavigationSnapshot& snapshot);
+
     const tiny2d::MapSession& world() const { return world_; }
     const tiny2d::GridNavigator& navigator() const { return navigator_; }
     const std::vector<NavigationEnemy>& enemies() const { return enemies_; }
@@ -59,6 +57,7 @@ public:
 private:
     friend struct NavigationSessionTestAccess;
     NavigationSession(tiny2d::MapSession&& world, int enemyCount);
+    NavigationSession(tiny2d::MapSession&& world, const NavigationSnapshot& snapshot);
     void spawnEnemies();
     void resolveContact();
 

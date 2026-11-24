@@ -339,6 +339,13 @@ void Inspector::discard() {
     if (active_) ImGui::EndFrame();
     active_=false; ready_=false;
 }
+void Inspector::invalidateSelection() {
+    requireOwner();
+    if (ImGui::IsAnyItemActive()) ImGui::SetWindowFocus(nullptr);
+    ImGui::GetIO().ClearInputMouse();
+    mouseBlocked_=true;
+    restoreCursor_=true;
+}
 void Inspector::suspend() {
     discard();
     cancelPendingInput(ImGui::GetIO());

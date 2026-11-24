@@ -5,12 +5,22 @@ namespace lab {
 using namespace tiny2d_game;
 
 NavigationApp::NavigationApp(const Options& options,const tiny2d::MapParameters& parameters)
-    :session(options.seed,parameters,options.navEnemies),view{options.navField,options.navPath} {}
+     :live(options.seed,parameters,options.navEnemies),view{options.navField,options.navPath} {
+    if (options.scene==LabScene::Replay) replay.emplace(options,live);
+}
 
-bool NavigationApp::playing() const { return session.phase()==NavigationPhase::Playing; }
+const NavigationSession& NavigationApp::displayed() const {
+    return replay ? replay->displayed(live) : live;
+}
+
+bool NavigationApp::dispatch(const ReplayCommand& command) {
+    return replay ? replay->dispatch(live,command) : dispatchEvent(live,command);
+}
+
+bool NavigationApp::playing() const { return displayed().phase()==NavigationPhase::Playing; }
 
 void NavigationApp::recordInitialBuild(CpuSample& cpu) const {
-    const auto& stats=session.navigator().stats();
+    const auto& stats=displayed().navigator().stats();
     cpu.nav.graphEvents=1;
     cpu.nav.fieldEvents=1;
     cpu.nav.graphUs=stats.graphBuildUs;
@@ -18,15 +28,22 @@ void NavigationApp::recordInitialBuild(CpuSample& cpu) const {
 }
 
 bool NavigationApp::applyChoice(UpgradeChoice choice,Controls& controls,CpuSample& cpu) {
-    if (!session.choose(choice.epoch,choice.serial,choice.id)) return false;
+    if (!dispatch(ReplayCommand::choose(choice))) return false;
     controls.clearElapsed();
-    cpu.nav.upgradeUs+=session.timings().upgradeUpdateUs;
+    cpu.nav.upgradeUs+=live.timings().upgradeUpdateUs;
     std::cout<<"upgrade_choice="<<upgradeName(choice.id)<<" serial="<<choice.serial<<" epoch="<<choice.epoch
-             <<" tick="<<session.world().tick()<<'\n';
+             <<" tick="<<live.world().tick()<<'\n';
     return true;
 }
 
 void NavigationApp::advance(Action action,const Options& options,Controls& controls,CpuSample& cpu) {
+    if (replay && replay->playback()) {
+        const auto start=Clock::now();
+        replay->advancePlayback();
+        cpu.update+=micros(start);
+        return;
+    }
+    const auto& session=live;
     const auto& world=session.world();
     if (options.frames) {
         if (const auto& offer=session.upgrades().offer()) {
@@ -39,8 +56,8 @@ void NavigationApp::advance(Action action,const Options& options,Controls& contr
         const auto input=options.navWalk?tiny2d::mapWalkInput(world.tick()):tiny2d::MapInput{action.motion.x,action.motion.y};
         const auto rebuilds=session.navigator().stats().fieldRebuildCount;
         const auto start=Clock::now();
-        if (world.paused()) session.step(input);
-        else session.fixedUpdate(input);
+        if (world.paused() && options.frames) break;
+        dispatch(world.paused()?ReplayCommand::manualStep(input):ReplayCommand::advance(input));
         cpu.update+=micros(start);
         cpu.map.collisionUs+=world.collisionUs();
         const auto& stats=session.navigator().stats();
@@ -56,13 +73,16 @@ void NavigationApp::advance(Action action,const Options& options,Controls& contr
 }
 
 bool NavigationApp::drawOffer(bool finite,bool focused,Controls& controls,CpuSample& cpu) {
+    const auto& session=displayed();
     if (!session.upgrades().offer()) return false;
-    const auto choice=navigationOffer(session,finite);
+    const bool readOnly=finite || (replay && replay->playback());
+    const auto choice=navigationOffer(session,readOnly);
     if (focused && choice) applyChoice(*choice,controls,cpu);
     return true;
 }
 
 void NavigationApp::prepare(Picture& picture,TileRange range,const Options& options,CpuSample& cpu) const {
+    const auto& session=displayed();
     const auto& world=session.world();
     const auto& upgrades=session.upgrades();
     const auto& nav=session.navigator();
@@ -93,6 +113,7 @@ void NavigationApp::prepare(Picture& picture,TileRange range,const Options& opti
 }
 
 void NavigationApp::printStatus() const {
+    const auto& session=displayed();
     const auto& u=session.upgrades();
     std::cout<<" phase="<<phaseName(session.phase())<<" hp="<<session.hp()
              <<" enemies="<<session.enemies().size()<<" requested_enemies="<<session.requestedEnemies()

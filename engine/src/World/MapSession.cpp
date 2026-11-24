@@ -12,6 +12,15 @@
 namespace tiny2d {
 namespace {
 
+std::uint64_t tileFingerprint(const TileMap& map) {
+    std::uint64_t hash = UINT64_C(14695981039346656037);
+    for (auto tile : map.cells()) {
+        hash ^= static_cast<std::uint8_t>(tile);
+        hash *= UINT64_C(1099511628211);
+    }
+    return hash;
+}
+
 TileMoveResult spawnPlayer(const GeneratedMap& candidate, Vector2 halfSize) {
     const auto spawn = candidate.map.spawn();
     const Vector2 center = candidate.map.tileToWorldCenter(spawn.x, spawn.y);
@@ -32,6 +41,42 @@ MapInput mapWalkInput(std::uint64_t currentTick) {
 MapSession::MapSession(std::uint32_t seed, const MapParameters& parameters)
     : parameters_(parameters), generated_(generateMap(seed, parameters)),
       movement_(spawnPlayer(generated_, playerHalfSize())) {}
+
+MapSnapshot MapSession::captureSnapshot() const {
+    return {seed(), parameters_, map().cells(), map().spawn(), map().exit(), tileFingerprint(map()),
+            epoch_, tick_, paused_, movement_};
+}
+
+MapSession MapSession::fromSnapshot(const MapSnapshot& s) {
+    if (s.epoch == 0) throw std::invalid_argument("world.epoch must be positive");
+    if (s.tiles.size() != TileMap::checkedCapacity(s.parameters.width, s.parameters.height,
+                                                   s.parameters.tileSize))
+        throw std::invalid_argument("world.tiles length differs from dimensions");
+    // Generation checks the carving budgets, bounds, closed perimeter, spawn,
+    // exit, and connectivity. Equality then proves those properties for s.tiles.
+    MapSession candidate(s.seed, s.parameters);
+    const auto& map = candidate.map();
+    if (s.spawn != map.spawn() || s.exit != map.exit() || s.tiles != map.cells() ||
+        s.fingerprint != tileFingerprint(map))
+        throw std::invalid_argument("world map differs from the seed, parameters or tile fingerprint");
+    const auto& move = s.movement;
+    if (!canOccupyTiles(map, move.position, candidate.playerHalfSize()))
+        throw std::invalid_argument("world.movement.position is not a legal player AABB");
+    if (s.tick == 0) {
+        const auto spawn = candidate.playerPosition();
+        if (move.position.x != spawn.x || move.position.y != spawn.y || move.hitX || move.hitY ||
+            move.tilesQueried != 0)
+            throw std::invalid_argument("world.movement at tick zero differs from spawn");
+    } else if (move.tilesQueried == 0 || move.tilesQueried > 3 * map.capacity()) {
+        // One initial box plus at most one full row-major sweep on each axis.
+        throw std::invalid_argument("world.movement.tilesQueried outside collision bounds");
+    }
+    candidate.movement_ = move;
+    candidate.epoch_ = s.epoch;
+    candidate.tick_ = s.tick;
+    candidate.paused_ = s.paused;
+    return candidate;
+}
 
 void MapSession::fixedUpdate(MapInput input) {
     if (!paused_) step(input);

@@ -1,5 +1,6 @@
 #pragma once
 #include "NavigationInspector.h"
+#include "ReplayApp.h"
 
 namespace lab {
 // Navigation-specific control boundaries, render preparation and observations
@@ -7,7 +8,10 @@ namespace lab {
 class NavigationApp {
 public:
     NavigationApp(const Options&,const tiny2d::MapParameters&);
-    tiny2d_game::NavigationSession session;
+    tiny2d_game::NavigationSession live;
+    std::optional<ReplayApp> replay;
+    const tiny2d_game::NavigationSession& displayed() const;
+    bool dispatch(const tiny2d_game::ReplayCommand&);
     NavigationView view;
     bool playing() const;
     void recordInitialBuild(CpuSample&) const;

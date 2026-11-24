@@ -1,0 +1,6 @@
+rejected=truncated.snap live_bytes_preserved=1 payload length mismatch
+rejected=version.snap live_bytes_preserved=1 unsupported format version
+rejected=length.snap live_bytes_preserved=1 payload length mismatch
+rejected=checksum.snap live_bytes_preserved=1 payload checksum mismatch
+rejected=semantic-tick.snap live_bytes_preserved=1 world.tick exceeds session duration
+rejected=expected-hash.replay live_bytes_preserved=1 sequence=3 stored_sequence=3 event=AdvanceTick after/hash mismatch expected_before=1/39 actual_before=1/39 expected_after=1/40 actual_state=1/40 expected_hash=0x19a0d7c544682215 actual_hash=0x19a0d7c544682214

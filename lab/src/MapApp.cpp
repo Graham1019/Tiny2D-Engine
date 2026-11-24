@@ -21,8 +21,9 @@ bool canPick(const FrameInfo& shown,tiny2d::Size logical,std::uint64_t generatio
 
 void runTileLab(Options options) {
     const bool finite=options.frames.has_value();
-    const bool navigation=options.scene==LabScene::Navigation;
-    tiny2d::Window window(options.width,options.height,navigation?"Tiny2D Lab / Enemy Navigation":"Tiny2D Lab / Seeded Tilemap");
+    const bool replay=options.scene==LabScene::Replay;
+    const bool navigation=options.scene==LabScene::Navigation || replay;
+    tiny2d::Window window(options.width,options.height,replay?"Tiny2D Lab / Snapshot & Replay":navigation?"Tiny2D Lab / Enemy Navigation":"Tiny2D Lab / Seeded Tilemap");
     tiny2d::Input input(window);
     if (finite) glfwSwapInterval(0);
     std::cout<<"opengl="<<glGetString(GL_VERSION)<<" renderer="<<glGetString(GL_RENDERER)<<'\n';
@@ -47,9 +48,11 @@ void runTileLab(Options options) {
     std::optional<NavigationApp> nav;
     if (navigation) nav.emplace(options,parameters);
     else mapScene.emplace(options.seed,parameters);
-    const auto& session=nav ? nav->session.world() : *mapScene;
-    MapEditor edit{options.seed};
+    auto world=[&]() -> const tiny2d::MapSession& { return nav ? nav->displayed().world() : *mapScene; };
+    MapEditor edit{world().seed()};
+    std::uint64_t revision=0;
     Controls controls;
+    controls.paused=world().paused();
     Picture picture;
     History history;
     Metrics csv(options.metrics);
@@ -101,7 +104,7 @@ void runTileLab(Options options) {
             timer->poll([&](FrameInfo origin,tiny2d::QueryStatus status,const Timer::Durations& times) {
                 GpuSample sample{origin,info.id,status,times};
                 csv.retired(sample);
-                history.recordGpu(session.epoch(),sample);
+                history.recordGpu(world().epoch(),sample,revision);
             });
             cpu.poll=micros(polling);
         }
@@ -109,62 +112,101 @@ void runTileLab(Options options) {
         if (!finite && window.takeFocusLoss()) controls.poll({},false,0,options.display);
         RoutedInput routed;
         edit.regenerate=false;
+        ReplayAction replayAction=ReplayAction::None;
+        const auto originalEpoch=world().epoch();
         if (gui) {
             const auto begin=Clock::now();
             routed=gui->buildPanel(tools,focused,[&](Commands& cmd) {
-                if (nav) navigationPanel(tools,edit,nav->view,cmd,nav->session,finite,history,queries.get());
-                else mapPanel(tools,edit,cmd,session,options.display,finite,history,queries.get());
-            },false,nav && nav->session.upgrades().offer().has_value());
+                if (nav) {
+                    std::function<void()> transport;
+                    if (replay) transport=[&]{replayAction=nav->replay->panel(nav->live);};
+                    navigationPanel(tools,edit,nav->view,cmd,nav->displayed(),finite,history,queries.get(),
+                                    transport,replay && nav->replay->playback());
+                } else mapPanel(tools,edit,cmd,world(),options.display,finite,history,queries.get());
+            },false,nav && nav->displayed().upgrades().offer().has_value());
             cpu.build=micros(begin);
         }
 
         Action action;
-        const auto originalEpoch=session.epoch();
+        const auto heldKeys=routed.keys;
+        const bool transportCommand=focused && replayAction!=ReplayAction::None;
+        bool replaced=transportCommand && nav->replay->perform(replayAction,nav->live);
+        const bool watching=replay && nav->replay->playback();
         if (finite) action.steps=1;
         else {
             for (auto key:{ToggleLighting,ToggleNormal,ToggleShadows,ShowLight,ShowNormal,ShowShadow})
                 routed.keys.reset(key);
+            if (watching || transportCommand) {
+                for (auto key:{Left,Right,Up,Down,Pause,Step,Reset}) {
+                    routed.keys.reset(key);
+                    routed.commands.edges.reset(key);
+                }
+                edit.regenerate=false;
+            }
             if (edit.regenerate) routed.commands.edges.set(Reset); // Flush the fixed-step accumulator on replacement.
             action=controls.poll(routed.keys,focused,nav && !nav->playing()?0.:elapsed,options.display,routed.captureKeyboard,
                                  routed.commands,routed.freshFocus);
             if (action.exit) break;
-            if (nav) nav->session.setPaused(controls.paused);
-            else mapScene->setPaused(controls.paused);
+            if (nav) {
+                if (!watching && !transportCommand && controls.paused!=world().paused())
+                    nav->dispatch(tiny2d_game::ReplayCommand::setPaused(controls.paused));
+            } else mapScene->setPaused(controls.paused);
             if (action.reset) {
                 try {
                     if (nav) {
-                        if (edit.regenerate) nav->session.regenerate(edit.seedInput);
-                        else nav->session.reset();
+                        if (edit.regenerate) nav->dispatch(tiny2d_game::ReplayCommand::regenerate(edit.seedInput,world().parameters()));
+                        else nav->dispatch(tiny2d_game::ReplayCommand::reset());
                         nav->view.selected=0;
                     } else if (edit.regenerate) mapScene->regenerate(edit.seedInput);
                     else mapScene->reset();
                     edit.selected.reset();
-                    edit.seedInput=session.map().seed();
+                    edit.seedInput=world().seed();
                     edit.error.clear();
                     history={};
                 } catch (const std::exception& error) { edit.error=error.what(); }
             } else if (!nav && tools.visible && routed.click && !history.cpu.empty() &&
                        canPick(history.cpu.back().info,info.logical,pipeline.generation(),options.display.view,*routed.click)) {
-                const auto cell=session.map().worldToTile(picture.worldCamera.viewportToWorld(*routed.click));
-                edit.selected=session.map().inBounds(cell.x,cell.y) ? std::optional{cell} : std::nullopt;
+                const auto cell=world().map().worldToTile(picture.worldCamera.viewportToWorld(*routed.click));
+                edit.selected=world().map().inBounds(cell.x,cell.y) ? std::optional{cell} : std::nullopt;
             }
         }
 
-        if (!frames || originalEpoch!=session.epoch()) {
+        auto recordBuild=[&] {
             if (nav) nav->recordInitialBuild(cpu);
-            cpu.map.generationUs=session.generationUs();
-            cpu.map.validationUs=session.validationUs();
-        }
-        if (nav) nav->advance(action,options,controls,cpu);
-        else for (unsigned i=0;i<action.steps;++i) {
-            const auto motion=options.mapWalk ? tiny2d::mapWalkInput(session.tick())
+            cpu.map.generationUs=world().generationUs();
+            cpu.map.validationUs=world().validationUs();
+        };
+        const auto beforeAdvanceEpoch=world().epoch();
+        if (!frames || replaced || originalEpoch!=beforeAdvanceEpoch) recordBuild();
+        if (nav) {
+            if (!transportCommand) nav->advance(action,options,controls,cpu);
+        } else for (unsigned i=0;i<action.steps;++i) {
+            const auto motion=options.mapWalk ? tiny2d::mapWalkInput(world().tick())
                                                : tiny2d::MapInput{action.motion.x,action.motion.y};
-            if (session.paused()) mapScene->step(motion);
+            if (world().paused()) mapScene->step(motion);
             else mapScene->fixedUpdate(motion);
-            cpu.map.collisionUs+=session.collisionUs();
-            cpu.update+=session.fixedUpdateUs();
+            cpu.map.collisionUs+=world().collisionUs();
+            cpu.update+=world().fixedUpdateUs();
         }
+        const auto& session=world();
+        replaced=replaced || originalEpoch!=session.epoch();
+        if (replay && replaced) {
+            ++revision;
+            history={};
+            nav->view.selected=0;
+            edit.selected.reset();
+            edit.seedInput=session.seed();
+            controls.replaceInstance(heldKeys,session.paused());
+            gui->invalidateSelection();
+            previous=Clock::now();
+        }
+        if (replay && transportCommand) {
+            controls.clearElapsed();
+            previous=Clock::now();
+        }
+        if (beforeAdvanceEpoch!=session.epoch()) recordBuild();
         const auto& map=session.map();
+        info.revision=revision;
         info.tick=session.tick();
         info.epoch=session.epoch();
         info.seed=map.seed();
@@ -179,9 +221,10 @@ void runTileLab(Options options) {
         bool offerWindow=false;
         if (nav && gui) {
             const auto startOffer=Clock::now();
-            offerWindow=nav->drawOffer(finite,focused,controls,cpu);
+            offerWindow=nav->drawOffer(finite || (replay && (replaced || transportCommand)),focused,controls,cpu);
             cpu.build+=micros(startOffer);
         }
+        if (replay && !options.metrics.empty()) nav->replay->observe(info,nav->live);
         const auto prepare=Clock::now();
         cpu.map.player=session.playerPosition();
         cpu.map.hitX=session.collision().hitX;
@@ -248,9 +291,11 @@ void runTileLab(Options options) {
         if (finite && info.measurement) samples.push_back(cpu);
         ++frames;
     }
+    const auto& session=world();
+    if (replay) nav->replay->finish(options,nav->live);
     report(samples);
     csv.close();
-    std::cout<<"status=ok scene="<<(navigation?"navigation":"map")<<" frames="<<frames<<" ticks="<<session.tick()<<" seed="<<session.map().seed()
+    std::cout<<"status=ok scene="<<(replay?"replay":navigation?"navigation":"map")<<" frames="<<frames<<" ticks="<<session.tick()<<" seed="<<session.map().seed()
              <<" epoch="<<session.epoch()<<" map_size="<<session.map().width()<<'x'<<session.map().height()
              <<" script="<<((nav?options.navWalk:options.mapWalk)?"walk":"none")<<" shortest_path="<<session.connectivity().shortestPathLength;
     if (nav) nav->printStatus();

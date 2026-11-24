@@ -41,11 +41,17 @@ std::string blanks(std::string_view header) {
     return std::string(std::count(header.begin(),header.end(),','),',');
 }
 void runConfig(std::ostream& out,const FrameInfo& f) {
-    out<<','<<f.seed<<','<<(f.navigation?"navigation":f.mapWidth?"map":f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
+    out<<','<<f.seed<<','<<(f.replay?"replay":f.navigation?"navigation":f.mapWidth?"map":f.galleryEffect?"shaders":f.particles?"particles":"neon")<<',';
     if (f.particles) {
         out<<(f.demoScript?"demo":"none")<<','<<f.particleCapacity<<','<<f.particleRate<<',';
         if (f.particleSteady) out<<*f.particleSteady;
     } else out<<",,,";
+}
+void replayConfig(std::ostream& out,const FrameInfo& f) {
+    if (f.replay) {
+        out<<','<<f.revision<<','<<f.eventSequence<<','<<f.recordedEvents<<','<<f.verifiedEvents
+           <<','<<std::hex<<f.simulationHash<<std::dec<<','<<f.replayMode;
+    } else out<<",,,,,,";
 }
 void mapConfig(std::ostream& out,const FrameInfo& f) {
     if (f.mapWidth) out<<','<<f.mapWidth<<','<<f.mapHeight<<','<<(f.mapWalk?"walk":"none");
@@ -79,7 +85,7 @@ Metrics::Metrics(const std::string& path) {
     out_<<legacyCpuColumns()
         <<",particle_emission_us,seed,scene,particle_script,particle_capacity,particle_rate,particle_steady"
         <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version,map_width,map_height,map_script"
-        <<mapCounters<<navCounters<<'\n';
+        <<mapCounters<<navCounters<<",runtime_revision,event_sequence,recorded_events,verified_events,state_hash,replay_mode\n";
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','
@@ -158,6 +164,7 @@ void Metrics::record(const CpuSample& c) {
         static const auto empty=blanks(navCounters);
         out_<<empty;
     }
+    replayConfig(out_,c.info);
     out_<<'\n';
 }
 void Metrics::write(const GpuSample& g) {
@@ -180,6 +187,7 @@ void Metrics::write(const GpuSample& g) {
     static const auto emptyMap=blanks(mapCounters);
     static const auto emptyNav=blanks(navCounters);
     out_<<emptyMap<<emptyNav;
+    replayConfig(out_,g.info);
     out_<<'\n';
 }
 void Metrics::retired(GpuSample g) { if (out_.is_open()) retired_.push_back(std::move(g)); }
