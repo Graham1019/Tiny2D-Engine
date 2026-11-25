@@ -274,6 +274,13 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
     if (!drawable_) throw std::logic_error("Lab draw requires a matching drawable target group");
     if (tools.gallery && (d.lighting || tools.particles))
         throw std::logic_error("Shader Gallery requires its standalone HDR scene");
+    if (tools.submitWorld && (d.lighting || tools.gallery || tools.particles))
+        throw std::invalid_argument("external world submission requires the unlit HDR scene");
+    auto accountScene = [&](const RenderStats& stats) {
+        s.draws += stats.drawCalls;
+        s.sprites += stats.submittedSprites;
+        s.bytes += stats.uploadedVertexBytes;
+    };
     auto& t=*targets_;
     const bool mix=d.view==View::Final && d.bloom && d.strength>0;
     auto previewNeeded=[&](View v){return (tools.previews & (1u<<unsigned(v)))!=0;};
@@ -366,6 +373,7 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
                     s.enemyVertexBytes=batch.uploadedVertexBytes;
                 }
                 sprites(picture.world,picture.worldCamera,s);
+                if (tools.submitWorld) accountScene(tools.submitWorld());
                 s.worldSprites=s.sprites;
             });
             particles(t.scene);
@@ -594,7 +602,10 @@ void Pipeline::draw(const Picture& picture,const Display& d,Stats& s,const DrawT
         if ((d.view==View::Scene || d.view==View::Final || d.view==View::Light) && !picture.debug.empty())
             pass(Debug,[&]{ sprites(picture.debug,picture.worldCamera,s); });
         if (d.hud || (d.view==View::Shadow && !picture.hud.empty()))
-            pass(Overlay,[&]{ sprites(picture.hud,picture.hudCamera,s); });
+            pass(Overlay,[&]{
+                sprites(picture.hud,picture.hudCamera,s);
+                if (tools.submitOverlay) accountScene(tools.submitOverlay());
+            });
         if (tools.gui) pass(Gui,[&]{tools.gui(s);});
     }
     detail::checkGL("Lab frame state restoration");

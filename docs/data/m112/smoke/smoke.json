@@ -1,0 +1,413 @@
+{
+  "archive": "Tiny2D-Showcase-0.6.0-rc1-macos-arm64.zip",
+  "zip_sha256": "6172dcbe750655a4fd525e02167a28109d9a3dd8b664e1d4fc9f6bc1a91e40f5",
+  "source_commit": "4dff8ddabfd6aa902f0310e55b90eed1c11764c4",
+  "signed_entries_compared": 76,
+  "manifest_entries_compared": 77,
+  "manifest_sha256": "9cb8df5247e9bcb2df04a7e951ec030a0d830231bd6f033080527e1c336903dd",
+  "rejected_outputs": [
+    "Survivor --capture own-app",
+    "Survivor --capture sibling-app",
+    "Survivor --capture linked-directory",
+    "Survivor --capture hardlink",
+    "Survivor --trace own-app",
+    "Survivor --trace sibling-app",
+    "Survivor --trace linked-directory",
+    "Survivor --trace hardlink",
+    "Survivor --metrics own-app",
+    "Survivor --metrics sibling-app",
+    "Survivor --metrics linked-directory",
+    "Survivor --metrics hardlink",
+    "Lab --capture own-app",
+    "Lab --capture sibling-app",
+    "Lab --capture linked-directory",
+    "Lab --capture hardlink",
+    "Lab --metrics own-app",
+    "Lab --metrics sibling-app",
+    "Lab --metrics linked-directory",
+    "Lab --metrics hardlink",
+    "Lab --metrics hardlink after CLI preflight"
+  ],
+  "relative_external_outputs": [
+    "Survivor PNG/trace/metrics",
+    "Lab PNG/metrics"
+  ],
+  "signature_log": "output protection/signature-protection.log",
+  "launch_services_entry": "Tiny2DShowcase",
+  "launched": 9,
+  "reaped": 9,
+  "shader_frames": [
+    {
+      "capture": "shader-initial.png",
+      "tick": 0,
+      "version": 1,
+      "result": "ok",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-rejected.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [
+        "/private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag: compilation failed",
+        "ERROR: 0:2: 'this' : Reserved word. ",
+        "ERROR: 0:2: 'this' : syntax error: syntax error",
+        ""
+      ],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-oversize.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [
+        "input size 1048577 exceeds byte budget 1048576: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag"
+      ],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-fifo.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [
+        "expected regular file: /private/tmp/Tiny2D M112 封版复核 mj1pv5k4/候选 独立验收/External Shader 工作副本/aurora.frag"
+      ],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-recovered.png",
+      "tick": 0,
+      "version": 2,
+      "result": "ok",
+      "diagnostics": [],
+      "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    {
+      "capture": "shader-stable.png",
+      "tick": 0,
+      "version": 2,
+      "result": "ok",
+      "diagnostics": [],
+      "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    {
+      "capture": "shader-edited-restart.png",
+      "tick": 0,
+      "version": 1,
+      "result": "ok",
+      "diagnostics": [],
+      "png_sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    {
+      "capture": "shader-startup-fallback.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-startup-oversize.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    {
+      "capture": "shader-startup-fifo.png",
+      "tick": 0,
+      "version": 1,
+      "result": "failed",
+      "diagnostics": [],
+      "png_sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    }
+  ],
+  "boundaries": [
+    {
+      "run": "restored",
+      "tick": "77",
+      "epoch": "1",
+      "event_sequence": "40",
+      "verified_events": "0",
+      "state_hash": "1cdbd94f8f42180b",
+      "nav_last_choice": "",
+      "nav_phase": "Playing",
+      "branch_id": "",
+      "parent_branch_id": "",
+      "fork_cursor": "",
+      "png_sha256": "4b2c2fc6ddd25291396c391fd243b485c5f614dcdfaec90e87ecaf9845126b26",
+      "snapshot_sha256": "31809a535fb929994c1129abb185cbb0ec62d95b9f234b5f182bdac1e58da845"
+    },
+    {
+      "run": "replayed",
+      "tick": "77",
+      "epoch": "1",
+      "event_sequence": "40",
+      "verified_events": "40",
+      "state_hash": "1cdbd94f8f42180b",
+      "nav_last_choice": "",
+      "nav_phase": "Playing",
+      "branch_id": "8324887960572110831",
+      "parent_branch_id": "",
+      "fork_cursor": "",
+      "png_sha256": "4b2c2fc6ddd25291396c391fd243b485c5f614dcdfaec90e87ecaf9845126b26",
+      "snapshot_sha256": "31809a535fb929994c1129abb185cbb0ec62d95b9f234b5f182bdac1e58da845"
+    },
+    {
+      "run": "offer",
+      "tick": "600",
+      "epoch": "1",
+      "event_sequence": "600",
+      "verified_events": "600",
+      "state_hash": "14af145719a79472",
+      "nav_last_choice": "",
+      "nav_phase": "AwaitingUpgrade",
+      "branch_id": "8663573909429406300",
+      "parent_branch_id": "",
+      "fork_cursor": "",
+      "png_sha256": "1d807925ed95ff845db57cb7d1a18233826cd30b162e870ec8872e21a11c667a",
+      "snapshot_sha256": "17db899cae85630efd500ebfc10d33ceb324c30eac9634e6992ee9472dfd03de"
+    },
+    {
+      "run": "parent-vitality",
+      "tick": "600",
+      "epoch": "1",
+      "event_sequence": "601",
+      "verified_events": "601",
+      "state_hash": "52b6aaabf796d40d",
+      "nav_last_choice": "Vitality",
+      "nav_phase": "Playing",
+      "branch_id": "8663573909429406300",
+      "parent_branch_id": "",
+      "fork_cursor": "",
+      "png_sha256": "4ee893315fff6075892355aff424865d887b540cfbe3b56828f4da4f6f05dd93",
+      "snapshot_sha256": "935580f8f5b023730d000b62e1fa955dcd16292d15381a4ac29cf89e1faab300"
+    },
+    {
+      "run": "supplied-fleet",
+      "tick": "600",
+      "epoch": "1",
+      "event_sequence": "1",
+      "verified_events": "1",
+      "state_hash": "f19dc3e4f2e1970c",
+      "nav_last_choice": "Fleet",
+      "nav_phase": "Playing",
+      "branch_id": "102",
+      "parent_branch_id": "8663573909429406300",
+      "fork_cursor": "600",
+      "png_sha256": "bba56b6526ad4e892e2c312643bd08fdfe1da3a120bdd4bf9e3dae75ca700a41",
+      "snapshot_sha256": "1ed63ea461e53c81fc16c125526a35d420619f2345c668063c5aa354004c4beb"
+    },
+    {
+      "run": "forked",
+      "tick": "607",
+      "epoch": "1",
+      "event_sequence": "8",
+      "verified_events": "0",
+      "state_hash": "1eb254f33134a43d",
+      "nav_last_choice": "Fleet",
+      "nav_phase": "Playing",
+      "branch_id": "112",
+      "parent_branch_id": "8663573909429406300",
+      "fork_cursor": "600",
+      "png_sha256": "11a454a26a70691c21827a17b975382c66167bdf5668c712a590dd42427898c4",
+      "snapshot_sha256": "6e5c25e31c6fd4365e86d5e18e830f317697f3ecf345dc2daf2e4b62accf46a0"
+    },
+    {
+      "run": "fork-replay",
+      "tick": "607",
+      "epoch": "1",
+      "event_sequence": "8",
+      "verified_events": "8",
+      "state_hash": "1eb254f33134a43d",
+      "nav_last_choice": "Fleet",
+      "nav_phase": "Playing",
+      "branch_id": "112",
+      "parent_branch_id": "8663573909429406300",
+      "fork_cursor": "600",
+      "png_sha256": "11a454a26a70691c21827a17b975382c66167bdf5668c712a590dd42427898c4",
+      "snapshot_sha256": "6e5c25e31c6fd4365e86d5e18e830f317697f3ecf345dc2daf2e4b62accf46a0"
+    }
+  ],
+  "captures": {
+    "launch-services.png": {
+      "bytes": 375918,
+      "width": 1920,
+      "height": 1160,
+      "sha256": "5c8261da070d3056153f63a9e2d04cb4d506f127bab310786fd6d15bc4328811"
+    },
+    "standalone-survivor.png": {
+      "bytes": 12022,
+      "width": 1600,
+      "height": 1200,
+      "sha256": "4735b9faff80c191b804b9820df329c383cd43d0e4dfc95f7eff0d619b48b724"
+    },
+    "launcher-return.png": {
+      "bytes": 382631,
+      "width": 1920,
+      "height": 1160,
+      "sha256": "30b950aaa0ebb83f2382f07056bb447b2ff02179ceab7b81526b6fcd018558c8"
+    },
+    "1-neon.png": {
+      "bytes": 306400,
+      "width": 1600,
+      "height": 900,
+      "sha256": "bdd267e5144e97f5692a06b524f195298f38a0d37d0dbee466ac21e3eded26d8"
+    },
+    "2-particles.png": {
+      "bytes": 22266,
+      "width": 1600,
+      "height": 900,
+      "sha256": "14afbd0739509518a95c3249138e5e2dc7bb097e9e6777001c4f6f91a9ceaaab"
+    },
+    "3-shaders.png": {
+      "bytes": 747049,
+      "width": 1600,
+      "height": 900,
+      "sha256": "c890698a51efc2da8298286ee5ced54fcf44b27f21e0a9a90ab9e82932a50207"
+    },
+    "4-map.png": {
+      "bytes": 15216,
+      "width": 1600,
+      "height": 900,
+      "sha256": "e8c465581785e1288f3c73f6fee067d08bf62a0b069eef3b5c905e6ee57b12e8"
+    },
+    "5-navigation.png": {
+      "bytes": 16400,
+      "width": 1600,
+      "height": 900,
+      "sha256": "3d15f617f7f33729acdafbdc841b65c1ed0f38f60265961d5dd50ae4b63c1a6d"
+    },
+    "6-replay.png": {
+      "bytes": 137855,
+      "width": 1600,
+      "height": 900,
+      "sha256": "2aac51c661e4319fad59b3f2d383df1476a395b5ba37deb183a14f57ae7a16a1"
+    },
+    "7-survivor-classic.png": {
+      "bytes": 12022,
+      "width": 1600,
+      "height": 1200,
+      "sha256": "4735b9faff80c191b804b9820df329c383cd43d0e4dfc95f7eff0d619b48b724"
+    },
+    "8-survivor-enhanced.png": {
+      "bytes": 25361,
+      "width": 1600,
+      "height": 1200,
+      "sha256": "e365e10723a868093b52ba8b7aa4e528f19975492f085f9e0d86578d9d08457c"
+    },
+    "9-neon.png": {
+      "bytes": 306400,
+      "width": 1600,
+      "height": 900,
+      "sha256": "bdd267e5144e97f5692a06b524f195298f38a0d37d0dbee466ac21e3eded26d8"
+    },
+    "restored.png": {
+      "bytes": 9693,
+      "width": 768,
+      "height": 432,
+      "sha256": "4b2c2fc6ddd25291396c391fd243b485c5f614dcdfaec90e87ecaf9845126b26"
+    },
+    "replayed.png": {
+      "bytes": 9693,
+      "width": 768,
+      "height": 432,
+      "sha256": "4b2c2fc6ddd25291396c391fd243b485c5f614dcdfaec90e87ecaf9845126b26"
+    },
+    "offer.png": {
+      "bytes": 31783,
+      "width": 768,
+      "height": 432,
+      "sha256": "1d807925ed95ff845db57cb7d1a18233826cd30b162e870ec8872e21a11c667a"
+    },
+    "parent-vitality.png": {
+      "bytes": 9363,
+      "width": 768,
+      "height": 432,
+      "sha256": "4ee893315fff6075892355aff424865d887b540cfbe3b56828f4da4f6f05dd93"
+    },
+    "supplied-fleet.png": {
+      "bytes": 9341,
+      "width": 768,
+      "height": 432,
+      "sha256": "bba56b6526ad4e892e2c312643bd08fdfe1da3a120bdd4bf9e3dae75ca700a41"
+    },
+    "forked.png": {
+      "bytes": 9210,
+      "width": 768,
+      "height": 432,
+      "sha256": "11a454a26a70691c21827a17b975382c66167bdf5668c712a590dd42427898c4"
+    },
+    "fork-replay.png": {
+      "bytes": 9210,
+      "width": 768,
+      "height": 432,
+      "sha256": "11a454a26a70691c21827a17b975382c66167bdf5668c712a590dd42427898c4"
+    },
+    "shader-initial.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-rejected.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-oversize.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-fifo.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-recovered.png": {
+      "bytes": 338617,
+      "width": 768,
+      "height": 432,
+      "sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    "shader-stable.png": {
+      "bytes": 338617,
+      "width": 768,
+      "height": 432,
+      "sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    "shader-edited-restart.png": {
+      "bytes": 338617,
+      "width": 768,
+      "height": 432,
+      "sha256": "a4f932e03b94145c8fdb4c71d39569e6bca90820fa7bbe7b3c733281989ac4f4"
+    },
+    "shader-startup-fallback.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-startup-oversize.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    },
+    "shader-startup-fifo.png": {
+      "bytes": 225472,
+      "width": 768,
+      "height": 432,
+      "sha256": "9209405ccc8906ce5446069c30b626452b8c7041f82f24f54911cdc7b2f957a3"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+Source SHA 4dff8ddabfd6aa902f0310e55b90eed1c11764c4
+ASAN_OPTIONS=halt_on_error=1:abort_on_error=1
+UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1
+All native CTest programs and the M101 cross-process child:
+tiny2d_m101_evidence | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m101_replay | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m101_snapshot | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m101_snapshot_codec | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m102_branch | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m102_timeline | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m111_showcase_process | ASan runtime | ___asan_init | 10 fatal UBSan handlers
+tiny2d_m111_survivor_cpu | ASan runtime | ___asan_init | 11 fatal UBSan handlers
+tiny2d_m112_shader_workspace | ASan runtime | ___asan_init | 7 fatal UBSan handlers
+tiny2d_m3_cpu_tests | ASan runtime | ___asan_init | 9 fatal UBSan handlers
+tiny2d_m72_cpu | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m91_collision | ASan runtime | ___asan_init | 11 fatal UBSan handlers
+tiny2d_m91_generation | ASan runtime | ___asan_init | 11 fatal UBSan handlers
+tiny2d_m91_session | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m92_motion | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m92_navigation | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m92_session | ASan runtime | ___asan_init | 12 fatal UBSan handlers
+tiny2d_m92_upgrade | ASan runtime | ___asan_init | 9 fatal UBSan handlers
+20 CTest cases, 18 verified test programs

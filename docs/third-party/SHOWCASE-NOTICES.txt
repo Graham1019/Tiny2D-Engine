@@ -1,0 +1,13 @@
+Tiny2D Showcase 0.6.0-rc1 redistribution notices
+
+GLFW provides macOS windows, contexts, and input. Its license is in GLFW-LICENSE.md.
+libpng provides PNG reading and writing. Its license is in libpng-LICENSE.txt.
+Mach-O install names and local ad-hoc signatures have been adjusted for relocation.
+
+Dear ImGui and its GLFW/OpenGL backends are included under the MIT License.
+The distribution includes the complete vendored text in Dear-ImGui-LICENSE.txt.
+
+Tiny2D's procedural sprite and color textures carry the CC0 notices in
+assets/textures/LICENSE.txt and assets/textures/M4-LICENSE.txt. The Showcase
+previews are captures of the Tiny2D demonstrations. These dependency and
+texture notices apply to the materials they identify.

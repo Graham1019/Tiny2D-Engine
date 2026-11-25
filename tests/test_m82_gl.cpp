@@ -4,6 +4,7 @@
 #include "ShaderAssets.h"
 #include "ShaderGallery.h"
 #include "ShaderPanel.h"
+#include "ShaderWorkspace.h"
 #include "imgui_impl_glfw.h"
 
 #include <algorithm>
@@ -12,6 +13,7 @@
 #include <filesystem>
 #include <fstream>
 #include <future>
+#include <sys/stat.h>
 #include <unistd.h>
 
 namespace lab {
@@ -166,6 +168,50 @@ void rejected(ShaderReloadManager& shader,std::string_view reason) {
 }
 
 constexpr char invalid[]="#version 330 core\nvoid main() { broken GLSL; }\n";
+
+void boundedSources() {
+    Scratch edits;
+    Frame frame;
+    ShaderReloadManager shader(edits.vertex, edits.fragment);
+    frame.render(shader, 90);
+    const auto original = readHDR(frame.pipe);
+    auto vertex = readShaderAsset("gallery/screen.vert");
+    vertex.resize(maxShaderBytes, ' ');
+    write(edits.vertex, vertex);
+    check(shader.reload() && shader.status().version == 2, "valid 1 MiB vertex at the limit");
+    frame.render(shader, 90);
+    check(readHDR(frame.pipe) == original, "padding preserves exact HDR pixels");
+
+    auto checkRejectedEdit = [&](const fs::path& path, std::string_view reason) {
+        shader.program().bind();
+        rejected(shader, reason);
+        check(shader.status().error.find(path.string()) != std::string::npos, "failed input path");
+        frame.render(shader, 90);
+        check(readHDR(frame.pipe) == original, "rejected input preserves exact HDR pixels");
+
+        const auto defaults = assetPath("shaders/gallery/screen.vert").parent_path();
+        ShaderGallery restarted(prepareShaderWorkspace(edits.dir, defaults));
+        const auto& fallback = restarted.shader(GalleryEffect::Aurora);
+        const auto& status = fallback.status();
+        check(!status.success && status.version == 1 &&
+              status.error.find("bundled version active") != std::string::npos &&
+              status.error.find(reason) != std::string::npos &&
+              status.error.find(path.string()) != std::string::npos, "startup fallback and edit diagnostic");
+        frame.render(fallback, 90);
+        check(readHDR(frame.pipe) == original, "bundled fallback reproduces the original HDR pixels");
+    };
+    write(edits.vertex, vertex + ' ');
+    checkRejectedEdit(edits.vertex, "byte budget 1048576");
+    check(fs::file_size(edits.vertex) == maxShaderBytes + 1, "oversize edit survives restart");
+    write(edits.vertex, readShaderAsset("gallery/screen.vert"));
+    fs::remove(edits.fragment);
+    check(::mkfifo(edits.fragment.c_str(), 0600) == 0, "create FIFO without a writer");
+    checkRejectedEdit(edits.fragment, "expected regular file");
+    check(fs::is_fifo(edits.fragment), "FIFO survives restart");
+    std::cout << "shader_file_limit=1048576 exact_limit=accepted oversized_vertex=rejected "
+                 "writerless_fragment_fifo=rejected program_version_binding=preserved "
+                 "same_tick_HDR=identical startup_bundled_fallback=both edits_preserved=yes\n";
+}
 
 void lifecycle(Window& owner) {
     Scratch assets;
@@ -392,7 +438,7 @@ int main(int argc,char** argv) {
         Window window(880,540,"M8.2 Shader Gallery");
         window.pollEvents();
         std::cout<<"GL="<<glGetString(GL_VERSION)<<" renderer="<<glGetString(GL_RENDERER)<<'\n';
-        exhibits(); lifecycle(window); resizeAndState();
+        exhibits(); lifecycle(window); boundedSources(); resizeAndState();
         galleryInput(window,false); galleryInput(window,true);
         if (argc==2) recoveryScreens(window,fs::absolute(argv[1]));
     } catch (const std::exception& e) { std::cerr<<e.what()<<'\n'; return 1; }

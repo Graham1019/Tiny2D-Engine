@@ -1,0 +1,42 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m111-san
+      Start 24: M91_MapGenerationCPU
+ 1/17 Test #24: M91_MapGenerationCPU .............   Passed    0.96 sec
+      Start 25: M91_TileCollisionCPU
+ 2/17 Test #25: M91_TileCollisionCPU .............   Passed    0.62 sec
+      Start 26: M91_MapSessionCPU
+ 3/17 Test #26: M91_MapSessionCPU ................   Passed    0.88 sec
+      Start 27: M92_NavigationCPU
+ 4/17 Test #27: M92_NavigationCPU ................   Passed    1.29 sec
+      Start 28: M92_EnemyMotionCPU
+ 5/17 Test #28: M92_EnemyMotionCPU ...............   Passed    1.06 sec
+      Start 29: M92_UpgradeCPU
+ 6/17 Test #29: M92_UpgradeCPU ...................   Passed    0.56 sec
+      Start 30: M92_NavigationSessionCPU
+ 7/17 Test #30: M92_NavigationSessionCPU .........   Passed    1.60 sec
+      Start 38: M101_SnapshotCPU
+ 8/17 Test #38: M101_SnapshotCPU .................   Passed    1.37 sec
+      Start 39: M101_SnapshotCodecCPU
+ 9/17 Test #39: M101_SnapshotCodecCPU ............   Passed    0.75 sec
+      Start 40: M101_EventDispatchCPU
+10/17 Test #40: M101_EventDispatchCPU ............   Passed    0.91 sec
+      Start 41: M101_ReplayCPU
+11/17 Test #41: M101_ReplayCPU ...................   Passed    7.44 sec
+      Start 42: M101_ReplayCodecCPU
+12/17 Test #42: M101_ReplayCodecCPU ..............   Passed    2.41 sec
+      Start 43: M101_CrossProcessCPU
+13/17 Test #43: M101_CrossProcessCPU .............   Passed    5.18 sec
+      Start 44: M102_TimelineCPU
+14/17 Test #44: M102_TimelineCPU .................   Passed   30.54 sec
+      Start 45: M102_BranchCPU
+15/17 Test #45: M102_BranchCPU ...................   Passed    3.89 sec
+      Start 46: M111_ShowcaseProcessCPU
+16/17 Test #46: M111_ShowcaseProcessCPU ..........   Passed    0.70 sec
+      Start 47: M111_SurvivorCPU
+17/17 Test #47: M111_SurvivorCPU .................   Passed    0.87 sec
+
+100% tests passed out of 17
+
+Label Time Summary:
+cpu    =  61.04 sec*proc (17 tests)
+
+Total Test time (real) =  61.05 sec

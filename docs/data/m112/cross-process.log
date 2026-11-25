@@ -1,0 +1,17 @@
+[A]
+base epoch=1 tick=37 seed=71 phase=Playing manual_paused=0 hp=5/5 enemies=16 waypoints=16 offer=0 last_choice=none hash=b652aff54571ff2
+recorded=666 final epoch=1 tick=702 seed=71 phase=GameOver manual_paused=0 hp=0/6 enemies=16 waypoints=15 offer=0 last_choice=Vitality hash=a83ea20adfe7606c
+verified=666 final epoch=1 tick=702 seed=71 phase=GameOver manual_paused=0 hp=0/6 enemies=16 waypoints=15 offer=0 last_choice=Vitality hash=a83ea20adfe7606c
+full_snapshot_comparisons=666 final_bytes_match=1
+[B]
+base epoch=1 tick=600 seed=71 phase=AwaitingUpgrade manual_paused=0 hp=5/5 enemies=0 waypoints=0 offer=1 last_choice=none hash=14af145719a79472
+recorded=53 final epoch=1 tick=650 seed=71 phase=Playing manual_paused=0 hp=6/6 enemies=0 waypoints=0 offer=0 last_choice=Vitality hash=b324f8bfc071b20a
+verified=53 final epoch=1 tick=650 seed=71 phase=Playing manual_paused=0 hp=6/6 enemies=0 waypoints=0 offer=0 last_choice=Vitality hash=b324f8bfc071b20a
+full_snapshot_comparisons=53 final_bytes_match=1
+[C]
+base epoch=1 tick=0 seed=71 phase=Playing manual_paused=0 hp=5/5 enemies=16 waypoints=0 offer=0 last_choice=none hash=fd4d60463caddb6e
+recorded=1210 final epoch=3 tick=8 seed=2026 phase=Playing manual_paused=0 hp=5/5 enemies=16 waypoints=16 offer=0 last_choice=none hash=55e161974af4fc2f
+verified=1210 final epoch=3 tick=8 seed=2026 phase=Playing manual_paused=0 hp=5/5 enemies=16 waypoints=16 offer=0 last_choice=none hash=55e161974af4fc2f
+full_snapshot_comparisons=1210 final_bytes_match=1
+restored base.snap epoch=1 tick=600 seed=71 phase=AwaitingUpgrade manual_paused=0 hp=5/5 enemies=0 waypoints=0 offer=1 last_choice=none hash=14af145719a79472
+restored chosen.snap epoch=1 tick=600 seed=71 phase=Playing manual_paused=1 hp=6/6 enemies=0 waypoints=0 offer=0 last_choice=Vitality hash=ce1a30fc6e7236a0

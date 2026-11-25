@@ -52,6 +52,13 @@ void replayConfig(std::ostream& out,const FrameInfo& f) {
         out<<','<<f.revision<<','<<f.eventSequence<<','<<f.recordedEvents<<','<<f.verifiedEvents
            <<','<<std::hex<<f.simulationHash<<std::dec<<','<<f.replayMode;
     } else out<<",,,,,,";
+    if (f.timeline) {
+        out<<','<<f.branchId<<',';
+        if (f.parentBranch) out<<*f.parentBranch;
+        out<<',';
+        if (f.forkCursor) out<<*f.forkCursor;
+        out<<','<<f.eventType<<','<<f.checkpointCount<<','<<f.checkpointBytes;
+    } else out<<",,,,,,";
 }
 void mapConfig(std::ostream& out,const FrameInfo& f) {
     if (f.mapWidth) out<<','<<f.mapWidth<<','<<f.mapHeight<<','<<(f.mapWalk?"walk":"none");
@@ -85,7 +92,7 @@ Metrics::Metrics(const std::string& path) {
     out_<<legacyCpuColumns()
         <<",particle_emission_us,seed,scene,particle_script,particle_capacity,particle_rate,particle_steady"
         <<particleCounters<<",shader_gallery_us,gallery_effect,shader_version,map_width,map_height,map_script"
-        <<mapCounters<<navCounters<<",runtime_revision,event_sequence,recorded_events,verified_events,state_hash,replay_mode\n";
+        <<mapCounters<<navCounters<<",runtime_revision,event_sequence,recorded_events,verified_events,state_hash,replay_mode,branch_id,parent_branch_id,fork_cursor,event_type,checkpoint_count,checkpoint_bytes\n";
 }
 void Metrics::prefix(const FrameInfo& f,const char* kind,QueryStatus query) {
     out_<<kind<<','<<f.id<<','<<f.tick<<','<<f.epoch<<','<<f.generation<<','<<f.measurement<<','

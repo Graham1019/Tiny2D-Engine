@@ -1,0 +1,127 @@
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene showcase --showcase-tour neon,particles,shaders,map,navigation,replay,survivor-classic,survivor-enhanced,neon,survivor-enhanced --child-frames 24 --showcase-output /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/children --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/showcase.png
+showcase_launch exhibit=neon pid=97713
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=24 ticks=24 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=10 draws=16 sprites=1049 upload_bytes=151416 lighting=on active_lights=6 light_uniform_bytes=192 normals=on material_upload_bytes=0 shadows=on shadow_bytes=5760000 shadow_casters=4 shadow_skipped=2 shadow_vertex_bytes=168 batch_vertex_bytes=151056 rgba16f_attachment_bytes=66240000 attempt_passes=11 attempt_draws=16 attempt_complete=1
+showcase_exit exhibit=neon code=0 signal=0
+showcase_launch exhibit=particles pid=97719
+opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+status=ok scene=particles frames=24 ticks=24 seed=71 script=demo capacity=8192 active=8192 dropped=0 active_fields=1 window=800x450 framebuffer=1600x900 particle_draws=1 draws=10 instance_upload_bytes=262144 timestamp_bits=-1 valid_gpu_samples=0 gpu_pending=0 gpu_invalid=0
+showcase_exit exhibit=particles code=0 signal=0
+showcase_launch exhibit=shaders pid=97720
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=shaders frames=24 ticks=24 effect=aurora shader_version=1 timestamp_bits=-1 valid_gpu_samples=0
+showcase_exit exhibit=shaders code=0 signal=0
+showcase_launch exhibit=map pid=97721
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=map frames=24 ticks=24 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 timestamp_bits=-1 valid_gpu_samples=0
+showcase_exit exhibit=map code=0 signal=0
+showcase_launch exhibit=navigation pid=97722
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=navigation frames=24 ticks=24 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=Playing hp=5 enemies=16 requested_enemies=16 offer_serial=0 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+showcase_exit exhibit=navigation code=0 signal=0
+showcase_launch exhibit=replay pid=97728
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Playback paused" event_sequence=600 recorded_events=626 verified_events=600 state_hash=14af145719a79472
+status=ok scene=replay frames=24 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+showcase_exit exhibit=replay code=0 signal=0
+showcase_launch exhibit=survivor-classic pid=97732
+Survivor frames=24 difficulty=3 ticks=24 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.6 draws_world=1 draws_ui=1 draws_total=2
+showcase_exit exhibit=survivor-classic code=0 signal=0
+showcase_launch exhibit=survivor-enhanced pid=97733
+Survivor frames=24 difficulty=3 ticks=24 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.6 draws_world=1 draws_ui=1 draws_total=6 presentation=enhanced bloom=1 hdr_bytes=26880000
+showcase_exit exhibit=survivor-enhanced code=0 signal=0
+showcase_launch exhibit=neon pid=97734
+profile=core opengl=4.1 Metal - 90.5 vendor=Apple renderer=Apple M5 Pro
+gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0 reason=timing off
+measurement_gpu_requested=0 completed=0 pending=0 skipped=0 invalid=0
+status=ok frames=24 ticks=24 seed=71 window=800x450 framebuffer=1600x900 view=final bloom=on strength=1.2 last_passes=11 fullscreen=10 draws=16 sprites=1049 upload_bytes=151416 lighting=on active_lights=6 light_uniform_bytes=192 normals=on material_upload_bytes=0 shadows=on shadow_bytes=5760000 shadow_casters=4 shadow_skipped=2 shadow_vertex_bytes=168 batch_vertex_bytes=151056 rgba16f_attachment_bytes=66240000 attempt_passes=11 attempt_draws=16 attempt_complete=1
+showcase_exit exhibit=neon code=0 signal=0
+showcase_launch exhibit=survivor-enhanced pid=97735
+Survivor frames=24 difficulty=3 ticks=24 health=5 kills=0 enemies=8 projectiles=0 spawned=8 fired=0 hits=0 phase=Playing remaining=89.6 draws_world=1 draws_ui=1 draws_total=6 presentation=enhanced bloom=1 hdr_bytes=26880000
+showcase_exit exhibit=survivor-enhanced code=0 signal=0
+status=ok scene=showcase launched=10 reaped=10 frames=178
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene showcase --showcase-exhibit neon --frames 4 --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/launcher.png
+status=ok scene=showcase launched=0 reaped=0 frames=4
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_m82_gl /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/shader-recovery
+GL=4.1 Metal - 90.5 renderer=Apple M5 Pro
+effect=aurora tick=90 hdr_peak=6.13672 max_display_error=0.00196046 bloom_changed_fraction=0.468153 tick_changed_fraction=0.483497
+effect=orbitals tick=90 hdr_peak=8.78906 max_display_error=0.00196018 bloom_changed_fraction=0.248302 tick_changed_fraction=0.0249341
+effect=contours tick=90 hdr_peak=3.73242 max_display_error=0.00196046 bloom_changed_fraction=0.949333 tick_changed_fraction=0.888036
+rollback=compile,link,inactive,type,array,sampler,attribute,output_location,file wrong_context=blocked foreign_draw_state=restored worker=blocked alternating_commits=6 exact_HDR_restored=yes bound_program_retired=yes
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene map --size 640x360 --frames 24 --gpu-timing off --inspector off --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/map-71.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/map-71.csv --seed 71 --map-size 21x13 --map-script none
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=map frames=24 ticks=24 seed=71 epoch=1 map_size=21x13 script=none shortest_path=28 timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene map --size 640x360 --frames 24 --gpu-timing off --inspector off --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/map-72.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/map-72.csv --seed 72 --map-size 21x13 --map-script none
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+status=ok scene=map frames=24 ticks=24 seed=72 epoch=1 map_size=21x13 script=none shortest_path=28 timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene navigation --size 640x360 --frames 600 --gpu-timing off --inspector on --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/navigation-offer.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/navigation-offer.csv --seed 71 --nav-enemies 0 --nav-script walk
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+warmup=120 samples=480 clock=steady units=us
+metric=frame n=480 p50=101.709 p95=138.083 p99=180.75
+metric=fixed_update n=480 p50=0.375 p95=21.375 p99=26.625
+metric=prepare n=480 p50=4.917 p95=6.625 p99=10.167
+metric=draw_calls n=480 p50=9 p95=9 p99=9
+metric=sprites n=480 p50=710 p95=716 p99=719
+metric=uploaded_bytes n=480 p50=123822 p95=124686 p99=125118
+metric=world n=480 p50=35.958 p95=48.583 p99=57
+metric=bright n=480 p50=6.875 p95=9.542 p99=12.333
+metric=horizontal n=480 p50=6.333 p95=8.167 p99=10.125
+metric=vertical n=480 p50=5.875 p95=7.333 p99=10.5
+metric=output n=480 p50=8.958 p95=12.209 p99=13.875
+metric=hud n=480 p50=15.417 p95=18.959 p99=21.333
+metric=gui n=480 p50=5.083 p95=8.625 p99=11.875
+status=ok scene=navigation frames=600 ticks=600 seed=71 epoch=1 map_size=64x40 script=walk shortest_path=80 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene replay --size 640x360 --frames 2 --gpu-timing off --inspector on --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-offer.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-offer.csv --replay /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/assets/showcase/timeline.replay --timeline-view on --seek-event 600
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Playback paused" event_sequence=600 recorded_events=626 verified_events=600 state_hash=14af145719a79472
+status=ok scene=replay frames=2 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=AwaitingUpgrade hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=none timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene replay --size 640x360 --frames 3 --gpu-timing off --inspector off --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-forked.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-forked.csv --replay /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/assets/showcase/timeline.replay --timeline-view on --fork-at 600 --branch-id 111 --nav-choice last --branch-out /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/journey.branch
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+upgrade_choice=Fleet serial=1 epoch=1 tick=600
+replay_mode="Branch live" event_sequence=3 recorded_events=3 verified_events=0 state_hash=cbace48703c392
+status=ok scene=replay frames=3 ticks=602 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Fleet timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/tiny2d_timeline_verify branch /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/journey.branch
+branch_id=111 parent_id=8663573909429406300 parent_recording_id=8663573909429406300 fork_cursor=600
+verified=3 recording_id=15847630262985185549 cursor=3 epoch=1 tick=602 phase=Playing manual_paused=0 hp=5/5 player_speed=132 checkpoint=0 replayed=3 hash=cbace48703c392
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/lab/tiny2d_lab --scene replay --size 640x360 --frames 2 --gpu-timing off --inspector on --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-child.png --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/timeline-child.csv --branch-in /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/journey.branch --timeline-view on --seek-event 1
+opengl=4.1 Metal - 90.5 renderer=Apple M5 Pro
+replay_mode="Playback paused" event_sequence=1 recorded_events=3 verified_events=1 state_hash=f19dc3e4f2e1970c
+status=ok scene=replay frames=2 ticks=600 seed=71 epoch=1 map_size=64x40 script=none shortest_path=80 phase=Playing hp=5 enemies=0 requested_enemies=0 offer_serial=1 last_choice=Fleet timestamp_bits=-1 valid_gpu_samples=0
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation classic --difficulty 3 --frames 600 --trace /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-3-classic.trace.csv --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-3-classic.metrics.csv
+Survivor frames=600 difficulty=3 ticks=383 health=0 kills=5 enemies=9 projectiles=0 spawned=14 fired=11 hits=11 phase=GameOver remaining=83.6167 draws_world=1 draws_ui=2 draws_total=3
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation enhanced --difficulty 3 --frames 600 --trace /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-3-enhanced.trace.csv --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-3-enhanced.metrics.csv
+Survivor frames=600 difficulty=3 ticks=383 health=0 kills=5 enemies=9 projectiles=0 spawned=14 fired=11 hits=11 phase=GameOver remaining=83.6167 draws_world=1 draws_ui=2 draws_total=7 presentation=enhanced bloom=1 hdr_bytes=26880000
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/tiny2d_sandbox --scene survivor-demo --difficulty 3 --frames 600
+Survivor frames=600 difficulty=3 ticks=383 health=0 kills=5 enemies=9 projectiles=0 spawned=14 fired=11 hits=11 phase=GameOver remaining=83.6167 draws_world=1 draws_ui=2 draws_total=3
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation classic --difficulty 3 --frames 87 --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/survivor-classic.png
+Survivor frames=87 difficulty=3 ticks=87 health=5 kills=1 enemies=8 projectiles=0 spawned=9 fired=2 hits=2 phase=Playing remaining=88.55 draws_world=1 draws_ui=1 draws_total=2
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation enhanced --difficulty 3 --frames 87 --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/survivor-enhanced.png
+Survivor frames=87 difficulty=3 ticks=87 health=5 kills=1 enemies=8 projectiles=0 spawned=9 fired=2 hits=2 phase=Playing remaining=88.55 draws_world=1 draws_ui=1 draws_total=6 presentation=enhanced bloom=1 hdr_bytes=26880000
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation enhanced --difficulty 3 --frames 87 --capture /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/enhanced-bloom-off.png --bloom off
+Survivor frames=87 difficulty=3 ticks=87 health=5 kills=1 enemies=8 projectiles=0 spawned=9 fired=2 hits=2 phase=Playing remaining=88.55 draws_world=1 draws_ui=1 draws_total=3 presentation=enhanced bloom=0 hdr_bytes=26880000
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation classic --difficulty 5 --frames 600 --trace /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-5-classic.trace.csv --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-5-classic.metrics.csv
+Survivor frames=600 difficulty=5 ticks=338 health=0 kills=6 enemies=8 projectiles=0 spawned=14 fired=12 hits=12 phase=GameOver remaining=84.3667 draws_world=1 draws_ui=2 draws_total=3
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/Tiny2DSurvivor.app/Contents/MacOS/Tiny2DSurvivor --presentation enhanced --difficulty 5 --frames 600 --trace /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-5-enhanced.trace.csv --metrics /var/folders/vr/3rjb_bt535z942y3g5q5kj2r0000gn/T/tiny2d-showcase-glww1i2f/level-5-enhanced.metrics.csv
+Survivor frames=600 difficulty=5 ticks=338 health=0 kills=6 enemies=8 projectiles=0 spawned=14 fired=12 hits=12 phase=GameOver remaining=84.3667 draws_world=1 draws_ui=2 draws_total=7 presentation=enhanced bloom=1 hdr_bytes=26880000
+
+$ /Users/grahm/Desktop/Tiny2D-Engine/build/m111-release/tiny2d_sandbox --scene survivor-demo --difficulty 5 --frames 600
+Survivor frames=600 difficulty=5 ticks=338 health=0 kills=6 enemies=8 projectiles=0 spawned=14 fired=12 hits=12 phase=GameOver remaining=84.3667 draws_world=1 draws_ui=2 draws_total=3

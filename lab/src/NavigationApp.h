@@ -16,10 +16,10 @@ public:
     bool playing() const;
     void recordInitialBuild(CpuSample&) const;
     void advance(Action,const Options&,Controls&,CpuSample&);
-    bool drawOffer(bool finite,bool focused,Controls&,CpuSample&);
+    bool drawOffer(bool finite,bool focused,Controls&,CpuSample&,std::optional<std::uint64_t> panelRevision={},bool sidePanel=false);
     void prepare(Picture&,TileRange,const Options&,CpuSample&) const;
     void printStatus() const;
 private:
-    bool applyChoice(tiny2d_game::UpgradeChoice,Controls&,CpuSample&);
+    bool applyChoice(tiny2d_game::UpgradeChoice,Controls&,CpuSample&,std::optional<std::uint64_t> panelRevision={});
 };
 }

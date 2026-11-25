@@ -59,7 +59,8 @@ Options parse(int argc, const char* const* argv) {
     Options o;
     std::optional<bool> inspector, timing, lighting;
     bool particleOption=false, effectOption=false, mapOption=false, mapSize=false, navOption=false;
-    bool seedOption=false, enemyOption=false, inputOption=false;
+    bool showcaseOption=false,childFramesOption=false,explicitSize=false,shaderControlOption=false;
+    bool seedOption=false, enemyOption=false, inputOption=false, timelineOption=false;
     for (int i=1; i<argc; ++i) {
         std::string_view key = argv[i];
         if (++i == argc) throw std::invalid_argument("missing value for " + std::string(key));
@@ -71,7 +72,23 @@ Options parse(int argc, const char* const* argv) {
             else if (value=="map") o.scene=LabScene::Map;
             else if (value=="navigation") o.scene=LabScene::Navigation;
             else if (value=="replay") o.scene=LabScene::Replay;
-            else throw std::invalid_argument("--scene expects neon, particles, shaders, map, navigation or replay");
+            else if (value=="showcase") o.scene=LabScene::Showcase;
+            else throw std::invalid_argument("--scene expects neon, particles, shaders, map, navigation, replay or showcase");
+        } else if (key=="--showcase-exhibit" || key=="--showcase-tour" || key=="--showcase-output") {
+            if (value.empty()) throw std::invalid_argument(std::string(key)+" requires a value");
+            showcaseOption=true;
+            if (key=="--showcase-exhibit") o.showcaseExhibit=value;
+            else if (key=="--showcase-tour") o.showcaseTour=value;
+            else o.showcaseOutput=value;
+        } else if (key=="--shader-workspace" && !value.empty()) {
+            o.shaderWorkspace=value;
+        } else if (key=="--shader-control-stdin" && (value=="on" || value=="off")) {
+            shaderControlOption=true;
+            o.shaderControl=value=="on";
+        } else if (key=="--child-frames") {
+            showcaseOption=childFramesOption=true;
+            o.childFrames=number(value,key);
+            if (!o.childFrames || o.childFrames>3600) throw std::invalid_argument("--child-frames expects 1..3600");
         } else if (key=="--map-script") {
             if (value!="none" && value!="walk") throw std::invalid_argument("--map-script expects none or walk");
             mapOption=true;
@@ -113,12 +130,24 @@ Options parse(int argc, const char* const* argv) {
         } else if (key == "--seed") {
             seedOption=true;
             o.seed=number(value,key);
-        } else if (key=="--snapshot-in" || key=="--snapshot-out" || key=="--record" || key=="--replay") {
+        } else if (key=="--snapshot-in" || key=="--snapshot-out" || key=="--record" || key=="--replay" || key=="--branch-in" || key=="--branch-out") {
             if (value.empty()) throw std::invalid_argument(std::string(key)+" requires a path");
             if (key=="--snapshot-in") o.snapshotIn=value;
             if (key=="--snapshot-out") o.snapshotOut=value;
             if (key=="--record") o.recordPath=value;
             if (key=="--replay") o.replayPath=value;
+            if (key=="--branch-in") o.branchIn=value;
+            if (key=="--branch-out") o.branchOut=value;
+        } else if (key=="--seek-event" || key=="--fork-at") {
+            timelineOption=true;
+            (key=="--seek-event"?o.seekEvent:o.forkAt)=number(value,key);
+        } else if (key=="--branch-id") {
+            timelineOption=true;
+            o.branchId=number(value,key);
+            if (!o.branchId) throw std::invalid_argument("--branch-id must be positive");
+        } else if (key=="--timeline-view" && (value=="on" || value=="off")) {
+            timelineOption=true;
+            o.timelineView=value=="on";
         }
         else if (key == "--frames") {
             o.frames = number(value,key);
@@ -161,12 +190,34 @@ Options parse(int argc, const char* const* argv) {
                 o.mapWidth=int(w); o.mapHeight=int(h);
             } else {
                 if (!w || !h || w>4096 || h>4096) throw std::invalid_argument("logical size outside 1..4096");
+                explicitSize=true;
                 o.width = int(w); o.height = int(h);
             }
         } else if (key == "--capture" && !value.empty()) o.capture = value;
         else throw std::invalid_argument("unsupported argument: " + std::string(key) + " " + std::string(value));
     }
-    if (!o.capture.empty() && !o.frames) throw std::invalid_argument("--capture requires --frames");
+    if (!o.shaderWorkspace.empty() && o.scene!=LabScene::Shaders && o.scene!=LabScene::Showcase)
+        throw std::invalid_argument("--shader-workspace requires shaders or showcase");
+    if (shaderControlOption && o.scene!=LabScene::Shaders)
+        throw std::invalid_argument("--shader-control-stdin requires shaders");
+    if (o.shaderControl && (!o.frames || *o.frames>3600 || o.shaderWorkspace.empty() || !o.capture.empty()))
+        throw std::invalid_argument("shader stdin control requires 1..3600 frames, explicit workspace and per-command captures");
+    if (showcaseOption && o.scene!=LabScene::Showcase)
+        throw std::invalid_argument("showcase options require --scene showcase");
+    if (o.scene==LabScene::Showcase) {
+        if (!explicitSize) { o.width=960; o.height=580; }
+        if (o.showcaseTour.empty() && (!o.showcaseOutput.empty() || childFramesOption))
+            throw std::invalid_argument("--child-frames and --showcase-output require --showcase-tour");
+        if (!o.showcaseTour.empty() && o.frames)
+            throw std::invalid_argument("tour duration is controlled by --child-frames");
+        if (!o.capture.empty() && !o.metrics.empty()) {
+            namespace fs=std::filesystem;
+            if (fs::weakly_canonical(fs::absolute(o.capture))==fs::weakly_canonical(fs::absolute(o.metrics)) ||
+                (fs::exists(o.capture) && fs::exists(o.metrics) && fs::equivalent(o.capture,o.metrics)))
+                throw std::invalid_argument("capture and metrics paths must differ");
+        }
+    }
+    if (!o.capture.empty() && !o.frames && o.showcaseTour.empty()) throw std::invalid_argument("--capture requires --frames");
     o.inspector=inspector.value_or(!o.frames);
     o.timing=timing.value_or(!o.frames);
     if (o.previews && !o.inspector) throw std::invalid_argument("--previews all requires --inspector on");
@@ -175,21 +226,28 @@ Options parse(int argc, const char* const* argv) {
     const bool map=o.scene==LabScene::Map;
     const bool replay=o.scene==LabScene::Replay;
     const bool navigation=o.scene==LabScene::Navigation || replay;
-    const bool load=!o.snapshotIn.empty() || !o.replayPath.empty();
-    if (!replay && (load || !o.snapshotOut.empty() || !o.recordPath.empty()))
+    const bool history=!o.replayPath.empty() || !o.branchIn.empty();
+    const bool load=!o.snapshotIn.empty() || history;
+    if (!replay && (load || !o.snapshotOut.empty() || !o.recordPath.empty() || timelineOption || !o.branchOut.empty()))
         throw std::invalid_argument("snapshot and replay file options require --scene replay");
     if (load && (mapSize || seedOption || enemyOption))
         throw std::invalid_argument("file supplies seed, map parameters and enemy count");
-    if (!o.replayPath.empty() && (inputOption || !o.snapshotIn.empty() || !o.recordPath.empty()))
+    if (!o.replayPath.empty() && !o.branchIn.empty())
+        throw std::invalid_argument("choose one input history");
+    if ((o.seekEvent || o.forkAt) && (!history || (o.seekEvent && o.forkAt)))
+        throw std::invalid_argument("choose one seek or fork cursor with an input history");
+    if ((!o.branchOut.empty() || o.branchId) && !o.forkAt)
+        throw std::invalid_argument("--branch-out and --branch-id require --fork-at");
+    if (history && ((inputOption && !o.forkAt) || !o.snapshotIn.empty() || !o.recordPath.empty()))
         throw std::invalid_argument("--replay supplies the base snapshot and all input events");
     if (replay) {
-        for (const auto* output:{&o.snapshotOut,&o.recordPath}) {
+        for (const auto* output:{&o.snapshotOut,&o.recordPath,&o.branchOut}) {
             if (!output->empty() && std::filesystem::exists(std::filesystem::symlink_status(*output)))
                 throw std::invalid_argument("output already exists: "+*output);
         }
         // Capture and Metrics historically replace their targets. Never allow those
         // output paths to alias an input snapshot, replay, or another output.
-        const std::string* paths[]={&o.snapshotIn,&o.replayPath,&o.recordPath,&o.snapshotOut,&o.capture,&o.metrics};
+        const std::string* paths[]={&o.snapshotIn,&o.replayPath,&o.recordPath,&o.snapshotOut,&o.capture,&o.metrics,&o.branchIn,&o.branchOut};
         for (std::size_t i=0;i<std::size(paths);++i) {
             if (paths[i]->empty()) continue;
             for (std::size_t j=0;j<i;++j) {

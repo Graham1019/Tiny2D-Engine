@@ -27,12 +27,15 @@ void NavigationApp::recordInitialBuild(CpuSample& cpu) const {
     cpu.nav.fieldUs=stats.fieldBuildUs;
 }
 
-bool NavigationApp::applyChoice(UpgradeChoice choice,Controls& controls,CpuSample& cpu) {
-    if (!dispatch(ReplayCommand::choose(choice))) return false;
+bool NavigationApp::applyChoice(UpgradeChoice choice,Controls& controls,CpuSample& cpu,
+                                std::optional<std::uint64_t> panelRevision) {
+    const auto command=ReplayCommand::choose(choice);
+    const bool applied=replay && panelRevision?replay->dispatchAtRevision(live,command,*panelRevision):dispatch(command);
+    if (!applied) return false;
     controls.clearElapsed();
-    cpu.nav.upgradeUs+=live.timings().upgradeUpdateUs;
+    cpu.nav.upgradeUs+=displayed().timings().upgradeUpdateUs;
     std::cout<<"upgrade_choice="<<upgradeName(choice.id)<<" serial="<<choice.serial<<" epoch="<<choice.epoch
-             <<" tick="<<live.world().tick()<<'\n';
+             <<" tick="<<displayed().world().tick()<<'\n';
     return true;
 }
 
@@ -43,13 +46,15 @@ void NavigationApp::advance(Action action,const Options& options,Controls& contr
         cpu.update+=micros(start);
         return;
     }
-    const auto& session=live;
+    const auto& session=displayed();
     const auto& world=session.world();
     if (options.frames) {
         if (const auto& offer=session.upgrades().offer()) {
             const auto id=offer->choices[options.navChooseLast?offer->count-1:0];
             if (!applyChoice({offer->epoch,offer->serial,id},controls,cpu))
                 throw std::logic_error("finite navigation choice rejected");
+            // Keep the editable child's choice visible at its own event boundary.
+            if (replay && replay->editingBranch()) return;
         }
     }
     for (unsigned i=0;i<action.steps && playing();++i) {
@@ -57,7 +62,7 @@ void NavigationApp::advance(Action action,const Options& options,Controls& contr
         const auto rebuilds=session.navigator().stats().fieldRebuildCount;
         const auto start=Clock::now();
         if (world.paused() && options.frames) break;
-        dispatch(world.paused()?ReplayCommand::manualStep(input):ReplayCommand::advance(input));
+        if (!dispatch(world.paused()?ReplayCommand::manualStep(input):ReplayCommand::advance(input))) break;
         cpu.update+=micros(start);
         cpu.map.collisionUs+=world.collisionUs();
         const auto& stats=session.navigator().stats();
@@ -72,12 +77,13 @@ void NavigationApp::advance(Action action,const Options& options,Controls& contr
     }
 }
 
-bool NavigationApp::drawOffer(bool finite,bool focused,Controls& controls,CpuSample& cpu) {
+bool NavigationApp::drawOffer(bool finite,bool focused,Controls& controls,CpuSample& cpu,
+                              std::optional<std::uint64_t> panelRevision,bool sidePanel) {
     const auto& session=displayed();
     if (!session.upgrades().offer()) return false;
     const bool readOnly=finite || (replay && replay->playback());
-    const auto choice=navigationOffer(session,readOnly);
-    if (focused && choice) applyChoice(*choice,controls,cpu);
+    const auto choice=navigationOffer(session,readOnly,sidePanel);
+    if (focused && choice) applyChoice(*choice,controls,cpu,panelRevision);
     return true;
 }
 

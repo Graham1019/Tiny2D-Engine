@@ -1,0 +1,21 @@
+$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.7.3
+BuildVersion:		25G342
+$ uname -m
+arm64
+$ c++ --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.6.0
+Thread model: posix
+InstalledDir: /Library/Developer/CommandLineTools/usr/bin
+$ cmake --version
+cmake version 4.4.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+$ xcrun --show-sdk-version
+26.5
+$ otool -L build/m102-release/tiny2d_m101_evidence
+build/m102-release/tiny2d_m101_evidence:
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)

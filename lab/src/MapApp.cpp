@@ -112,16 +112,20 @@ void runTileLab(Options options) {
         if (!finite && window.takeFocusLoss()) controls.poll({},false,0,options.display);
         RoutedInput routed;
         edit.regenerate=false;
+        const auto panelRevision=replay?nav->replay->revision():0;
         ReplayAction replayAction=ReplayAction::None;
         const auto originalEpoch=world().epoch();
         if (gui) {
             const auto begin=Clock::now();
             routed=gui->buildPanel(tools,focused,[&](Commands& cmd) {
                 if (nav) {
-                    std::function<void()> transport;
-                    if (replay) transport=[&]{replayAction=nav->replay->panel(nav->live);};
+                    std::function<void()> transport,timeline;
+                    if (replay) {
+                        transport=[&]{replayAction=nav->replay->panel(nav->live);};
+                        timeline=[&]{replayAction=nav->replay->timelinePanel(nav->live);};
+                    }
                     navigationPanel(tools,edit,nav->view,cmd,nav->displayed(),finite,history,queries.get(),
-                                    transport,replay && nav->replay->playback());
+                                    transport,replay && nav->replay->playback(),timeline,replay && nav->replay->selectTimelineTab());
                 } else mapPanel(tools,edit,cmd,world(),options.display,finite,history,queries.get());
             },false,nav && nav->displayed().upgrades().offer().has_value());
             cpu.build=micros(begin);
@@ -221,7 +225,7 @@ void runTileLab(Options options) {
         bool offerWindow=false;
         if (nav && gui) {
             const auto startOffer=Clock::now();
-            offerWindow=nav->drawOffer(finite || (replay && (replaced || transportCommand)),focused,controls,cpu);
+            offerWindow=nav->drawOffer(finite || (replay && (replaced || transportCommand)),focused,controls,cpu,panelRevision,replay && tools.visible);
             cpu.build+=micros(startOffer);
         }
         if (replay && !options.metrics.empty()) nav->replay->observe(info,nav->live);

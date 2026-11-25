@@ -1,0 +1,433 @@
+{
+  "built_utc": "2026-11-24T08:01:32+00:00",
+  "candidate": "0.6.0-rc1",
+  "distribution": {
+    "notarization": "none",
+    "publication": "local candidate",
+    "signature": "ad-hoc"
+  },
+  "environment": {
+    "build": "25G342",
+    "cmake": "cmake version 4.4.3",
+    "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+    "macos": "26.7.3",
+    "sdk": "26.5"
+  },
+  "files": {
+    "README.txt": {
+      "bytes": 1208,
+      "sha256": "3daec8e5b1b6b1be416362276ee3d89b969a44068169ff67d8510743586a9922"
+    },
+    "Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib": {
+      "bytes": 263520,
+      "sha256": "48bb9949d229cca3de243ec4c74d986464dda9e238ef25a522d412890bce4342"
+    },
+    "Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.dylib": {
+      "link": "libglfw.3.5.dylib"
+    },
+    "Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib": {
+      "bytes": 208272,
+      "sha256": "56978f4a947d65e627602d5141d2531b8bce12e9749e6b4243b3a0acaf6536cc"
+    },
+    "Tiny2D Showcase.app/Contents/Info.plist": {
+      "bytes": 735,
+      "sha256": "7c90d51f4293d3e555b7b1459b9be11e92b61958841db85d980ad2695b313c32"
+    },
+    "Tiny2D Showcase.app/Contents/MacOS/Tiny2DShowcase": {
+      "bytes": 59600,
+      "sha256": "b602f7842f92327840d55608270dec2b41dd4b595576b7d205f98490646a7f8f"
+    },
+    "Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab": {
+      "bytes": 1654432,
+      "sha256": "5cb9e1e017dcae14d73b3169c5ed7928680d8bd4e214534f1f7a7c2d98aa895f"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/examples/fleet.branch": {
+      "bytes": 4208,
+      "sha256": "d5e1f84a9ce90a464f13bfd58e770bac281551eee2fa2b978c770738fc4b102d"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/examples/mid.snap": {
+      "bytes": 3275,
+      "sha256": "9c822b9a657cd3ec33cff8f89c62139dc63e8355c9bf02aeade8a37d652aa0fe"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/examples/parent.replay": {
+      "bytes": 34728,
+      "sha256": "ed176065a9c5ec09940fe1aa341fd62b689356698dac9d0ef2fb1e2329813e9d"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/blur.frag": {
+      "bytes": 680,
+      "sha256": "84a16806a22c70ba3e43ada120c6783ae595f26b48c792fbe378e54e2c7f244e"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/bright.frag": {
+      "bytes": 247,
+      "sha256": "c920d2dcb2af7ced9aba474caf34310f796227a8e761e7c7fe30cda5f5a446ee"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/compose.frag": {
+      "bytes": 361,
+      "sha256": "a69153d1777e7f694c5e1e1ae10f318651db0a3c2a34fc525cf6b8a9645a1f03"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/display.frag": {
+      "bytes": 441,
+      "sha256": "344a9eba73d559cdc89713a954d6a38fb365919545d7a46d979b81d8306d8647"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/fullscreen.vert": {
+      "bytes": 183,
+      "sha256": "e232c87d297ec3a37da30f49e824ba6eb61cba94b497669b660d04b4ff7a01a9"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/gallery/aurora.frag": {
+      "bytes": 1833,
+      "sha256": "bca7cf536c36d4f2f4414cf64d13add107c745312124494deaf4cba858af61d0"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/gallery/contours.frag": {
+      "bytes": 1211,
+      "sha256": "750571925df17cd6e534561a78ff96ac59a5a4a2a4e2d41f07d022edf2576b9a"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/gallery/orbitals.frag": {
+      "bytes": 1803,
+      "sha256": "7bf127fe8e619f30670e215757fc346fc4448c55584edb91426a26c0e4056ff2"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/gallery/screen.vert": {
+      "bytes": 234,
+      "sha256": "a874c2454187ff31282e250430dc679c78a1d2a0b857e359a23ae873886694fa"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/light.frag": {
+      "bytes": 1394,
+      "sha256": "4d430fd09fe76132ab62dc26410d7bffc12bd323e43a070ba7fb78648a489e31"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/normal.frag": {
+      "bytes": 378,
+      "sha256": "a0178e5183c9b7a2d9d2649df934fb50bec343cd244a1a073b58c54a91c38718"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/normal.vert": {
+      "bytes": 312,
+      "sha256": "92e6efbc7c68decb798262197d2b919457be16c474b5c42027ec1fce11b45981"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/normal_display.frag": {
+      "bytes": 150,
+      "sha256": "da24620853296aecbb030f0a11a3f2f58299dc92fc51d67da4ad2aab4f8a73b4"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/particle.frag": {
+      "bytes": 202,
+      "sha256": "034a4487de5e5a324fb6d6d25b290f0551919ef12d94e3bbb36f341bc540ce78"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/particle.vert": {
+      "bytes": 502,
+      "sha256": "1361dbd1c52b10a5f250741514b8f88b73a0e47163f388f9fa89b448f87b8f15"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/shadow_display.frag": {
+      "bytes": 140,
+      "sha256": "fe37ed16fde0789659aa66ad688684f0193a7198f2f11f25387cb112cc57abaf"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/shadow_light.frag": {
+      "bytes": 956,
+      "sha256": "a9daf14b75217254138db9d4a27748318c93853c0292502b4a21b702dac409e7"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/shadow_mask.frag": {
+      "bytes": 88,
+      "sha256": "5abb023b3c2d87f804da19556823fca89eedc968b3aa1bdacf92916fb9c7d578"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/shadow_mask.vert": {
+      "bytes": 166,
+      "sha256": "a42344b336ac6c97ae9f6c11518827f4ff7b7e13130dbc010197b1f5e2c468a0"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/triangle.frag": {
+      "bytes": 106,
+      "sha256": "ff511266a027e636a8e7924d44494c24f6c82b73de45403e81765aa9b3c1bb43"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/shaders/triangle.vert": {
+      "bytes": 225,
+      "sha256": "e05f049d73025268e7983c51e9f538caeaaf53409cfb7b8a94655c66ec37b863"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/classic.png": {
+      "bytes": 12443,
+      "sha256": "14b55e02484490ae9ebb5374b62f0a00f3db6cb8d321db7c4af866cb21f9e70f"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/enhanced.png": {
+      "bytes": 34399,
+      "sha256": "6f90c73139e9c3e25b1bff7f5bd7544058db4247e74e267c80c49445f9b4db26"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/map.png": {
+      "bytes": 17803,
+      "sha256": "50fe8edf020b0e46fb35f9d6013aa1da7bde711c5cc96b2a873daf875078a3d3"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/navigation.png": {
+      "bytes": 27145,
+      "sha256": "aef17118013f10a5e4c37dfc12c6d979d06e4eb737d2d94515bd8ce0d501903f"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/neon.png": {
+      "bytes": 312569,
+      "sha256": "b708b488ebfa8a2cd1b843b2cd77f82061289ba6b3f0c52e96e6052f41d8cc43"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/particles.png": {
+      "bytes": 335938,
+      "sha256": "99db0dfd0ebf9e048d3701e1819edce37508735cdda4a5bc80690142161dd970"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/replay.png": {
+      "bytes": 137855,
+      "sha256": "2aac51c661e4319fad59b3f2d383df1476a395b5ba37deb183a14f57ae7a16a1"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/shaders.png": {
+      "bytes": 742972,
+      "sha256": "66f86e6254aa9ea7203e8a7e416220ae3314894829462664e6328599ac27b75e"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/showcase/timeline.replay": {
+      "bytes": 34728,
+      "sha256": "ed176065a9c5ec09940fe1aa341fd62b689356698dac9d0ef2fb1e2329813e9d"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/LICENSE.txt": {
+      "bytes": 227,
+      "sha256": "167389f6dae7e975fcf4b1d03f839a7673068d6d9e5fee65df5695788bce5d55"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/M4-LICENSE.txt": {
+      "bytes": 164,
+      "sha256": "b20b367a8894219ba7e2ca1bb8d9df741a8dada7471bbe26ffcc6a6e90fedc03"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/blue.png": {
+      "bytes": 83,
+      "sha256": "8951b82cddd0ee83604a536462c60265bf58a6ad7d8b5e7ab6d6527fb0941c5b"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/green.png": {
+      "bytes": 83,
+      "sha256": "2a54f5d50848fac0d9a6678f9c9d69bc61c62a6a884c00899d3284f13d975c3d"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/red.png": {
+      "bytes": 83,
+      "sha256": "c20e4eceaf12d2a147ad8659e7c76bee14ca34567e1566cb5e3e017272083e6e"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/assets/textures/sprite.png": {
+      "bytes": 134,
+      "sha256": "e02803f2f0917b643ef1a571b7abd006eba9d9885ad8d45d35c4489dc920a340"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/licenses/Dear-ImGui-LICENSE.txt": {
+      "bytes": 1083,
+      "sha256": "173506a2d6f7fb67990d257fb2507f188690eca39060c39469ae7bef43aae2a3"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/licenses/GLFW-LICENSE.md": {
+      "bytes": 904,
+      "sha256": "149704059b5d0bf551637e50042dd4de9c2cae921021f6636298911e3a5f9462"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/licenses/README.md": {
+      "bytes": 1374,
+      "sha256": "4998f393d9441d61206fafe2a92348c7a9a55b723364e108849137768a631a40"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/licenses/SHOWCASE-NOTICES.txt": {
+      "bytes": 731,
+      "sha256": "98cacc2e2f9d3c61c0b2d86e075f35e343f222d8d22168ed73b2752b9d32d3d3"
+    },
+    "Tiny2D Showcase.app/Contents/Resources/licenses/libpng-LICENSE.txt": {
+      "bytes": 5345,
+      "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+    },
+    "Tiny2D Showcase.app/Contents/_CodeSignature/CodeResources": {
+      "bytes": 14553,
+      "sha256": "02b01a4fa224dd794360dd59df039d029ba6d39104cb1e1ac10162ab16cbecec"
+    },
+    "Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib": {
+      "bytes": 263520,
+      "sha256": "48bb9949d229cca3de243ec4c74d986464dda9e238ef25a522d412890bce4342"
+    },
+    "Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.dylib": {
+      "link": "libglfw.3.5.dylib"
+    },
+    "Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib": {
+      "bytes": 208272,
+      "sha256": "56978f4a947d65e627602d5141d2531b8bce12e9749e6b4243b3a0acaf6536cc"
+    },
+    "Tiny2D Survivor.app/Contents/Info.plist": {
+      "bytes": 735,
+      "sha256": "3fa34ff96a59fcdade2d51ef584ab4d2fed0eeb2209ee4258923d2b60797f410"
+    },
+    "Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor": {
+      "bytes": 389056,
+      "sha256": "9c4e294870e0eddf19e6267c8b52188ae8b3126c7616010a86172092513172b5"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/blur.frag": {
+      "bytes": 680,
+      "sha256": "84a16806a22c70ba3e43ada120c6783ae595f26b48c792fbe378e54e2c7f244e"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/bright.frag": {
+      "bytes": 247,
+      "sha256": "c920d2dcb2af7ced9aba474caf34310f796227a8e761e7c7fe30cda5f5a446ee"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/compose.frag": {
+      "bytes": 361,
+      "sha256": "a69153d1777e7f694c5e1e1ae10f318651db0a3c2a34fc525cf6b8a9645a1f03"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/display.frag": {
+      "bytes": 441,
+      "sha256": "344a9eba73d559cdc89713a954d6a38fb365919545d7a46d979b81d8306d8647"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/fullscreen.vert": {
+      "bytes": 183,
+      "sha256": "e232c87d297ec3a37da30f49e824ba6eb61cba94b497669b660d04b4ff7a01a9"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/light.frag": {
+      "bytes": 1394,
+      "sha256": "4d430fd09fe76132ab62dc26410d7bffc12bd323e43a070ba7fb78648a489e31"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/triangle.frag": {
+      "bytes": 106,
+      "sha256": "ff511266a027e636a8e7924d44494c24f6c82b73de45403e81765aa9b3c1bb43"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/shaders/triangle.vert": {
+      "bytes": 225,
+      "sha256": "e05f049d73025268e7983c51e9f538caeaaf53409cfb7b8a94655c66ec37b863"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/LICENSE.txt": {
+      "bytes": 227,
+      "sha256": "167389f6dae7e975fcf4b1d03f839a7673068d6d9e5fee65df5695788bce5d55"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/M4-LICENSE.txt": {
+      "bytes": 164,
+      "sha256": "b20b367a8894219ba7e2ca1bb8d9df741a8dada7471bbe26ffcc6a6e90fedc03"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/blue.png": {
+      "bytes": 83,
+      "sha256": "8951b82cddd0ee83604a536462c60265bf58a6ad7d8b5e7ab6d6527fb0941c5b"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/green.png": {
+      "bytes": 83,
+      "sha256": "2a54f5d50848fac0d9a6678f9c9d69bc61c62a6a884c00899d3284f13d975c3d"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/red.png": {
+      "bytes": 83,
+      "sha256": "c20e4eceaf12d2a147ad8659e7c76bee14ca34567e1566cb5e3e017272083e6e"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/assets/textures/sprite.png": {
+      "bytes": 134,
+      "sha256": "e02803f2f0917b643ef1a571b7abd006eba9d9885ad8d45d35c4489dc920a340"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/licenses/Dear-ImGui-LICENSE.txt": {
+      "bytes": 1083,
+      "sha256": "173506a2d6f7fb67990d257fb2507f188690eca39060c39469ae7bef43aae2a3"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/licenses/GLFW-LICENSE.md": {
+      "bytes": 904,
+      "sha256": "149704059b5d0bf551637e50042dd4de9c2cae921021f6636298911e3a5f9462"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/licenses/README.md": {
+      "bytes": 1374,
+      "sha256": "4998f393d9441d61206fafe2a92348c7a9a55b723364e108849137768a631a40"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/licenses/SHOWCASE-NOTICES.txt": {
+      "bytes": 731,
+      "sha256": "98cacc2e2f9d3c61c0b2d86e075f35e343f222d8d22168ed73b2752b9d32d3d3"
+    },
+    "Tiny2D Survivor.app/Contents/Resources/licenses/libpng-LICENSE.txt": {
+      "bytes": 5345,
+      "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+    },
+    "Tiny2D Survivor.app/Contents/_CodeSignature/CodeResources": {
+      "bytes": 7711,
+      "sha256": "3204278b29645c582d84ec98143dca3d11114b550f1dee43a4841af00cec01e9"
+    }
+  },
+  "format": 1,
+  "mach_o": {
+    "Tiny2D Showcase.app/Contents/Frameworks/libglfw.3.5.dylib": {
+      "architecture": "arm64",
+      "load_names": [
+        "@executable_path/../Frameworks/libglfw.3.5.dylib",
+        "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+        "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+        "/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore",
+        "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+        "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+        "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+        "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Showcase.app/Contents/Frameworks/libpng16.16.dylib": {
+      "architecture": "arm64",
+      "load_names": [
+        "@executable_path/../Frameworks/libpng16.16.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Showcase.app/Contents/MacOS/Tiny2DShowcase": {
+      "architecture": "arm64",
+      "load_names": [
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Showcase.app/Contents/MacOS/tiny2d_lab": {
+      "architecture": "arm64",
+      "load_names": [
+        "/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL",
+        "@executable_path/../Frameworks/libpng16.16.dylib",
+        "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+        "@executable_path/../Frameworks/libglfw.3.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Survivor.app/Contents/Frameworks/libglfw.3.5.dylib": {
+      "architecture": "arm64",
+      "load_names": [
+        "@executable_path/../Frameworks/libglfw.3.5.dylib",
+        "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+        "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+        "/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore",
+        "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+        "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+        "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+        "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Survivor.app/Contents/Frameworks/libpng16.16.dylib": {
+      "architecture": "arm64",
+      "load_names": [
+        "@executable_path/../Frameworks/libpng16.16.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    },
+    "Tiny2D Survivor.app/Contents/MacOS/Tiny2DSurvivor": {
+      "architecture": "arm64",
+      "load_names": [
+        "@executable_path/../Frameworks/libglfw.3.dylib",
+        "/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL",
+        "@executable_path/../Frameworks/libpng16.16.dylib",
+        "/usr/lib/libz.1.dylib",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libSystem.B.dylib"
+      ],
+      "min_macos": "26.0",
+      "rpaths": []
+    }
+  },
+  "source_commit": "4dff8ddabfd6aa902f0310e55b90eed1c11764c4",
+  "target": {
+    "architecture": "arm64",
+    "cmake_options": [
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DCMAKE_OSX_ARCHITECTURES=arm64",
+      "-DCMAKE_OSX_DEPLOYMENT_TARGET=26.0",
+      "-DBUILD_TESTING=OFF"
+    ],
+    "configuration": "Release",
+    "minimum_macos": "26.0",
+    "source": "git archive of source_commit into a new build directory"
+  }
+}

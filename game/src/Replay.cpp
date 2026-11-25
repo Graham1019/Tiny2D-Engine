@@ -84,22 +84,27 @@ bool ReplayRecorder::apply(NavigationSession& session, const ReplayCommand& comm
 }
 
 ReplayPlayer::ReplayPlayer(ReplayData data)
-    : data_(std::move(data)), session_(NavigationSession::fromSnapshot(data_.base)) {
-    if (data_.events.size() > maxReplayEvents) throw std::length_error("too many replay events");
+    : data_(std::make_shared<const ReplayData>(std::move(data))), session_(NavigationSession::fromSnapshot(data_->base)) {
+    if (data_->events.size() > maxReplayEvents) throw std::length_error("too many replay events");
     atBase();
+}
+
+ReplayPlayer::ReplayPlayer(std::shared_ptr<const ReplayData> data, NavigationSession session, std::size_t cursor)
+    : data_(std::move(data)), session_(std::move(session)), cursor_(cursor) {
+    if (cursor_ == data_->events.size()) status_ = PlaybackStatus::Finished;
 }
 
 void ReplayPlayer::atBase() {
     cursor_ = 0;
     error_.clear();
     status_ = PlaybackStatus::Paused;
-    if (data_.events.empty()) {
+    if (data_->events.empty()) {
         const auto actualHash = stateHash(session_.captureSnapshot());
-        if (data_.finalHash == actualHash) {
+        if (data_->finalHash == actualHash) {
             status_ = PlaybackStatus::Finished;
         } else {
             std::ostringstream message;
-            message << "base snapshot final hash mismatch: expected=0x" << std::hex << data_.finalHash
+            message << "base snapshot final hash mismatch: expected=0x" << std::hex << data_->finalHash
                     << " actual=0x" << actualHash;
             error_ = message.str();
             status_ = PlaybackStatus::Error;
@@ -108,7 +113,7 @@ void ReplayPlayer::atBase() {
 }
 
 void ReplayPlayer::restart() {
-    session_ = NavigationSession::fromSnapshot(data_.base);
+    session_ = NavigationSession::fromSnapshot(data_->base);
     atBase();
 }
 
@@ -119,7 +124,7 @@ void ReplayPlayer::setPlaying(bool playing) {
 
 bool ReplayPlayer::next() {
     if (status_ == PlaybackStatus::Finished || status_ == PlaybackStatus::Error) return false;
-    const auto& event = data_.events[cursor_];
+    const auto& event = data_->events[cursor_];
     const auto& before = session_.world();
     auto fail = [&](const std::string& reason, const NavigationSession& actual, std::uint64_t actualHash) {
         std::ostringstream message;
@@ -150,10 +155,10 @@ bool ReplayPlayer::next() {
         if (candidate.world().epoch() != event.afterEpoch || candidate.world().tick() != event.afterTick ||
             hash != event.expectedHash)
             return fail("after/hash mismatch", candidate, hash);
-        const bool last = cursor_ + 1 == data_.events.size();
-        if (last && hash != data_.finalHash) {
+        const bool last = cursor_ + 1 == data_->events.size();
+        if (last && hash != data_->finalHash) {
             std::ostringstream reason;
-            reason << "trailer hash mismatch final_hash=0x" << std::hex << data_.finalHash;
+            reason << "trailer hash mismatch final_hash=0x" << std::hex << data_->finalHash;
             return fail(reason.str(), candidate, hash);
         }
         static_assert(std::is_nothrow_move_assignable_v<NavigationSession>);

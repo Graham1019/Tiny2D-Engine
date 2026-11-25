@@ -1,0 +1,98 @@
+Test project /Users/grahm/Desktop/Tiny2D-Engine/build/m102-off
+      Start  1: M3CPUTests
+ 1/45 Test  #1: M3CPUTests .......................   Passed    0.35 sec
+      Start  2: Vector2Tests
+ 2/45 Test  #2: Vector2Tests .....................   Passed    0.34 sec
+      Start  3: RenderFailureTests
+ 3/45 Test  #3: RenderFailureTests ...............   Passed    0.35 sec
+      Start  4: M5_scene
+ 4/45 Test  #4: M5_scene .........................   Passed    0.36 sec
+      Start  5: M5_collision
+ 5/45 Test  #5: M5_collision .....................   Passed    0.34 sec
+      Start  6: M5_fixed_step
+ 6/45 Test  #6: M5_fixed_step ....................   Passed    0.34 sec
+      Start  7: M61_combat
+ 7/45 Test  #7: M61_combat .......................   Passed    0.34 sec
+      Start  8: M61_projectiles
+ 8/45 Test  #8: M61_projectiles ..................   Passed    0.33 sec
+      Start  9: M61_spawning
+ 9/45 Test  #9: M61_spawning .....................   Passed    0.36 sec
+      Start 10: M62_game_phase
+10/45 Test #10: M62_game_phase ...................   Passed    0.34 sec
+      Start 11: M62_restart
+11/45 Test #11: M62_restart ......................   Passed    0.35 sec
+      Start 12: M62_hud
+12/45 Test #12: M62_hud ..........................   Passed    0.34 sec
+      Start 13: M63a_difficulty
+13/45 Test #13: M63a_difficulty ..................   Passed    0.34 sec
+      Start 14: M63a_flow
+14/45 Test #14: M63a_flow ........................   Passed    0.68 sec
+      Start 15: M63a_pacing
+15/45 Test #15: M63a_pacing ......................   Passed    0.36 sec
+      Start 16: M63a_invalid_difficulty_0
+16/45 Test #16: M63a_invalid_difficulty_0 ........   Passed    0.34 sec
+      Start 17: M63a_invalid_difficulty_6
+17/45 Test #17: M63a_invalid_difficulty_6 ........   Passed    0.00 sec
+      Start 18: M63a_invalid_difficulty_-1
+18/45 Test #18: M63a_invalid_difficulty_-1 .......   Passed    0.00 sec
+      Start 19: M63a_invalid_difficulty_abc
+19/45 Test #19: M63a_invalid_difficulty_abc ......   Passed    0.00 sec
+      Start 20: M63b_events
+20/45 Test #20: M63b_events ......................   Passed    0.34 sec
+      Start 21: M63b_vfx
+21/45 Test #21: M63b_vfx .........................   Passed    0.50 sec
+      Start 22: M63b_fps
+22/45 Test #22: M63b_fps .........................   Passed    0.33 sec
+      Start 23: M63b_priority
+23/45 Test #23: M63b_priority ....................   Passed    0.36 sec
+      Start 24: M91_MapGenerationCPU
+24/45 Test #24: M91_MapGenerationCPU .............   Passed    0.14 sec
+      Start 25: M91_TileCollisionCPU
+25/45 Test #25: M91_TileCollisionCPU .............   Passed    0.35 sec
+      Start 26: M91_MapSessionCPU
+26/45 Test #26: M91_MapSessionCPU ................   Passed    0.34 sec
+      Start 27: M92_NavigationCPU
+27/45 Test #27: M92_NavigationCPU ................   Passed    0.38 sec
+      Start 28: M92_EnemyMotionCPU
+28/45 Test #28: M92_EnemyMotionCPU ...............   Passed    0.37 sec
+      Start 29: M92_UpgradeCPU
+29/45 Test #29: M92_UpgradeCPU ...................   Passed    0.12 sec
+      Start 30: M92_NavigationSessionCPU
+30/45 Test #30: M92_NavigationSessionCPU .........   Passed    0.38 sec
+      Start 31: M81_ParticleSimulationCPU
+31/45 Test #31: M81_ParticleSimulationCPU ........   Passed    0.34 sec
+      Start 32: M71CPU
+32/45 Test #32: M71CPU ...........................   Passed    0.33 sec
+      Start 33: M72CPU
+33/45 Test #33: M72CPU ...........................   Passed    0.34 sec
+      Start 34: M73_cpu
+34/45 Test #34: M73_cpu ..........................   Passed    0.35 sec
+      Start 35: M73_controls
+35/45 Test #35: M73_controls .....................   Passed    0.36 sec
+      Start 36: M74a_NormalMaterialsCPU
+36/45 Test #36: M74a_NormalMaterialsCPU ..........   Passed    0.35 sec
+      Start 37: M74b_OcclusionCPU
+37/45 Test #37: M74b_OcclusionCPU ................   Passed    0.35 sec
+      Start 38: M101_SnapshotCPU
+38/45 Test #38: M101_SnapshotCPU .................   Passed    0.37 sec
+      Start 39: M101_SnapshotCodecCPU
+39/45 Test #39: M101_SnapshotCodecCPU ............   Passed    0.36 sec
+      Start 40: M101_EventDispatchCPU
+40/45 Test #40: M101_EventDispatchCPU ............   Passed    0.45 sec
+      Start 41: M101_ReplayCPU
+41/45 Test #41: M101_ReplayCPU ...................   Passed    0.20 sec
+      Start 42: M101_ReplayCodecCPU
+42/45 Test #42: M101_ReplayCodecCPU ..............   Passed    0.06 sec
+      Start 43: M101_CrossProcessCPU
+43/45 Test #43: M101_CrossProcessCPU .............   Passed    0.34 sec
+      Start 44: M102_TimelineCPU
+44/45 Test #44: M102_TimelineCPU .................   Passed    1.20 sec
+      Start 45: M102_BranchCPU
+45/45 Test #45: M102_BranchCPU ...................   Passed    0.46 sec
+
+100% tests passed out of 45
+
+Label Time Summary:
+cpu    =  10.05 sec*proc (28 tests)
+
+Total Test time (real) =  15.40 sec
